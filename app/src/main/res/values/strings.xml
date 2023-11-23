@@ -7,4 +7,5 @@
     <string name="album_item_found">Found:</string>
     <string name="album_item_missing">Missing:</string>
     <string name="album_item_repeated">Repeated:</string>
+    <string name="album_list_title">My Albums</string>
 </resources>

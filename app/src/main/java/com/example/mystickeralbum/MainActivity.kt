@@ -24,6 +24,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -61,6 +63,9 @@ fun AlbumsScreen() {
     Scaffold(
         floatingActionButton = {
             AddAlbumFab()
+        },
+        topBar = {
+            AlbumsTopBar()
         }
     ) {
         Surface(
@@ -72,6 +77,25 @@ fun AlbumsScreen() {
             AlbumsList()
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlbumsTopBar() {
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(id = R.string.album_list_title),
+                fontSize = 24.sp,
+                modifier = Modifier
+                    .padding(horizontal = 10.dp),
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
+    )
 }
 
 @Composable
