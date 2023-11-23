@@ -3,6 +3,7 @@ package com.example.mystickeralbum
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -144,7 +145,8 @@ fun AlbumItem(album: Album) {
                     model = album.albumImage,
                     contentDescription = null,
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .background(Color.Black.copy(alpha = 0.5F)),
                     contentScale = ContentScale.Crop
                 )
 
@@ -192,7 +194,8 @@ fun AlbumProgress(album: Album) {
                 .fillMaxWidth()
                 .height(20.dp),
             shape = RoundedCornerShape(10.dp),
-            color = Color.White
+            color = Color.White,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
         ) {
             Box(
                 modifier = Modifier
@@ -212,7 +215,8 @@ fun AlbumProgress(album: Album) {
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Center),
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Black
                 )
             }
         }
@@ -312,7 +316,6 @@ fun AlbumStickersInfo(album: Album) {
         }
 
     }
-
 }
 
 @Composable
