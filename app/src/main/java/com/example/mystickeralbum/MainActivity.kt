@@ -3,7 +3,6 @@ package com.example.mystickeralbum
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -129,7 +128,7 @@ fun AlbumItem(album: Album) {
             .height(200.dp)
             .padding(horizontal = 10.dp, vertical = 10.dp),
         shape = RoundedCornerShape(10.dp),
-        color = Color.LightGray
+        color = MaterialTheme.colorScheme.secondary
     ) {
 
         Column(
@@ -153,7 +152,10 @@ fun AlbumItem(album: Album) {
                     text = album.name,
                     fontSize = 20.sp,
                     modifier = Modifier
-                        .background(Color.White.copy(alpha = 0.7F), RoundedCornerShape(10.dp))
+                        .background(
+                            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7F),
+                            RoundedCornerShape(10.dp)
+                        )
                         .align(Alignment.BottomStart)
                         .padding(horizontal = 10.dp),
                     overflow = TextOverflow.Ellipsis
@@ -196,18 +198,12 @@ fun AlbumProgress(album: Album) {
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_background),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth(album.getProgress()),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                        .fillMaxHeight()
+                        .fillMaxWidth(album.getProgress())
+                        .background(MaterialTheme.colorScheme.primary)
+                )
 
                 Text(
                     text = album.getFormattedProgress(),
@@ -322,7 +318,8 @@ fun AlbumStickersInfo(album: Album) {
 @Composable
 fun AddAlbumFab() {
     SmallFloatingActionButton(
-        onClick = { /*TODO*/ }
+        onClick = { /*TODO*/ },
+        containerColor = MaterialTheme.colorScheme.primary
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_add),
