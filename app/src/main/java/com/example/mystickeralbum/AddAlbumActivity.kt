@@ -24,12 +24,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -303,122 +305,146 @@ class AddAlbumActivity : ComponentActivity() {
 
     @Composable
     fun SpecialStickerInfo() {
-        Text(
-            text = stringResource(id = R.string.special_stickers_label),
-            fontSize = 16.sp,
-            modifier = Modifier
-                .padding(horizontal = 20.dp),
-            overflow = TextOverflow.Ellipsis,
-            color = Color.Black,
-            fontWeight = FontWeight.SemiBold
-        )
-
+        var specialStickersChecked by remember { mutableStateOf(false) }
         Row(
             modifier = Modifier
                 .height(30.dp)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
             ) {
                 Text(
-                    text = stringResource(id = R.string.type_label),
-                    fontSize = 14.sp,
+                    text = stringResource(id = R.string.special_stickers_label),
+                    fontSize = 16.sp,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.Black,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .align(Alignment.Center)
                 )
             }
 
-            var specialStickerType by rememberSaveable { mutableStateOf(SpecialStickerType.LetterNumber) }
+            Switch(
+                checked = specialStickersChecked,
+                onCheckedChange = {
+                    specialStickersChecked = it
+                },
+                modifier = Modifier
+            )
+        }
+
+
+        if (specialStickersChecked) {
             Row(
                 modifier = Modifier
-                    .padding(horizontal = 6.dp)
+                    .height(30.dp)
+                    .padding(horizontal = 20.dp)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .zIndex(if (specialStickerType == SpecialStickerType.LetterNumber) 1F else 0F)
-                        .then(
-                            if (specialStickerType == SpecialStickerType.LetterNumber) Modifier.background(
-                                Color.LightGray,
-                                RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
-                            ) else Modifier.background(
-                                Color.Gray,
-                                RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
-                            )
-                        )
-                        .then(
-                            if (specialStickerType == SpecialStickerType.LetterNumber) Modifier.border(
-                                (1.4).dp,
-                                Color.Black,
-                                RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
-                            ) else Modifier.border(
-                                1.dp,
-                                Color.DarkGray,
-                                RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
-                            )
-                        )
-                        .clickable { specialStickerType = SpecialStickerType.LetterNumber }
                 ) {
                     Text(
-                        text = stringResource(id = R.string.letter_number),
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 4.dp),
+                        text = stringResource(id = R.string.type_label),
+                        fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,
                         color = Color.Black,
-                        fontWeight = if (specialStickerType == SpecialStickerType.LetterNumber) FontWeight.SemiBold else FontWeight.Normal
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier
+                            .align(Alignment.Center)
                     )
                 }
 
-                Box(
+                var specialStickerType by rememberSaveable { mutableStateOf(SpecialStickerType.LetterNumber) }
+                Row(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .offset(x = (-1).dp)
-                        .zIndex(if (specialStickerType == SpecialStickerType.NumberLetter) 1F else 0F)
-                        .then(
-                            if (specialStickerType == SpecialStickerType.NumberLetter) Modifier.background(
-                                Color.LightGray,
-                                RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
-                            ) else Modifier.background(
-                                Color.Gray,
-                                RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
-                            )
-                        )
-                        .then(
-                            if (specialStickerType == SpecialStickerType.NumberLetter) Modifier.border(
-                                (1.4).dp,
-                                Color.Black,
-                                RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
-                            ) else Modifier.border(
-                                1.dp,
-                                Color.DarkGray,
-                                RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
-                            )
-                        )
-                        .clickable { specialStickerType = SpecialStickerType.NumberLetter }
+                        .padding(horizontal = 6.dp)
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.number_letter),
-                        fontSize = 16.sp,
+                    Box(
                         modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 4.dp),
-                        overflow = TextOverflow.Ellipsis,
-                        color = Color.Black,
-                        fontWeight = if (specialStickerType == SpecialStickerType.NumberLetter) FontWeight.SemiBold else FontWeight.Normal
-                    )
+                            .fillMaxHeight()
+                            .zIndex(if (specialStickerType == SpecialStickerType.LetterNumber) 1F else 0F)
+                            .then(
+                                if (specialStickerType == SpecialStickerType.LetterNumber) Modifier.background(
+                                    MaterialTheme.colorScheme.primary,
+                                    RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
+                                ) else Modifier.background(
+                                    Color.Gray,
+                                    RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
+                                )
+                            )
+                            .then(
+                                if (specialStickerType == SpecialStickerType.LetterNumber) Modifier.border(
+                                    1.dp,
+                                    Color.Black,
+                                    RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
+                                ) else Modifier.border(
+                                    1.dp,
+                                    Color.DarkGray,
+                                    RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
+                                )
+                            )
+                            .clickable { specialStickerType = SpecialStickerType.LetterNumber }
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.letter_number),
+                            fontSize = 16.sp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 4.dp),
+                            overflow = TextOverflow.Ellipsis,
+                            color = if (specialStickerType == SpecialStickerType.LetterNumber) Color.White else Color.Black,
+                            fontWeight = if (specialStickerType == SpecialStickerType.LetterNumber) FontWeight.SemiBold else FontWeight.Normal
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .offset(x = (-1).dp)
+                            .zIndex(if (specialStickerType == SpecialStickerType.NumberLetter) 1F else 0F)
+                            .then(
+                                if (specialStickerType == SpecialStickerType.NumberLetter) Modifier.background(
+                                    MaterialTheme.colorScheme.primary,
+                                    RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
+                                ) else Modifier.background(
+                                    Color.Gray,
+                                    RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
+                                )
+                            )
+                            .then(
+                                if (specialStickerType == SpecialStickerType.NumberLetter) Modifier.border(
+                                    1.dp,
+                                    Color.Black,
+                                    RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
+                                ) else Modifier.border(
+                                    1.dp,
+                                    Color.DarkGray,
+                                    RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
+                                )
+                            )
+                            .clickable { specialStickerType = SpecialStickerType.NumberLetter }
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.number_letter),
+                            fontSize = 16.sp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 4.dp),
+                            overflow = TextOverflow.Ellipsis,
+                            color = if (specialStickerType == SpecialStickerType.NumberLetter) Color.White else Color.Black,
+                            fontWeight = if (specialStickerType == SpecialStickerType.NumberLetter) FontWeight.SemiBold else FontWeight.Normal
+                        )
+                    }
                 }
             }
-        }
 
-        LetterInputSpecialSticker()
-        NumberInputSpecialSticker()
+            LetterInputSpecialSticker()
+            NumberInputSpecialSticker()
+        }
     }
 
     @Composable
