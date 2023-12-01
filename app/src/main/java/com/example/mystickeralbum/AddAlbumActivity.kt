@@ -94,7 +94,8 @@ class AddAlbumActivity : ComponentActivity() {
                 text = stringResource(id = R.string.album_name_label),
                 fontSize = 16.sp,
                 modifier = Modifier
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 10.dp),
                 overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold
@@ -110,7 +111,6 @@ class AddAlbumActivity : ComponentActivity() {
                 paddingValues = PaddingValues(horizontal = 20.dp)
             )
         }
-
 
         Column {
             Text(
@@ -198,11 +198,15 @@ class AddAlbumActivity : ComponentActivity() {
 
     @Composable
     fun StickersInfo() {
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
             NormalStickerInfo()
         }
 
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
             SpecialStickerInfo()
         }
     }
@@ -221,7 +225,7 @@ class AddAlbumActivity : ComponentActivity() {
 
         Row(
             modifier = Modifier
-                .height(40.dp)
+                .height(30.dp)
                 .padding(horizontal = 20.dp)
         ) {
             Box(
@@ -230,7 +234,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.from_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.Center),
                     overflow = TextOverflow.Ellipsis,
@@ -245,7 +249,7 @@ class AddAlbumActivity : ComponentActivity() {
                     fromText = it
                 },
                 modifier = Modifier
-                    .height(40.dp)
+                    .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -258,7 +262,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.to_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.Center),
                     overflow = TextOverflow.Ellipsis,
@@ -273,7 +277,7 @@ class AddAlbumActivity : ComponentActivity() {
                     toText = it
                 },
                 modifier = Modifier
-                    .height(40.dp)
+                    .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -305,7 +309,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.type_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.Black,
                     fontWeight = FontWeight.Normal,
@@ -406,7 +410,7 @@ class AddAlbumActivity : ComponentActivity() {
     fun LetterInputSpecialSticker() {
         Row(
             modifier = Modifier
-                .height(40.dp)
+                .height(30.dp)
                 .padding(horizontal = 20.dp)
         ) {
             Box(
@@ -415,7 +419,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.letter_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.Black,
                     fontWeight = FontWeight.Normal,
@@ -431,7 +435,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.from_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.Center),
                     overflow = TextOverflow.Ellipsis,
@@ -446,7 +450,7 @@ class AddAlbumActivity : ComponentActivity() {
                     fromText = it
                 },
                 modifier = Modifier
-                    .height(40.dp)
+                    .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -459,7 +463,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.to_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.Center),
                     overflow = TextOverflow.Ellipsis,
@@ -474,7 +478,7 @@ class AddAlbumActivity : ComponentActivity() {
                     toText = it
                 },
                 modifier = Modifier
-                    .height(40.dp)
+                    .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -487,7 +491,7 @@ class AddAlbumActivity : ComponentActivity() {
     fun NumberInputSpecialSticker() {
         Row(
             modifier = Modifier
-                .height(40.dp)
+                .height(30.dp)
                 .padding(horizontal = 20.dp)
         ) {
             Box(
@@ -496,7 +500,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.number_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.Black,
                     fontWeight = FontWeight.Normal,
@@ -512,7 +516,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.from_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.Center),
                     overflow = TextOverflow.Ellipsis,
@@ -527,7 +531,7 @@ class AddAlbumActivity : ComponentActivity() {
                     fromText = it
                 },
                 modifier = Modifier
-                    .height(40.dp)
+                    .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -540,7 +544,7 @@ class AddAlbumActivity : ComponentActivity() {
             ) {
                 Text(
                     text = stringResource(id = R.string.to_label),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.Center),
                     overflow = TextOverflow.Ellipsis,
@@ -555,7 +559,7 @@ class AddAlbumActivity : ComponentActivity() {
                     toText = it
                 },
                 modifier = Modifier
-                    .height(40.dp)
+                    .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
