@@ -24,5 +24,6 @@
     <string name="number_label">Number:</string>
     <string name="letter_number">LetterNumber</string>
     <string name="number_letter">NumberLetter</string>
+    <string name="total_stickers_label">Total Stickers:</string>
 
 </resources>

@@ -202,7 +202,7 @@ class AddAlbumActivity : ComponentActivity() {
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Text(
-                        text = "Total Stickers:",
+                        text = stringResource(id = R.string.total_stickers_label),
                         fontSize = 16.sp,
                         modifier = Modifier
                             .padding(horizontal = 10.dp),
