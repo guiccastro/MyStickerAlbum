@@ -1,5 +1,7 @@
 package com.example.mystickeralbum
 
+import android.R.attr.value
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,23 +49,28 @@ import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
-class MainActivity : ComponentActivity() {
+class AlbumsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyStickerAlbumTheme {
-                AlbumsScreen()
+                AlbumsScreen(::onAddAlbumClick)
             }
         }
+    }
+
+    private fun onAddAlbumClick() {
+        val intent = Intent(this, AddAlbumActivity::class.java)
+        startActivity(intent)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlbumsScreen() {
+fun AlbumsScreen(onClick: () -> Unit) {
     Scaffold(
         floatingActionButton = {
-            AddAlbumFab()
+            AddAlbumFab(onClick)
         },
         topBar = {
             AlbumsTopBar()
@@ -74,7 +82,30 @@ fun AlbumsScreen() {
                 .fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            AlbumsList()
+            AlbumsList(
+                listOf(
+                    Album(
+                        "Album 1",
+                        listOf(
+                            Sticker("1", false, 0),
+                            Sticker("2", true, 1),
+                            Sticker("3", true, 2)
+                        ),
+                        AlbumStatus.Completing,
+                        "https://i0.wp.com/maquinadoesporte.com.br/wp-content/uploads/2023/10/foto-maquina-do-esporte-1200-675-3-8.png?fit=616%2C308&ssl=1"
+                    ),
+                    Album(
+                        "Album 2",
+                        listOf(
+                            Sticker("1", false, 0),
+                            Sticker("2", false, 0),
+                            Sticker("3", false, 0)
+                        ),
+                        AlbumStatus.Completing,
+                        "https://ultraverso.com.br/wp-content/uploads/2023/07/2-1.jpg"
+                    )
+                )
+            )
         }
     }
 }
@@ -89,7 +120,9 @@ fun AlbumsTopBar() {
                 fontSize = 24.sp,
                 modifier = Modifier
                     .padding(horizontal = 10.dp),
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold
             )
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -99,26 +132,25 @@ fun AlbumsTopBar() {
 }
 
 @Composable
-fun AlbumsList() {
-    val albumsList = listOf(
-        Album(
-            "Album 1",
-            listOf(Sticker("1", false, 0), Sticker("2", true, 1), Sticker("3", true, 2)),
-            AlbumStatus.Completing,
-            "https://i0.wp.com/maquinadoesporte.com.br/wp-content/uploads/2023/10/foto-maquina-do-esporte-1200-675-3-8.png?fit=616%2C308&ssl=1"
-        ),
-        Album(
-            "Album 2",
-            listOf(Sticker("1", false, 0), Sticker("2", false, 0), Sticker("3", false, 0)),
-            AlbumStatus.Completing,
-            "https://ultraverso.com.br/wp-content/uploads/2023/07/2-1.jpg"
+fun AlbumsList(albumsList: List<Album>) {
+    if (albumsList.isEmpty()) {
+        Text(
+            text = stringResource(id = R.string.album_list_empty),
+            fontSize = 14.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 10.dp),
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
         )
-    )
-    LazyColumn() {
-        items(albumsList) {
-            AlbumItem(it)
+    } else {
+        LazyColumn() {
+            items(albumsList) {
+                AlbumItem(it)
+            }
         }
     }
+
 }
 
 @Composable
@@ -319,9 +351,9 @@ fun AlbumStickersInfo(album: Album) {
 }
 
 @Composable
-fun AddAlbumFab() {
+fun AddAlbumFab(onClick: () -> Unit) {
     SmallFloatingActionButton(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         containerColor = MaterialTheme.colorScheme.primary
     ) {
         Icon(
@@ -335,6 +367,6 @@ fun AddAlbumFab() {
 @Composable
 fun AlbumsScreenPreview() {
     MyStickerAlbumTheme {
-        AlbumsScreen()
+        AlbumsScreen {}
     }
 }

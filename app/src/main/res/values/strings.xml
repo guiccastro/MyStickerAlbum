@@ -8,4 +8,12 @@
     <string name="album_item_missing">Missing:</string>
     <string name="album_item_repeated">Repeated:</string>
     <string name="album_list_title">My Albums</string>
+    <string name="album_list_empty">Your album list is empty.</string>
+
+
+    <string name="add_album_title">Add New Album</string>
+    <string name="album_name_label">Album Name</string>
+    <string name="image_url_label">Image URL</string>
+    <string name="preview_label">Preview</string>
+
 </resources>
