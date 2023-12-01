@@ -154,7 +154,7 @@ class AddAlbumActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 10.dp),
             shape = RoundedCornerShape(10.dp),
             color = MaterialTheme.colorScheme.secondary
         ) {
@@ -191,6 +191,21 @@ class AddAlbumActivity : ComponentActivity() {
                             overflow = TextOverflow.Ellipsis
                         )
                     }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Text(
+                        text = "Total Stickers:",
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp),
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }
