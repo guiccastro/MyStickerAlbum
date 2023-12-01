@@ -15,5 +15,14 @@
     <string name="album_name_label">Album Name</string>
     <string name="image_url_label">Image URL</string>
     <string name="preview_label">Preview</string>
+    <string name="normal_stickers_label">Normal Stickers</string>
+    <string name="from_label">From</string>
+    <string name="to_label">to</string>
+    <string name="special_stickers_label">Special Stickers</string>
+    <string name="type_label">Type:</string>
+    <string name="letter_label">Letter:</string>
+    <string name="number_label">Number:</string>
+    <string name="letter_number">LetterNumber</string>
+    <string name="number_letter">NumberLetter</string>
 
 </resources>
