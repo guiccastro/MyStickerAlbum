@@ -11,7 +11,7 @@
     <string name="album_list_empty">Your album list is empty.</string>
 
 
-    <string name="add_album_title">Add New Album</string>
+    <string name="add_album_title">Create New Album</string>
     <string name="album_name_label">Album Name</string>
     <string name="image_url_label">Image URL</string>
     <string name="preview_label">Preview</string>
@@ -25,5 +25,9 @@
     <string name="letter_number">LetterNumber</string>
     <string name="number_letter">NumberLetter</string>
     <string name="total_stickers_label">Total Stickers:</string>
+
+
+    <string name="create_button">Create</string>
+    <string name="cancel_button">Cancel</string>
 
 </resources>

@@ -18,8 +18,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -77,10 +81,62 @@ class AddAlbumActivity : ComponentActivity() {
                 color = MaterialTheme.colorScheme.background
             ) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
                 ) {
-                    BasicAlbumInfo()
-                    StickersInfo()
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        BasicAlbumInfo()
+                        StickersInfo()
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .height(60.dp)
+                            .padding(horizontal = 20.dp, 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        Button(
+                            onClick = { this@AddAlbumActivity.finish() },
+                            modifier = Modifier
+                                .weight(1F)
+                                .fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.LightGray
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.cancel_button),
+                                fontSize = 16.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                color = Color.Black,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .weight(1F)
+                                .fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.create_button),
+                                fontSize = 16.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
                 }
             }
         }
