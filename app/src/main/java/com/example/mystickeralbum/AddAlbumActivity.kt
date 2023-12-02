@@ -34,11 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import com.example.mystickeralbum.model.SpecialStickerType
+import com.example.mystickeralbum.stateholders.AddAlbumUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AddAlbumViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,14 +64,14 @@ class AddAlbumActivity : ComponentActivity() {
 
         setContent {
             MyStickerAlbumTheme {
-                AddAlbumScreen()
+                AddAlbumScreen(viewModel.uiState.collectAsState().value)
             }
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun AddAlbumScreen() {
+    fun AddAlbumScreen(state: AddAlbumUIState) {
         Scaffold(
             topBar = {
                 AddAlbumTopBar()
@@ -97,8 +94,8 @@ class AddAlbumActivity : ComponentActivity() {
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        BasicAlbumInfo()
-                        StickersInfo()
+                        BasicAlbumInfo(state)
+                        StickersInfo(state)
                     }
 
                     Row(
@@ -108,7 +105,7 @@ class AddAlbumActivity : ComponentActivity() {
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         Button(
-                            onClick = { this@AddAlbumActivity.finish() },
+                            onClick = { finish() },
                             modifier = Modifier
                                 .weight(1F)
                                 .fillMaxWidth(),
@@ -127,7 +124,10 @@ class AddAlbumActivity : ComponentActivity() {
                         }
 
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                state.onCreateClick()
+                                finish()
+                            },
                             modifier = Modifier
                                 .weight(1F)
                                 .fillMaxWidth(),
@@ -149,10 +149,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun BasicAlbumInfo() {
-        var nameText by rememberSaveable { mutableStateOf("") }
-        var imageUrlText by rememberSaveable { mutableStateOf("") }
-
+    fun BasicAlbumInfo(state: AddAlbumUIState) {
         Column {
             Text(
                 text = stringResource(id = R.string.album_name_label),
@@ -165,9 +162,9 @@ class AddAlbumActivity : ComponentActivity() {
                 fontWeight = FontWeight.SemiBold
             )
             TextField(
-                text = nameText,
+                text = state.albumName,
                 onValueChange = {
-                    nameText = it
+                    state.onAlbumNameChange(it)
                 },
                 modifier = Modifier
                     .height(40.dp),
@@ -187,9 +184,9 @@ class AddAlbumActivity : ComponentActivity() {
                 fontWeight = FontWeight.SemiBold
             )
             TextField(
-                text = imageUrlText,
+                text = state.albumImageUrl,
                 onValueChange = {
-                    imageUrlText = it
+                    state.onAlbumImageUrlChange(it)
                 },
                 modifier = Modifier
                     .height(40.dp),
@@ -208,7 +205,7 @@ class AddAlbumActivity : ComponentActivity() {
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold
             )
-            PreviewAlbum(name = nameText, imageUrl = imageUrlText)
+            PreviewAlbum(name = state.albumName, imageUrl = state.albumImageUrl)
         }
     }
 
@@ -276,22 +273,22 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun StickersInfo() {
+    fun StickersInfo(state: AddAlbumUIState) {
         Column(
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            NormalStickerInfo()
+            NormalStickerInfo(state)
         }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            SpecialStickerInfo()
+            SpecialStickerInfo(state)
         }
     }
 
     @Composable
-    fun NormalStickerInfo() {
+    fun NormalStickerInfo(state: AddAlbumUIState) {
         Text(
             text = stringResource(id = R.string.normal_stickers_label),
             fontSize = 16.sp,
@@ -321,11 +318,10 @@ class AddAlbumActivity : ComponentActivity() {
                     fontWeight = FontWeight.Normal
                 )
             }
-            var fromText by rememberSaveable { mutableStateOf("") }
             TextField(
-                text = fromText,
+                text = state.normalStickersFrom.toString(),
                 onValueChange = {
-                    fromText = it
+                    state.onNormalStickersFromChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -349,11 +345,10 @@ class AddAlbumActivity : ComponentActivity() {
                     fontWeight = FontWeight.Normal
                 )
             }
-            var toText by rememberSaveable { mutableStateOf("") }
             TextField(
-                text = toText,
+                text = state.normalStickersTo.toString(),
                 onValueChange = {
-                    toText = it
+                    state.onNormalStickersToChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -366,8 +361,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SpecialStickerInfo() {
-        var specialStickersChecked by remember { mutableStateOf(false) }
+    fun SpecialStickerInfo(state: AddAlbumUIState) {
         Row(
             modifier = Modifier
                 .height(30.dp)
@@ -390,16 +384,16 @@ class AddAlbumActivity : ComponentActivity() {
             }
 
             Switch(
-                checked = specialStickersChecked,
+                checked = state.hasSpecialStickers,
                 onCheckedChange = {
-                    specialStickersChecked = it
+                    state.onHasSpecialStickersChange(it)
                 },
                 modifier = Modifier
             )
         }
 
 
-        if (specialStickersChecked) {
+        if (state.hasSpecialStickers) {
             Row(
                 modifier = Modifier
                     .height(30.dp)
@@ -420,7 +414,6 @@ class AddAlbumActivity : ComponentActivity() {
                     )
                 }
 
-                var specialStickerType by rememberSaveable { mutableStateOf(SpecialStickerType.LetterNumber) }
                 Row(
                     modifier = Modifier
                         .padding(horizontal = 6.dp)
@@ -428,9 +421,9 @@ class AddAlbumActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .zIndex(if (specialStickerType == SpecialStickerType.LetterNumber) 1F else 0F)
+                            .zIndex(if (state.specialStickerType == SpecialStickerType.LetterNumber) 1F else 0F)
                             .then(
-                                if (specialStickerType == SpecialStickerType.LetterNumber) Modifier.background(
+                                if (state.specialStickerType == SpecialStickerType.LetterNumber) Modifier.background(
                                     MaterialTheme.colorScheme.primary,
                                     RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
                                 ) else Modifier.background(
@@ -439,7 +432,7 @@ class AddAlbumActivity : ComponentActivity() {
                                 )
                             )
                             .then(
-                                if (specialStickerType == SpecialStickerType.LetterNumber) Modifier.border(
+                                if (state.specialStickerType == SpecialStickerType.LetterNumber) Modifier.border(
                                     1.dp,
                                     Color.Black,
                                     RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
@@ -449,7 +442,7 @@ class AddAlbumActivity : ComponentActivity() {
                                     RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
                                 )
                             )
-                            .clickable { specialStickerType = SpecialStickerType.LetterNumber }
+                            .clickable { state.onSpecialStickerTypeChange(SpecialStickerType.LetterNumber) }
                     ) {
                         Text(
                             text = stringResource(id = R.string.letter_number),
@@ -458,8 +451,8 @@ class AddAlbumActivity : ComponentActivity() {
                                 .align(Alignment.Center)
                                 .padding(horizontal = 4.dp),
                             overflow = TextOverflow.Ellipsis,
-                            color = if (specialStickerType == SpecialStickerType.LetterNumber) Color.White else Color.Black,
-                            fontWeight = if (specialStickerType == SpecialStickerType.LetterNumber) FontWeight.SemiBold else FontWeight.Normal
+                            color = if (state.specialStickerType == SpecialStickerType.LetterNumber) Color.White else Color.Black,
+                            fontWeight = if (state.specialStickerType == SpecialStickerType.LetterNumber) FontWeight.SemiBold else FontWeight.Normal
                         )
                     }
 
@@ -467,9 +460,9 @@ class AddAlbumActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxHeight()
                             .offset(x = (-1).dp)
-                            .zIndex(if (specialStickerType == SpecialStickerType.NumberLetter) 1F else 0F)
+                            .zIndex(if (state.specialStickerType == SpecialStickerType.NumberLetter) 1F else 0F)
                             .then(
-                                if (specialStickerType == SpecialStickerType.NumberLetter) Modifier.background(
+                                if (state.specialStickerType == SpecialStickerType.NumberLetter) Modifier.background(
                                     MaterialTheme.colorScheme.primary,
                                     RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
                                 ) else Modifier.background(
@@ -478,7 +471,7 @@ class AddAlbumActivity : ComponentActivity() {
                                 )
                             )
                             .then(
-                                if (specialStickerType == SpecialStickerType.NumberLetter) Modifier.border(
+                                if (state.specialStickerType == SpecialStickerType.NumberLetter) Modifier.border(
                                     1.dp,
                                     Color.Black,
                                     RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
@@ -488,7 +481,7 @@ class AddAlbumActivity : ComponentActivity() {
                                     RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
                                 )
                             )
-                            .clickable { specialStickerType = SpecialStickerType.NumberLetter }
+                            .clickable { state.onSpecialStickerTypeChange(SpecialStickerType.NumberLetter) }
                     ) {
                         Text(
                             text = stringResource(id = R.string.number_letter),
@@ -497,20 +490,20 @@ class AddAlbumActivity : ComponentActivity() {
                                 .align(Alignment.Center)
                                 .padding(horizontal = 4.dp),
                             overflow = TextOverflow.Ellipsis,
-                            color = if (specialStickerType == SpecialStickerType.NumberLetter) Color.White else Color.Black,
-                            fontWeight = if (specialStickerType == SpecialStickerType.NumberLetter) FontWeight.SemiBold else FontWeight.Normal
+                            color = if (state.specialStickerType == SpecialStickerType.NumberLetter) Color.White else Color.Black,
+                            fontWeight = if (state.specialStickerType == SpecialStickerType.NumberLetter) FontWeight.SemiBold else FontWeight.Normal
                         )
                     }
                 }
             }
 
-            LetterInputSpecialSticker()
-            NumberInputSpecialSticker()
+            LetterInputSpecialSticker(state)
+            NumberInputSpecialSticker(state)
         }
     }
 
     @Composable
-    fun LetterInputSpecialSticker() {
+    fun LetterInputSpecialSticker(state: AddAlbumUIState) {
         Row(
             modifier = Modifier
                 .height(30.dp)
@@ -546,11 +539,10 @@ class AddAlbumActivity : ComponentActivity() {
                     fontWeight = FontWeight.Normal
                 )
             }
-            var fromText by rememberSaveable { mutableStateOf("") }
             TextField(
-                text = fromText,
+                text = state.specialStickersLetterFrom,
                 onValueChange = {
-                    fromText = it
+                    state.onSpecialStickersLetterFromChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -574,11 +566,10 @@ class AddAlbumActivity : ComponentActivity() {
                     fontWeight = FontWeight.Normal
                 )
             }
-            var toText by rememberSaveable { mutableStateOf("") }
             TextField(
-                text = toText,
+                text = state.specialStickersLetterTo,
                 onValueChange = {
-                    toText = it
+                    state.onSpecialStickersLetterToChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -591,7 +582,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun NumberInputSpecialSticker() {
+    fun NumberInputSpecialSticker(state: AddAlbumUIState) {
         Row(
             modifier = Modifier
                 .height(30.dp)
@@ -627,11 +618,10 @@ class AddAlbumActivity : ComponentActivity() {
                     fontWeight = FontWeight.Normal
                 )
             }
-            var fromText by rememberSaveable { mutableStateOf("") }
             TextField(
-                text = fromText,
+                text = state.specialStickersNumberFrom.toString(),
                 onValueChange = {
-                    fromText = it
+                    state.onSpecialStickersNumberFromChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -655,11 +645,10 @@ class AddAlbumActivity : ComponentActivity() {
                     fontWeight = FontWeight.Normal
                 )
             }
-            var toText by rememberSaveable { mutableStateOf("") }
             TextField(
-                text = toText,
+                text = state.specialStickersNumberTo.toString(),
                 onValueChange = {
-                    toText = it
+                    state.onSpecialStickersNumberToChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -696,7 +685,7 @@ class AddAlbumActivity : ComponentActivity() {
     @Composable
     fun AddAlbumScreenPreview() {
         MyStickerAlbumTheme {
-            AddAlbumScreen()
+            AddAlbumScreen(AddAlbumUIState())
         }
     }
 }
