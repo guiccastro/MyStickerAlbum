@@ -6,6 +6,7 @@ import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.model.Sticker
+import com.example.mystickeralbum.onlyLetters
 import com.example.mystickeralbum.stateholders.AddAlbumUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,18 +53,22 @@ class AddAlbumViewModel : ViewModel() {
     }
 
     private fun onNormalStickersFromChange(from: String) {
-        _uiState.update {
-            it.copy(
-                normalStickersFrom = from.toInt()
-            )
+        if (from.toIntOrNull() != null || from.isEmpty()) {
+            _uiState.update {
+                it.copy(
+                    normalStickersFrom = from
+                )
+            }
         }
     }
 
     private fun onNormalStickersToChange(to: String) {
-        _uiState.update {
-            it.copy(
-                normalStickersTo = to.toInt()
-            )
+        if (to.toIntOrNull() != null || to.isEmpty()) {
+            _uiState.update {
+                it.copy(
+                    normalStickersTo = to
+                )
+            }
         }
     }
 
@@ -84,34 +89,44 @@ class AddAlbumViewModel : ViewModel() {
     }
 
     private fun onSpecialStickersLetterFromChange(letterFrom: String) {
-        _uiState.update {
-            it.copy(
-                specialStickersLetterFrom = letterFrom
-            )
+        val from = letterFrom.uppercase()
+        if (from.onlyLetters()) {
+            _uiState.update {
+                it.copy(
+                    specialStickersLetterFrom = from
+                )
+            }
         }
     }
 
     private fun onSpecialStickersLetterToChange(letterTo: String) {
-        _uiState.update {
-            it.copy(
-                specialStickersLetterTo = letterTo
-            )
+        val from = letterTo.uppercase()
+        if (from.onlyLetters()) {
+            _uiState.update {
+                it.copy(
+                    specialStickersLetterTo = letterTo
+                )
+            }
         }
     }
 
     private fun onSpecialStickersNumberFromChange(numberFrom: String) {
-        _uiState.update {
-            it.copy(
-                specialStickersNumberFrom = numberFrom.toInt()
-            )
+        if (numberFrom.toIntOrNull() != null || numberFrom.isEmpty()) {
+            _uiState.update {
+                it.copy(
+                    specialStickersNumberFrom = numberFrom
+                )
+            }
         }
     }
 
     private fun onSpecialStickersNumberToChange(numberTo: String) {
-        _uiState.update {
-            it.copy(
-                specialStickersNumberTo = numberTo.toInt()
-            )
+        if (numberTo.toIntOrNull() != null || numberTo.isEmpty()) {
+            _uiState.update {
+                it.copy(
+                    specialStickersNumberTo = numberTo
+                )
+            }
         }
     }
 
@@ -134,7 +149,7 @@ class AddAlbumViewModel : ViewModel() {
     }
 
     private fun createNormalStickersList(): List<Sticker> {
-        return (_uiState.value.normalStickersFrom.._uiState.value.normalStickersTo)
+        return (_uiState.value.normalStickersFrom.toInt().._uiState.value.normalStickersTo.toInt())
             .map {
                 Sticker(
                     identifier = it.toString(),
@@ -151,7 +166,7 @@ class AddAlbumViewModel : ViewModel() {
                 .single().._uiState.value.specialStickersLetterTo.uppercase()
                 .single()).forEach { letter ->
                 stickers.addAll(
-                    (_uiState.value.specialStickersNumberFrom.._uiState.value.specialStickersNumberTo).map { number ->
+                    (_uiState.value.specialStickersNumberFrom.toInt().._uiState.value.specialStickersNumberTo.toInt()).map { number ->
                         if (_uiState.value.specialStickerType == SpecialStickerType.LetterNumber) {
                             Sticker(
                                 identifier = "$letter$number",

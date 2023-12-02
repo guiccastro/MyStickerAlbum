@@ -7,9 +7,9 @@ data class AddAlbumUIState(
     val onAlbumNameChange: (String) -> Unit = {},
     val albumImageUrl: String = "",
     val onAlbumImageUrlChange: (String) -> Unit = {},
-    val normalStickersFrom: Int = 0,
+    val normalStickersFrom: String = "",
     val onNormalStickersFromChange: (String) -> Unit = {},
-    val normalStickersTo: Int = 0,
+    val normalStickersTo: String = "",
     val onNormalStickersToChange: (String) -> Unit = {},
     val hasSpecialStickers: Boolean = false,
     val onHasSpecialStickersChange: (Boolean) -> Unit = {},
@@ -19,9 +19,9 @@ data class AddAlbumUIState(
     val onSpecialStickersLetterFromChange: (String) -> Unit = {},
     val specialStickersLetterTo: String = "",
     val onSpecialStickersLetterToChange: (String) -> Unit = {},
-    val specialStickersNumberFrom: Int = 0,
+    val specialStickersNumberFrom: String = "",
     val onSpecialStickersNumberFromChange: (String) -> Unit = {},
-    val specialStickersNumberTo: Int = 0,
+    val specialStickersNumberTo: String = "",
     val onSpecialStickersNumberToChange: (String) -> Unit = {},
     val onCreateClick: () -> Unit = {}
 )

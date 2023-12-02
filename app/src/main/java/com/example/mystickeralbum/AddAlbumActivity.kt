@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -319,7 +320,7 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.normalStickersFrom.toString(),
+                text = state.normalStickersFrom,
                 onValueChange = {
                     state.onNormalStickersFromChange(it)
                 },
@@ -346,7 +347,7 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.normalStickersTo.toString(),
+                text = state.normalStickersTo,
                 onValueChange = {
                     state.onNormalStickersToChange(it)
                 },
@@ -549,7 +550,10 @@ class AddAlbumActivity : ComponentActivity() {
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.Characters
+                )
             )
 
             Box(
@@ -576,7 +580,10 @@ class AddAlbumActivity : ComponentActivity() {
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.Characters
+                )
             )
         }
     }
@@ -619,7 +626,7 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.specialStickersNumberFrom.toString(),
+                text = state.specialStickersNumberFrom,
                 onValueChange = {
                     state.onSpecialStickersNumberFromChange(it)
                 },
@@ -646,7 +653,7 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.specialStickersNumberTo.toString(),
+                text = state.specialStickersNumberTo,
                 onValueChange = {
                     state.onSpecialStickersNumberToChange(it)
                 },
