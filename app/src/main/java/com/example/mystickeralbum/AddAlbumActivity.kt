@@ -3,6 +3,7 @@ package com.example.mystickeralbum
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -53,8 +54,13 @@ import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
+import com.example.mystickeralbum.viewmodels.AddAlbumViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AddAlbumActivity : ComponentActivity() {
+
+    private val viewModel: AddAlbumViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
