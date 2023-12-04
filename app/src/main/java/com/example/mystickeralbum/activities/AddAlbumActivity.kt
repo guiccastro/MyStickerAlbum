@@ -209,8 +209,13 @@ class AddAlbumActivity : ComponentActivity() {
                             fontSize = 20.sp,
                             modifier = Modifier
                                 .background(
-                                    MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7F),
-                                    RoundedCornerShape(10.dp)
+                                    MaterialTheme.colorScheme.primary,
+                                    RoundedCornerShape(
+                                        topStart = 0.dp,
+                                        topEnd = 10.dp,
+                                        bottomEnd = 0.dp,
+                                        bottomStart = 0.dp
+                                    )
                                 )
                                 .align(Alignment.BottomStart)
                                 .padding(horizontal = 10.dp),

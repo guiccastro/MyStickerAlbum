@@ -46,14 +46,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.mystickeralbum.stateholders.AlbumsUIState
-import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
+import com.example.mystickeralbum.stateholders.AlbumsUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
+import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 
 class AlbumsActivity : ComponentActivity() {
 
@@ -182,8 +182,13 @@ class AlbumsActivity : ComponentActivity() {
                         fontSize = 20.sp,
                         modifier = Modifier
                             .background(
-                                MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7F),
-                                RoundedCornerShape(10.dp)
+                                MaterialTheme.colorScheme.primary,
+                                RoundedCornerShape(
+                                    topStart = 0.dp,
+                                    topEnd = 10.dp,
+                                    bottomEnd = 0.dp,
+                                    bottomStart = 0.dp
+                                )
                             )
                             .align(Alignment.BottomStart)
                             .padding(horizontal = 10.dp),
