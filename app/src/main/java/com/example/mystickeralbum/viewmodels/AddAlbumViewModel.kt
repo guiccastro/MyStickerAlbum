@@ -3,12 +3,12 @@ package com.example.mystickeralbum.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.mystickeralbum.R
+import com.example.mystickeralbum.extensions.onlyLetters
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.TextFieldValues
-import com.example.mystickeralbum.extensions.onlyLetters
 import com.example.mystickeralbum.stateholders.AddAlbumUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -124,6 +124,8 @@ class AddAlbumViewModel : ViewModel() {
             )
         }
 
+        updateTotalStickers()
+
         return errorFrom || errorTo
     }
 
@@ -198,6 +200,8 @@ class AddAlbumViewModel : ViewModel() {
             )
         }
 
+        updateTotalStickers()
+
         return errorFrom || errorTo
     }
 
@@ -253,6 +257,8 @@ class AddAlbumViewModel : ViewModel() {
                 )
             )
         }
+
+        updateTotalStickers()
 
         return errorFrom || errorTo
     }
@@ -365,5 +371,61 @@ class AddAlbumViewModel : ViewModel() {
         }
 
         return error
+    }
+
+    private fun updateTotalStickers() {
+        var total = 0
+        _uiState.value.apply {
+            val (errorFrom, _) = verifyInputNumber(
+                normalStickersFromTextField.text,
+                normalStickersToTextField.text,
+                false
+            )
+
+            val (errorTo, _) = verifyInputNumber(
+                normalStickersToTextField.text,
+                normalStickersFromTextField.text,
+                true
+            )
+
+            val (errorLetterFrom, _) = verifyInputLetter(
+                specialStickersLetterFromTextField.text,
+                specialStickersLetterToTextField.text,
+                false
+            )
+
+            val (errorLetterTo, _) = verifyInputLetter(
+                specialStickersLetterToTextField.text,
+                specialStickersLetterFromTextField.text,
+                true
+            )
+
+            val (errorNumberFrom, _) = verifyInputNumber(
+                specialStickersNumberFromTextField.text,
+                specialStickersNumberToTextField.text,
+                false
+            )
+
+            val (errorNumberTo, _) = verifyInputNumber(
+                specialStickersNumberToTextField.text,
+                specialStickersNumberFromTextField.text,
+                true
+            )
+
+
+            if (!errorFrom && !errorTo) {
+                total += createNormalStickersList().size
+            }
+
+            if (!errorLetterFrom && !errorLetterTo && !errorNumberFrom && !errorNumberTo) {
+                total += createSpecialStickersList().size
+            }
+        }
+
+        _uiState.update {
+            it.copy(
+                totalStickers = total
+            )
+        }
     }
 }

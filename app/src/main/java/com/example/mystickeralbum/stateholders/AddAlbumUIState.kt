@@ -16,5 +16,6 @@ data class AddAlbumUIState(
     val onHasSpecialStickersChange: (Boolean) -> Unit = {},
     val specialStickerType: SpecialStickerType = SpecialStickerType.LetterNumber,
     val onSpecialStickerTypeChange: (SpecialStickerType) -> Unit = {},
-    val onCreateClick: () -> Boolean = { false }
+    val onCreateClick: () -> Boolean = { false },
+    val totalStickers: Int = 0
 )

@@ -168,13 +168,14 @@ class AddAlbumActivity : ComponentActivity() {
             )
             PreviewAlbum(
                 name = state.albumNameTextField.text,
-                imageUrl = state.albumNameTextField.text
+                imageUrl = state.albumNameTextField.text,
+                totalStickers = state.totalStickers
             )
         }
     }
 
     @Composable
-    fun PreviewAlbum(name: String, imageUrl: String) {
+    fun PreviewAlbum(name: String, imageUrl: String, totalStickers: Int) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -225,7 +226,7 @@ class AddAlbumActivity : ComponentActivity() {
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Text(
-                        text = stringResource(id = R.string.total_stickers_label),
+                        text = stringResource(id = R.string.total_stickers_label) + " $totalStickers",
                         fontSize = 16.sp,
                         modifier = Modifier
                             .padding(horizontal = 10.dp),
