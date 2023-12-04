@@ -147,7 +147,7 @@ class AddAlbumActivity : ComponentActivity() {
             TextField(
                 text = state.albumImageUrlTextField.text,
                 onValueChange = {
-                    state.albumNameTextField.onTextChange(it)
+                    state.albumImageUrlTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .height(40.dp),
@@ -168,7 +168,7 @@ class AddAlbumActivity : ComponentActivity() {
             )
             PreviewAlbum(
                 name = state.albumNameTextField.text,
-                imageUrl = state.albumNameTextField.text,
+                imageUrl = state.albumImageUrlTextField.text,
                 totalStickers = state.totalStickers
             )
         }
