@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.mystickeralbum.R
+import com.example.mystickeralbum.StickersList
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
@@ -86,20 +87,24 @@ class AlbumsActivity : ComponentActivity() {
                     listOf(
                         Album(
                             "Album 1",
-                            listOf(
-                                Sticker("1", false, 0),
-                                Sticker("2", true, 1),
-                                Sticker("3", true, 2)
+                            StickersList(
+                                listOf(
+                                    Sticker("1", false, 0),
+                                    Sticker("2", true, 1),
+                                    Sticker("3", true, 2)
+                                )
                             ),
                             AlbumStatus.Completing,
                             "https://i0.wp.com/maquinadoesporte.com.br/wp-content/uploads/2023/10/foto-maquina-do-esporte-1200-675-3-8.png?fit=616%2C308&ssl=1"
                         ),
                         Album(
                             "Album 2",
-                            listOf(
-                                Sticker("1", false, 0),
-                                Sticker("2", false, 0),
-                                Sticker("3", false, 0)
+                            StickersList(
+                                listOf(
+                                    Sticker("1", false, 0),
+                                    Sticker("2", false, 0),
+                                    Sticker("3", false, 0)
+                                )
                             ),
                             AlbumStatus.Completing,
                             "https://ultraverso.com.br/wp-content/uploads/2023/07/2-1.jpg"

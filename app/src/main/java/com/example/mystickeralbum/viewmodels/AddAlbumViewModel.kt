@@ -3,6 +3,7 @@ package com.example.mystickeralbum.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.mystickeralbum.R
+import com.example.mystickeralbum.StickersList
 import com.example.mystickeralbum.extensions.onlyLetters
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
@@ -267,12 +268,16 @@ class AddAlbumViewModel : ViewModel() {
         if (!hasError()) {
             val album = Album(
                 name = _uiState.value.albumNameTextField.text,
-                stickers = createStickersList(),
+                stickersList = createStickersList(),
                 status = AlbumStatus.Completing,
                 albumImage = _uiState.value.albumImageUrlTextField.text
             )
 
-            Log.println(Log.ASSERT, "Album", album.stickers.map { it.identifier }.toString())
+            Log.println(
+                Log.ASSERT,
+                "Album",
+                album.stickersList.stickers.map { it.identifier }.toString()
+            )
 
             return true
         }
@@ -280,11 +285,11 @@ class AddAlbumViewModel : ViewModel() {
         return false
     }
 
-    private fun createStickersList(): List<Sticker> {
+    private fun createStickersList(): StickersList {
         val stickers = ArrayList<Sticker>()
         stickers.addAll(createNormalStickersList())
         stickers.addAll(createSpecialStickersList())
-        return stickers
+        return StickersList(stickers)
     }
 
     private fun createNormalStickersList(): List<Sticker> {

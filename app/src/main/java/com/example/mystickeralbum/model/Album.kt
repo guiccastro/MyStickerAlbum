@@ -1,24 +1,29 @@
 package com.example.mystickeralbum.model
 
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.example.mystickeralbum.StickersList
 import java.text.DecimalFormat
 
+@Entity
 data class Album(
-    val name: String,
-    val stickers: List<Sticker>,
+    @PrimaryKey val name: String,
+    @Embedded val stickersList: StickersList,
     val status: AlbumStatus,
     val albumImage: String
 ) {
     fun getMissing(): List<Sticker> {
-        return stickers.filter { !it.found }
+        return stickersList.stickers.filter { !it.found }
     }
 
     fun getFound(): List<Sticker> {
-        return stickers.filter { it.found }
+        return stickersList.stickers.filter { it.found }
     }
 
     fun getRepeated(): List<Sticker> {
         val repeated = ArrayList<Sticker>()
-        stickers.filter { it.repeated > 0 }.forEach { sticker ->
+        stickersList.stickers.filter { it.repeated > 0 }.forEach { sticker ->
             repeat(sticker.repeated) {
                 repeated.add(sticker)
             }
@@ -38,6 +43,6 @@ data class Album(
     }
 
     fun getTotalStickers(): Int {
-        return stickers.size
+        return stickersList.stickers.size
     }
 }
