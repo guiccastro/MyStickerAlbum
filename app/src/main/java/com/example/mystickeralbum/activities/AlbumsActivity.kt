@@ -1,7 +1,7 @@
 package com.example.mystickeralbum.activities
 
 import android.R.attr.value
-import android.content.Intent
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -64,7 +64,6 @@ class AlbumsActivity : ComponentActivity() {
         setContent {
             MyStickerAlbumTheme {
                 AlbumsScreen(
-                    onFabClick = ::onAddAlbumClick,
                     state = viewModel.uiState.collectAsState().value
                 )
             }
@@ -76,17 +75,12 @@ class AlbumsActivity : ComponentActivity() {
         viewModel.updateAlbumsList()
     }
 
-    private fun onAddAlbumClick() {
-        val intent = Intent(this, AddAlbumActivity::class.java)
-        startActivity(intent)
-    }
-
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun AlbumsScreen(onFabClick: () -> Unit, state: AlbumsUIState) {
+    fun AlbumsScreen(state: AlbumsUIState) {
         Scaffold(
             floatingActionButton = {
-                AddAlbumFab(onFabClick)
+                AddAlbumFab(state.onFabClick)
             },
             topBar = {
                 AlbumsTopBar()
@@ -351,9 +345,9 @@ class AlbumsActivity : ComponentActivity() {
     }
 
     @Composable
-    fun AddAlbumFab(onClick: () -> Unit) {
+    fun AddAlbumFab(onClick: (Activity) -> Unit) {
         SmallFloatingActionButton(
-            onClick = { onClick() },
+            onClick = { onClick(this) },
             containerColor = MaterialTheme.colorScheme.primary
         ) {
             Icon(
@@ -368,7 +362,6 @@ class AlbumsActivity : ComponentActivity() {
     fun AlbumsScreenPreview() {
         MyStickerAlbumTheme {
             AlbumsScreen(
-                onFabClick = {},
                 state = AlbumsUIState(
                     albumsList = listOf(
                         Album(

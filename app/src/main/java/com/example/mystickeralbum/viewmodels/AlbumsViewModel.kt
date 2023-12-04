@@ -1,8 +1,11 @@
 package com.example.mystickeralbum.viewmodels
 
+import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
+import com.example.mystickeralbum.activities.AddAlbumActivity
 import com.example.mystickeralbum.stateholders.AlbumsUIState
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +21,12 @@ class AlbumsViewModel : ViewModel() {
     val uiState get() = _uiState.asStateFlow()
 
     init {
+        _uiState.update {
+            it.copy(
+                onFabClick = ::onFabClick
+            )
+        }
+
         updateAlbumsList()
     }
 
@@ -28,6 +37,13 @@ class AlbumsViewModel : ViewModel() {
                     albumsList = withContext(IO) { AlbumsRepository.getAllAlbums() }
                 )
             }
+        }
+    }
+
+    private fun onFabClick(activity: Activity) {
+        activity.apply {
+            val intent = Intent(this, AddAlbumActivity::class.java)
+            startActivity(intent)
         }
     }
 }
