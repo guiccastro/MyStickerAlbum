@@ -99,51 +99,7 @@ class AddAlbumActivity : ComponentActivity() {
                         StickersInfo(state)
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .height(60.dp)
-                            .padding(horizontal = 20.dp, 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        Button(
-                            onClick = { finish() },
-                            modifier = Modifier
-                                .weight(1F)
-                                .fillMaxWidth(),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.LightGray
-                            )
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.cancel_button),
-                                fontSize = 16.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                color = Color.Black,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-
-                        Button(
-                            onClick = {
-                                state.onCreateClick()
-                                finish()
-                            },
-                            modifier = Modifier
-                                .weight(1F)
-                                .fillMaxWidth(),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.create_button),
-                                fontSize = 16.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                color = Color.White,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-
+                    BottomButtons(state)
                 }
             }
         }
@@ -163,14 +119,16 @@ class AddAlbumActivity : ComponentActivity() {
                 fontWeight = FontWeight.SemiBold
             )
             TextField(
-                text = state.albumName,
+                text = state.albumNameTextField.text,
                 onValueChange = {
-                    state.onAlbumNameChange(it)
+                    state.albumNameTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .height(40.dp),
                 textSize = 14.sp,
-                paddingValues = PaddingValues(horizontal = 20.dp)
+                paddingValues = PaddingValues(horizontal = 20.dp),
+                error = state.albumNameTextField.error,
+                errorMessage = stringResource(id = state.albumNameTextField.errorMessage)
             )
         }
 
@@ -185,9 +143,9 @@ class AddAlbumActivity : ComponentActivity() {
                 fontWeight = FontWeight.SemiBold
             )
             TextField(
-                text = state.albumImageUrl,
+                text = state.albumImageUrlTextField.text,
                 onValueChange = {
-                    state.onAlbumImageUrlChange(it)
+                    state.albumNameTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .height(40.dp),
@@ -206,7 +164,10 @@ class AddAlbumActivity : ComponentActivity() {
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold
             )
-            PreviewAlbum(name = state.albumName, imageUrl = state.albumImageUrl)
+            PreviewAlbum(
+                name = state.albumNameTextField.text,
+                imageUrl = state.albumNameTextField.text
+            )
         }
     }
 
@@ -302,7 +263,6 @@ class AddAlbumActivity : ComponentActivity() {
 
         Row(
             modifier = Modifier
-                .height(30.dp)
                 .padding(horizontal = 20.dp)
         ) {
             Box(
@@ -320,16 +280,20 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.normalStickersFrom,
+                text = state.normalStickersFromTextField.text,
                 onValueChange = {
-                    state.onNormalStickersFromChange(it)
+                    state.normalStickersFromTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                error = state.normalStickersFromTextField.error,
+                errorMessage = stringResource(id = state.normalStickersFromTextField.errorMessage),
+                errorModifier = Modifier
+                    .width(50.dp)
             )
 
             Box(
@@ -347,16 +311,20 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.normalStickersTo,
+                text = state.normalStickersToTextField.text,
                 onValueChange = {
-                    state.onNormalStickersToChange(it)
+                    state.normalStickersToTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                error = state.normalStickersToTextField.error,
+                errorMessage = stringResource(id = state.normalStickersToTextField.errorMessage),
+                errorModifier = Modifier
+                    .width(50.dp)
             )
         }
     }
@@ -507,7 +475,6 @@ class AddAlbumActivity : ComponentActivity() {
     fun LetterInputSpecialSticker(state: AddAlbumUIState) {
         Row(
             modifier = Modifier
-                .height(30.dp)
                 .padding(horizontal = 20.dp)
         ) {
             Box(
@@ -541,9 +508,9 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.specialStickersLetterFrom,
+                text = state.specialStickersLetterFromTextField.text,
                 onValueChange = {
-                    state.onSpecialStickersLetterFromChange(it)
+                    state.specialStickersLetterFromTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -553,7 +520,11 @@ class AddAlbumActivity : ComponentActivity() {
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     capitalization = KeyboardCapitalization.Characters
-                )
+                ),
+                error = state.specialStickersLetterFromTextField.error,
+                errorMessage = stringResource(id = state.specialStickersLetterFromTextField.errorMessage),
+                errorModifier = Modifier
+                    .width(50.dp)
             )
 
             Box(
@@ -571,9 +542,9 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.specialStickersLetterTo,
+                text = state.specialStickersLetterToTextField.text,
                 onValueChange = {
-                    state.onSpecialStickersLetterToChange(it)
+                    state.specialStickersLetterToTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -583,7 +554,11 @@ class AddAlbumActivity : ComponentActivity() {
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     capitalization = KeyboardCapitalization.Characters
-                )
+                ),
+                error = state.specialStickersLetterToTextField.error,
+                errorMessage = stringResource(id = state.specialStickersLetterToTextField.errorMessage),
+                errorModifier = Modifier
+                    .width(50.dp)
             )
         }
     }
@@ -592,7 +567,6 @@ class AddAlbumActivity : ComponentActivity() {
     fun NumberInputSpecialSticker(state: AddAlbumUIState) {
         Row(
             modifier = Modifier
-                .height(30.dp)
                 .padding(horizontal = 20.dp)
         ) {
             Box(
@@ -626,16 +600,20 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.specialStickersNumberFrom,
+                text = state.specialStickersNumberFromTextField.text,
                 onValueChange = {
-                    state.onSpecialStickersNumberFromChange(it)
+                    state.specialStickersNumberFromTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                error = state.specialStickersNumberFromTextField.error,
+                errorMessage = stringResource(id = state.specialStickersNumberFromTextField.errorMessage),
+                errorModifier = Modifier
+                    .width(50.dp)
             )
 
             Box(
@@ -653,17 +631,68 @@ class AddAlbumActivity : ComponentActivity() {
                 )
             }
             TextField(
-                text = state.specialStickersNumberTo,
+                text = state.specialStickersNumberToTextField.text,
                 onValueChange = {
-                    state.onSpecialStickersNumberToChange(it)
+                    state.specialStickersNumberToTextField.onTextChange(it)
                 },
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                error = state.specialStickersNumberToTextField.error,
+                errorMessage = stringResource(id = state.specialStickersNumberToTextField.errorMessage),
+                errorModifier = Modifier
+                    .width(50.dp)
             )
+        }
+    }
+
+    @Composable
+    fun BottomButtons(state: AddAlbumUIState) {
+        Row(
+            modifier = Modifier
+                .height(60.dp)
+                .padding(horizontal = 20.dp, 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            Button(
+                onClick = { finish() },
+                modifier = Modifier
+                    .weight(1F)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.LightGray
+                )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.cancel_button),
+                    fontSize = 16.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Button(
+                onClick = {
+                    if (state.onCreateClick()) finish()
+                },
+                modifier = Modifier
+                    .weight(1F)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.create_button),
+                    fontSize = 16.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 
@@ -692,7 +721,7 @@ class AddAlbumActivity : ComponentActivity() {
     @Composable
     fun AddAlbumScreenPreview() {
         MyStickerAlbumTheme {
-            AddAlbumScreen(AddAlbumUIState())
+            AddAlbumScreen(AddAlbumUIState(hasSpecialStickers = true))
         }
     }
 }
