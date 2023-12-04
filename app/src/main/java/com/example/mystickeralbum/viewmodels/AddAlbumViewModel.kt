@@ -2,18 +2,23 @@ package com.example.mystickeralbum.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.mystickeralbum.AlbumsRepository
 import com.example.mystickeralbum.R
-import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.extensions.onlyLetters
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.model.Sticker
+import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.model.TextFieldValues
 import com.example.mystickeralbum.stateholders.AddAlbumUIState
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddAlbumViewModel : ViewModel() {
 
@@ -273,11 +278,11 @@ class AddAlbumViewModel : ViewModel() {
                 albumImage = _uiState.value.albumImageUrlTextField.text
             )
 
-            Log.println(
-                Log.ASSERT,
-                "Album",
-                album.stickersList.stickers.map { it.identifier }.toString()
-            )
+            viewModelScope.launch {
+                withContext(IO) {
+                    AlbumsRepository.addAlbum(album)
+                }
+            }
 
             return true
         }
