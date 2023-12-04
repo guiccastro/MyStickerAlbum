@@ -1,4 +1,4 @@
-package com.example.mystickeralbum
+package com.example.mystickeralbum.database
 
 import androidx.room.TypeConverter
 import com.example.mystickeralbum.model.Sticker

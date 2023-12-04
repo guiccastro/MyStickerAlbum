@@ -1,4 +1,4 @@
-package com.example.mystickeralbum
+package com.example.mystickeralbum.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

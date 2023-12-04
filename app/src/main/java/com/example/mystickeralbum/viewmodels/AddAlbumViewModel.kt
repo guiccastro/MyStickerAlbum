@@ -3,7 +3,7 @@ package com.example.mystickeralbum.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.mystickeralbum.R
-import com.example.mystickeralbum.StickersList
+import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.extensions.onlyLetters
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus

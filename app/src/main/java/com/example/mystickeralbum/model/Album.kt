@@ -3,7 +3,6 @@ package com.example.mystickeralbum.model
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.mystickeralbum.StickersList
 import java.text.DecimalFormat
 
 @Entity

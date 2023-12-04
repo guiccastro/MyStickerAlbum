@@ -1,4 +1,4 @@
-package com.example.mystickeralbum
+package com.example.mystickeralbum.model
 
 import com.example.mystickeralbum.model.Sticker
 
