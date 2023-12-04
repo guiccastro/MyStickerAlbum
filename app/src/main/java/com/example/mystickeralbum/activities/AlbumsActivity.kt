@@ -46,8 +46,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.mystickeralbum.AlbumsUIState
-import com.example.mystickeralbum.AlbumsViewModel
+import com.example.mystickeralbum.stateholders.AlbumsUIState
+import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus

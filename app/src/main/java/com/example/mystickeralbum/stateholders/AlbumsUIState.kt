@@ -1,4 +1,4 @@
-package com.example.mystickeralbum
+package com.example.mystickeralbum.stateholders
 
 import com.example.mystickeralbum.model.Album
 
