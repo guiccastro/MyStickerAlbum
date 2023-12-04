@@ -8,7 +8,7 @@ import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.TextFieldValues
-import com.example.mystickeralbum.onlyLetters
+import com.example.mystickeralbum.extensions.onlyLetters
 import com.example.mystickeralbum.stateholders.AddAlbumUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

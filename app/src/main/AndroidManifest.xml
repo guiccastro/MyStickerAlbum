@@ -16,7 +16,7 @@
         android:name=".MyStickerAlbumApplication"
         tools:targetApi="31">
         <activity
-            android:name=".AlbumsActivity"
+            android:name=".activities.AlbumsActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyStickerAlbum">
@@ -28,7 +28,7 @@
         </activity>
 
         <activity
-            android:name=".AddAlbumActivity"
+            android:name=".activities.AddAlbumActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyStickerAlbum">

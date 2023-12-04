@@ -1,4 +1,4 @@
-package com.example.mystickeralbum
+package com.example.mystickeralbum.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -49,8 +49,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
+import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.stateholders.AddAlbumUIState
+import com.example.mystickeralbum.ui.TextField
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AddAlbumViewModel
 import dagger.hilt.android.AndroidEntryPoint
