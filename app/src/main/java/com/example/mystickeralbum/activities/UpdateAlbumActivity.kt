@@ -1,7 +1,6 @@
 package com.example.mystickeralbum.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -56,11 +55,12 @@ class UpdateAlbumActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val albumName = intent.getStringExtra(AlbumsViewModel.ALBUM_NAME) ?: ""
-        Log.println(Log.ASSERT, "AlbumName", albumName)
 
         setContent {
             MyStickerAlbumTheme {
-                UpdateAlbumScreen(viewModel.uiState.collectAsState().value)
+                val state = viewModel.uiState.collectAsState().value
+                state.onReceiveAlbumName(albumName)
+                UpdateAlbumScreen(state)
             }
         }
     }

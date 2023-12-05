@@ -16,4 +16,8 @@ object AlbumsRepository {
     fun removeAlbum(album: Album) {
         albumDao.delete(album)
     }
+
+    fun getAlbumByName(albumName: String): Album? {
+        return albumDao.getAlbumByName(albumName)
+    }
 }

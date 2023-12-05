@@ -18,4 +18,7 @@ interface AlbumDao {
 
     @Delete
     fun delete(album: Album)
+
+    @Query("SELECT * FROM Album WHERE name = :albumName")
+    fun getAlbumByName(albumName: String): Album?
 }
