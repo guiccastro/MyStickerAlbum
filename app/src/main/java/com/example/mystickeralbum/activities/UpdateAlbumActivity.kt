@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -127,7 +128,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                 .shadow(4.dp, RoundedCornerShape(8.dp), clip = false)
                 .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
                 .background(
-                    if (sticker.found) Color.Gray else Color.LightGray,
+                    if (sticker.found) Color.DarkGray else Color.LightGray,
                     RoundedCornerShape(8.dp)
                 )
         ) {
@@ -135,7 +136,9 @@ class UpdateAlbumActivity : ComponentActivity() {
                 text = sticker.identifier,
                 fontSize = 18.sp,
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .align(Alignment.Center),
+                textDecoration = if (sticker.found) TextDecoration.LineThrough else null,
+                fontWeight = if (sticker.found) FontWeight.Normal else FontWeight.SemiBold
             )
 
             if (sticker.found) {
@@ -157,8 +160,10 @@ class UpdateAlbumActivity : ComponentActivity() {
                     Text(
                         text = sticker.repeated.toString(),
                         fontSize = 12.sp,
+                        color = Color.White,
                         modifier = Modifier
-                            .align(Alignment.Center)
+                            .align(Alignment.Center),
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
