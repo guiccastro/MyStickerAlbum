@@ -6,6 +6,7 @@ import com.example.mystickeralbum.model.AlbumItem
 data class AlbumsUIState(
     val albumsList: List<AlbumItem> = emptyList(),
     val onFabClick: (Activity) -> Unit = {},
+    val onAlbumClick: (Activity, AlbumItem) -> Unit = { _, _ -> },
     val onAlbumLongClick: (AlbumItem) -> Unit = {},
     val onDeleteClick: (AlbumItem) -> Unit = {},
     val onEditClick: (AlbumItem) -> Unit = {},

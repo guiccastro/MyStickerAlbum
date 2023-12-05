@@ -1,6 +1,7 @@
 package com.example.mystickeralbum.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -43,6 +44,7 @@ import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.stateholders.UpdateAlbumUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
+import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 import com.example.mystickeralbum.viewmodels.UpdateAlbumViewModel
 
 
@@ -52,6 +54,9 @@ class UpdateAlbumActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val albumName = intent.getStringExtra(AlbumsViewModel.ALBUM_NAME) ?: ""
+        Log.println(Log.ASSERT, "AlbumName", albumName)
 
         setContent {
             MyStickerAlbumTheme {

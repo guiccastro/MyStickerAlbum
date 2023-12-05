@@ -4,9 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mystickeralbum.model.AlbumItem
 import com.example.mystickeralbum.AlbumsRepository
 import com.example.mystickeralbum.activities.AddAlbumActivity
+import com.example.mystickeralbum.activities.UpdateAlbumActivity
+import com.example.mystickeralbum.model.AlbumItem
 import com.example.mystickeralbum.stateholders.AlbumsUIState
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,10 +22,15 @@ class AlbumsViewModel : ViewModel() {
         MutableStateFlow(AlbumsUIState())
     val uiState get() = _uiState.asStateFlow()
 
+    companion object {
+        const val ALBUM_NAME = "ALBUM_NAME"
+    }
+
     init {
         _uiState.update {
             it.copy(
                 onFabClick = ::onFabClick,
+                onAlbumClick = ::onAlbumClick,
                 onAlbumLongClick = ::onAlbumLongClick,
                 onDeleteClick = ::onDeleteClick,
                 onCloseEditModeClick = ::onCloseEditModeClick
@@ -49,6 +55,14 @@ class AlbumsViewModel : ViewModel() {
     private fun onFabClick(activity: Activity) {
         activity.apply {
             val intent = Intent(this, AddAlbumActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun onAlbumClick(activity: Activity, albumItem: AlbumItem) {
+        activity.apply {
+            val intent = Intent(this, UpdateAlbumActivity::class.java)
+            intent.putExtra(ALBUM_NAME, albumItem.album.name)
             startActivity(intent)
         }
     }

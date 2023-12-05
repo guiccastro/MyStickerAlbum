@@ -31,6 +31,12 @@
             android:exported="true"
             android:theme="@style/Theme.MyStickerAlbum">
         </activity>
+
+        <activity
+            android:name=".activities.UpdateAlbumActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MyStickerAlbum">
+        </activity>
     </application>
 
 </manifest>

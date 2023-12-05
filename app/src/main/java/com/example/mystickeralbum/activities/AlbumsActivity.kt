@@ -3,7 +3,6 @@ package com.example.mystickeralbum.activities
 import android.R.attr.value
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -58,9 +57,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.mystickeralbum.model.AlbumItem
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
+import com.example.mystickeralbum.model.AlbumItem
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
@@ -148,6 +147,7 @@ class AlbumsActivity : ComponentActivity() {
                 items(state.albumsList) {
                     AlbumItem(
                         albumItem = it,
+                        onClick = state.onAlbumClick,
                         onLongClick = state.onAlbumLongClick,
                         onDeleteClick = state.onDeleteClick,
                         onCloseEditModeClick = state.onCloseEditModeClick
@@ -162,6 +162,7 @@ class AlbumsActivity : ComponentActivity() {
     @Composable
     fun AlbumItem(
         albumItem: AlbumItem,
+        onClick: (Activity, AlbumItem) -> Unit,
         onLongClick: (AlbumItem) -> Unit,
         onDeleteClick: (AlbumItem) -> Unit,
         onCloseEditModeClick: (AlbumItem) -> Unit
@@ -172,7 +173,7 @@ class AlbumsActivity : ComponentActivity() {
                 .height(200.dp)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
                 .combinedClickable(
-                    onClick = { Log.println(Log.ASSERT, "Click", "Click") },
+                    onClick = { onClick(this, albumItem) },
                     onLongClick = { onLongClick(albumItem) }
                 ),
             shape = RoundedCornerShape(10.dp),
