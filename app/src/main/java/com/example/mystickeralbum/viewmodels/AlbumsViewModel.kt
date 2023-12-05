@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mystickeralbum.model.AlbumItem
 import com.example.mystickeralbum.AlbumsRepository
 import com.example.mystickeralbum.activities.AddAlbumActivity
 import com.example.mystickeralbum.stateholders.AlbumsUIState
@@ -23,7 +24,10 @@ class AlbumsViewModel : ViewModel() {
     init {
         _uiState.update {
             it.copy(
-                onFabClick = ::onFabClick
+                onFabClick = ::onFabClick,
+                onAlbumLongClick = ::onAlbumLongClick,
+                onDeleteClick = ::onDeleteClick,
+                onCloseEditModeClick = ::onCloseEditModeClick
             )
         }
 
@@ -34,7 +38,9 @@ class AlbumsViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
-                    albumsList = withContext(IO) { AlbumsRepository.getAllAlbums() }
+                    albumsList = withContext(IO) {
+                        AlbumsRepository.getAllAlbums().map { album -> AlbumItem(album, false) }
+                    }
                 )
             }
         }
@@ -44,6 +50,48 @@ class AlbumsViewModel : ViewModel() {
         activity.apply {
             val intent = Intent(this, AddAlbumActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun onAlbumLongClick(albumItem: AlbumItem) {
+        val newList = _uiState.value.albumsList.map {
+            if (albumItem == it) {
+                it.copy(editMode = true)
+            } else {
+                it
+            }
+        }
+
+        _uiState.update {
+            it.copy(
+                albumsList = newList
+            )
+        }
+    }
+
+    private fun onDeleteClick(albumItem: AlbumItem) {
+        viewModelScope.launch {
+            withContext(IO) {
+                AlbumsRepository.removeAlbum(albumItem.album)
+            }
+
+            updateAlbumsList()
+        }
+    }
+
+    private fun onCloseEditModeClick(albumItem: AlbumItem) {
+        val newList = _uiState.value.albumsList.map {
+            if (albumItem == it) {
+                it.copy(editMode = false)
+            } else {
+                it
+            }
+        }
+
+        _uiState.update {
+            it.copy(
+                albumsList = newList
+            )
         }
     }
 }
