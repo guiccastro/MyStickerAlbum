@@ -27,13 +27,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mystickeralbum.R
+import com.example.mystickeralbum.model.TopBarItem
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     @StringRes title: Int,
-    onReturn: (() -> Unit)? = null
+    onReturn: (() -> Unit)? = null,
+    itemsList: List<TopBarItem> = emptyList()
 ) {
     TopAppBar(
         title = {
@@ -63,6 +65,20 @@ fun TopBar(
                     colorFilter = ColorFilter.tint(Color.White)
                 )
             }
+        },
+        actions = {
+            itemsList.forEach {
+                Image(
+                    painter = painterResource(id = it.image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(horizontal = 6.dp)
+                        .clip(CircleShape)
+                        .clickable { it.onClick() },
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+            }
         }
     )
 }
@@ -74,7 +90,13 @@ fun TopBarPreview() {
     MyStickerAlbumTheme {
         Scaffold(
             topBar = {
-                TopBar(title = R.string.album_list_title)
+                TopBar(
+                    title = R.string.album_list_title,
+                    itemsList = listOf(
+                        TopBarItem(R.drawable.ic_delete) {},
+                        TopBarItem(R.drawable.ic_edit) {}
+                    )
+                )
             }
         ) {
             Box(modifier = Modifier.padding(it))
