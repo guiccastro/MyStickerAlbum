@@ -20,7 +20,7 @@ class UpdateAlbumViewModel : ViewModel() {
     init {
         _uiState.update {
             it.copy(
-                onReceiveAlbumName = ::onReceiveAlbumName
+                onReceivedAlbumName = ::onReceiveAlbumName
             )
         }
     }

@@ -35,5 +35,9 @@
     <string name="error_grater_text_field">Value must be greater than value \'from\'.</string>
 
     <string name="update_album_title">Update Album</string>
+    <string name="sticker_title">Sticker</string>
+    <string name="found_title">Found</string>
+    <string name="not_found_title">Not Found</string>
+    <string name="repeated_stickers_title">Repeated Stickers</string>
 
 </resources>

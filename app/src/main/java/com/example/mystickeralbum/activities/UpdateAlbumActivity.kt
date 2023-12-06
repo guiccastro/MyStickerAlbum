@@ -4,19 +4,31 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,13 +42,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
@@ -60,7 +76,7 @@ class UpdateAlbumActivity : ComponentActivity() {
         setContent {
             MyStickerAlbumTheme {
                 val state = viewModel.uiState.collectAsState().value
-                state.onReceiveAlbumName(albumName)
+                state.onReceivedAlbumName(albumName)
                 UpdateAlbumScreen(state)
             }
         }
@@ -80,7 +96,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                     .fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-                StickersGrid(state.album.stickersList)
+                StickersGrid(state)
             }
         }
     }
@@ -107,21 +123,21 @@ class UpdateAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun StickersGrid(stickersList: StickersList) {
+    fun StickersGrid(state: UpdateAlbumUIState) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(6),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
         ) {
-            items(stickersList.stickers) {
-                StickerItem(sticker = it)
+            items(state.album.stickersList.stickers) {
+                StickerItem(sticker = it, state = state)
             }
         }
     }
 
     @Composable
-    fun StickerItem(sticker: Sticker) {
+    fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
         Box(
             modifier = Modifier
                 .aspectRatio(1F)
@@ -131,6 +147,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                     if (sticker.found) Color.DarkGray else Color.LightGray,
                     RoundedCornerShape(8.dp)
                 )
+                .clickable { state.onStickerClick(sticker) }
         ) {
             Text(
                 text = sticker.identifier,
@@ -167,6 +184,189 @@ class UpdateAlbumActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+
+        if (state.showDialog) {
+            StickerOptionsDialog(
+                sticker = sticker,
+                state = state
+            )
+        }
+    }
+
+    @Composable
+    fun StickerOptionsDialog(sticker: Sticker, state: UpdateAlbumUIState) {
+        Dialog(
+            onDismissRequest = {}
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(200.dp)
+                    .background(Color.LightGray, RoundedCornerShape(10.dp))
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.sticker_title) + " " + sticker.identifier,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = if (sticker.found) stringResource(id = R.string.found_title) else stringResource(
+                                id = R.string.not_found_title
+                            ),
+                            fontSize = 8.sp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .offset(y = (-4).dp)
+                                .border(
+                                    1.dp,
+                                    Color.Black,
+                                    RoundedCornerShape(
+                                        topStart = 0.dp,
+                                        topEnd = 0.dp,
+                                        bottomEnd = 4.dp,
+                                        bottomStart = 4.dp
+                                    )
+                                )
+                                .background(
+                                    Color.Gray, RoundedCornerShape(
+                                        topStart = 0.dp,
+                                        topEnd = 0.dp,
+                                        bottomEnd = 4.dp,
+                                        bottomStart = 4.dp
+                                    )
+                                )
+                                .padding(horizontal = 4.dp, vertical = 2.dp),
+                            textAlign = TextAlign.Center,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                if (!sticker.found) {
+                    Button(
+                        onClick = { state.onFoundClick(sticker) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Gray
+                        ),
+                        shape = RoundedCornerShape(4.dp),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 4.dp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.found_title),
+                            fontSize = 14.sp
+                        )
+                    }
+                } else {
+                    Button(
+                        onClick = { state.onNotFoundClick(sticker) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Gray
+                        ),
+                        shape = RoundedCornerShape(4.dp),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 4.dp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.not_found_title),
+                            fontSize = 14.sp
+                        )
+                    }
+
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.repeated_stickers_title),
+                            fontSize = 10.sp,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .height(30.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_remove),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(Color.White),
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .aspectRatio(1F)
+                                    .shadow(4.dp, CircleShape)
+                                    .background(Color.Gray, CircleShape)
+                                    .padding(4.dp)
+                                    .clickable { state.onChangeRepeatedStickerClick(sticker, -1) }
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .padding(horizontal = 10.dp)
+                            ) {
+                                Text(
+                                    text = sticker.repeated.toString(),
+                                    fontSize = 14.sp,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                )
+                            }
+
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_add),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(Color.White),
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .aspectRatio(1F)
+                                    .shadow(4.dp, CircleShape)
+                                    .background(Color.Gray, CircleShape)
+                                    .padding(4.dp)
+                                    .clickable { state.onChangeRepeatedStickerClick(sticker, 1) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Preview
+    @Composable
+    fun StickerOptionsDialogPreview() {
+        MyStickerAlbumTheme {
+            StickerOptionsDialog(
+                sticker = Sticker(
+                    "1",
+                    true,
+                    0
+                ),
+                state = UpdateAlbumUIState()
+            )
         }
     }
 
