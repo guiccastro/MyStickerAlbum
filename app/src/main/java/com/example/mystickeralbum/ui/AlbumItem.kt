@@ -1,7 +1,6 @@
 package com.example.mystickeralbum.ui
 
 import android.app.Activity
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,11 +24,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
+import com.example.mystickeralbum.model.AlbumStatus
+import com.example.mystickeralbum.model.Sticker
+import com.example.mystickeralbum.model.StickersList
+import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @Composable
 fun AlbumCard(
@@ -114,8 +118,7 @@ fun AlbumProgress(album: Album) {
                 .fillMaxWidth()
                 .height(20.dp),
             shape = RoundedCornerShape(10.dp),
-            color = Color.White,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+            color = Color.White
         ) {
             Box(
                 modifier = Modifier
@@ -125,7 +128,7 @@ fun AlbumProgress(album: Album) {
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth(album.getProgress())
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.7F))
                 )
 
                 Text(
@@ -246,5 +249,36 @@ fun AlbumStickerInfo(album: Album) {
     ) {
         AlbumProgress(album)
         AlbumStickersInfo(album)
+    }
+}
+
+@Preview
+@Composable
+fun AlbumCardPreview() {
+    MyStickerAlbumTheme {
+        val album = Album(
+            name = "Album Name",
+            stickersList = StickersList(
+                listOf(
+                    Sticker(
+                        "1",
+                        true,
+                        2
+                    ),
+                    Sticker(
+                        "2",
+                        false,
+                        0
+                    )
+                )
+            ),
+            status = AlbumStatus.Completing,
+            albumImage = ""
+        )
+        AlbumCard(
+            album = album
+        ) {
+            AlbumStickerInfo(album = album)
+        }
     }
 }
