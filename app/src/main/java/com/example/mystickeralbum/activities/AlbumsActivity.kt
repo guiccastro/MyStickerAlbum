@@ -7,9 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,12 +31,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,13 +43,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.stateholders.AlbumsUIState
+import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 
@@ -137,82 +133,28 @@ class AlbumsActivity : ComponentActivity() {
                 items(state.albumsList) {
                     AlbumItem(
                         album = it,
-                        onClick = state.onAlbumClick
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 6.dp, vertical = 4.dp),
-                            verticalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            AlbumProgress(it)
-                            AlbumStickersInfo(it)
-                        }
-                    }
+                        state = state
+                    )
                 }
             }
         }
-
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun AlbumItem(
-        album: Album,
-        onClick: ((Activity, Album) -> Unit)? = null,
-        content: @Composable () -> Unit
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-                .clickable(
-                    enabled = onClick != null
-                ) {
-                    onClick?.invoke(this, album)
-                },
-            shape = RoundedCornerShape(10.dp),
-            color = MaterialTheme.colorScheme.secondary
+    fun AlbumItem(album: Album, state: AlbumsUIState) {
+        AlbumCard(
+            album = album,
+            activity = this,
+            onClick = state.onAlbumClick
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.5F),
-                ) {
-                    AsyncImage(
-                        model = album.albumImage,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Black.copy(alpha = 0.5F)),
-                        contentScale = ContentScale.Crop
-                    )
-
-                    Text(
-                        text = album.name,
-                        fontSize = 20.sp,
-                        modifier = Modifier
-                            .background(
-                                MaterialTheme.colorScheme.primary,
-                                RoundedCornerShape(
-                                    topStart = 0.dp,
-                                    topEnd = 10.dp,
-                                    bottomEnd = 0.dp,
-                                    bottomStart = 0.dp
-                                )
-                            )
-                            .align(Alignment.BottomStart)
-                            .padding(horizontal = 10.dp),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                content()
+                AlbumProgress(album)
+                AlbumStickersInfo(album)
             }
         }
     }
@@ -265,7 +207,6 @@ class AlbumsActivity : ComponentActivity() {
 
     @Composable
     fun AlbumStickersInfo(album: Album) {
-
         Column {
             Text(
                 text = stringResource(id = R.string.album_item_stickers),
