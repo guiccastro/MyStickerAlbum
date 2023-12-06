@@ -48,7 +48,8 @@ class AddAlbumViewModel : ViewModel() {
             it.copy(
                 albumNameTextField = it.albumNameTextField.copy(
                     text = name
-                )
+                ),
+                album = _uiState.value.album.copy(name = name)
             )
         }
         verifyAlbumNameInputError()
@@ -71,7 +72,8 @@ class AddAlbumViewModel : ViewModel() {
     private fun onAlbumImageUrlChange(url: String) {
         _uiState.update {
             it.copy(
-                albumImageUrlTextField = it.albumImageUrlTextField.copy(text = url)
+                albumImageUrlTextField = it.albumImageUrlTextField.copy(text = url),
+                album = _uiState.value.album.copy(albumImage = url)
             )
         }
     }

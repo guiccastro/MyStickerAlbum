@@ -38,7 +38,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -48,10 +47,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import coil.compose.AsyncImage
 import com.example.mystickeralbum.R
+import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.stateholders.AddAlbumUIState
+import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.TextField
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AddAlbumViewModel
@@ -167,77 +167,30 @@ class AddAlbumActivity : ComponentActivity() {
                 fontWeight = FontWeight.SemiBold
             )
             PreviewAlbum(
-                name = state.albumNameTextField.text,
-                imageUrl = state.albumImageUrlTextField.text,
+                album = state.album,
                 totalStickers = state.totalStickers
             )
         }
     }
 
     @Composable
-    fun PreviewAlbum(name: String, imageUrl: String, totalStickers: Int) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(horizontal = 10.dp),
-            shape = RoundedCornerShape(10.dp),
-            color = MaterialTheme.colorScheme.secondary
+    fun PreviewAlbum(album: Album, totalStickers: Int) {
+        AlbumCard(
+            album = album
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Box(
+                Text(
+                    text = stringResource(id = R.string.total_stickers_label) + " $totalStickers",
+                    fontSize = 16.sp,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.5F),
-                ) {
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Black.copy(alpha = 0.5F)),
-                        contentScale = ContentScale.Crop
-                    )
-
-                    if (name.isNotEmpty()) {
-                        Text(
-                            text = name,
-                            fontSize = 20.sp,
-                            modifier = Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.primary,
-                                    RoundedCornerShape(
-                                        topStart = 0.dp,
-                                        topEnd = 10.dp,
-                                        bottomEnd = 0.dp,
-                                        bottomStart = 0.dp
-                                    )
-                                )
-                                .align(Alignment.BottomStart)
-                                .padding(horizontal = 10.dp),
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 6.dp, vertical = 4.dp),
-                    verticalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.total_stickers_label) + " $totalStickers",
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .padding(horizontal = 10.dp),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                        .padding(horizontal = 10.dp),
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

@@ -65,23 +65,25 @@ fun AlbumCard(
                     contentScale = ContentScale.Crop
                 )
 
-                Text(
-                    text = album.name,
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .background(
-                            MaterialTheme.colorScheme.primary,
-                            RoundedCornerShape(
-                                topStart = 0.dp,
-                                topEnd = 10.dp,
-                                bottomEnd = 0.dp,
-                                bottomStart = 0.dp
+                if (album.name.isNotEmpty()) {
+                    Text(
+                        text = album.name,
+                        fontSize = 20.sp,
+                        modifier = Modifier
+                            .background(
+                                MaterialTheme.colorScheme.primary,
+                                RoundedCornerShape(
+                                    topStart = 0.dp,
+                                    topEnd = 10.dp,
+                                    bottomEnd = 0.dp,
+                                    bottomStart = 0.dp
+                                )
                             )
-                        )
-                        .align(Alignment.BottomStart)
-                        .padding(horizontal = 10.dp),
-                    overflow = TextOverflow.Ellipsis
-                )
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = 10.dp),
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
 
             content()

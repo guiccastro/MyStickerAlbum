@@ -1,6 +1,9 @@
 package com.example.mystickeralbum.stateholders
 
+import com.example.mystickeralbum.model.Album
+import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.SpecialStickerType
+import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.model.TextFieldValues
 
 data class AddAlbumUIState(
@@ -17,5 +20,6 @@ data class AddAlbumUIState(
     val specialStickerType: SpecialStickerType = SpecialStickerType.LetterNumber,
     val onSpecialStickerTypeChange: (SpecialStickerType) -> Unit = {},
     val onCreateClick: () -> Boolean = { false },
-    val totalStickers: Int = 0
+    val totalStickers: Int = 0,
+    val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, "")
 )
