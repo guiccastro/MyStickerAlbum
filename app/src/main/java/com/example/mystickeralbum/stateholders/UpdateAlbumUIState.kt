@@ -9,8 +9,8 @@ data class UpdateAlbumUIState(
     val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, ""),
     val onReceivedAlbumName: (String) -> Unit = {},
     val onStickerClick: (Sticker) -> Unit = {},
+    val stickerDialog: Sticker = Sticker("", false, 0),
     val showDialog: Boolean = false,
-    val onFoundClick: (Sticker) -> Unit = {},
-    val onNotFoundClick: (Sticker) -> Unit = {},
-    val onChangeRepeatedStickerClick: (Sticker, Int) -> Unit = { _, _ -> },
+    val onFoundNotFoundClick: (Boolean) -> Unit = {},
+    val onChangeRepeatedStickerClick: (Int) -> Unit = {},
 )

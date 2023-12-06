@@ -3,6 +3,8 @@ package com.example.mystickeralbum.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
+import com.example.mystickeralbum.model.Sticker
+import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.stateholders.UpdateAlbumUIState
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,10 @@ class UpdateAlbumViewModel : ViewModel() {
     init {
         _uiState.update {
             it.copy(
-                onReceivedAlbumName = ::onReceiveAlbumName
+                onReceivedAlbumName = ::onReceiveAlbumName,
+                onStickerClick = ::onStickerClick,
+                onFoundNotFoundClick = ::onFoundNotFoundClick,
+                onChangeRepeatedStickerClick = ::onChangeRepeatedStickerClick
             )
         }
     }
@@ -36,6 +41,58 @@ class UpdateAlbumViewModel : ViewModel() {
                     album = album
                 )
             }
+        }
+    }
+
+    private fun onStickerClick(sticker: Sticker) {
+        _uiState.update {
+            it.copy(
+                showDialog = true,
+                stickerDialog = sticker
+            )
+        }
+    }
+
+    private fun onFoundNotFoundClick(found: Boolean) {
+        val newSticker = _uiState.value.stickerDialog.copy(found = found, repeated = 0)
+        updateSticker(newSticker)
+    }
+
+    private fun onChangeRepeatedStickerClick(value: Int) {
+        val newRepeated = _uiState.value.stickerDialog.repeated + value
+
+        if (newRepeated >= 0) {
+            val newSticker = _uiState.value.stickerDialog.copy(repeated = newRepeated)
+            updateSticker(newSticker)
+        }
+    }
+
+    private fun updateSticker(newSticker: Sticker) {
+        val newStickers = ArrayList(_uiState.value.album.stickersList.stickers)
+
+        newStickers.replaceAll {
+            if (it.identifier == newSticker.identifier) {
+                newSticker
+            } else {
+                it
+            }
+        }
+
+        val newAlbum = _uiState.value.album.copy(
+            stickersList = StickersList(newStickers)
+        )
+
+        viewModelScope.launch {
+            withContext(IO) {
+                AlbumsRepository.updateAlbum(newAlbum)
+            }
+        }
+
+        _uiState.update {
+            it.copy(
+                album = newAlbum,
+                stickerDialog = newSticker
+            )
         }
     }
 }

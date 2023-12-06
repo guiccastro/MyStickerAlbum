@@ -97,6 +97,10 @@ class UpdateAlbumActivity : ComponentActivity() {
                 color = MaterialTheme.colorScheme.background
             ) {
                 StickersGrid(state)
+
+                if (state.showDialog) {
+                    StickerOptionsDialog(state)
+                }
             }
         }
     }
@@ -185,17 +189,10 @@ class UpdateAlbumActivity : ComponentActivity() {
                 }
             }
         }
-
-        if (state.showDialog) {
-            StickerOptionsDialog(
-                sticker = sticker,
-                state = state
-            )
-        }
     }
 
     @Composable
-    fun StickerOptionsDialog(sticker: Sticker, state: UpdateAlbumUIState) {
+    fun StickerOptionsDialog(state: UpdateAlbumUIState) {
         Dialog(
             onDismissRequest = {}
         ) {
@@ -208,7 +205,7 @@ class UpdateAlbumActivity : ComponentActivity() {
             ) {
                 Column {
                     Text(
-                        text = stringResource(id = R.string.sticker_title) + " " + sticker.identifier,
+                        text = stringResource(id = R.string.sticker_title) + " " + state.stickerDialog.identifier,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
@@ -222,7 +219,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = if (sticker.found) stringResource(id = R.string.found_title) else stringResource(
+                            text = if (state.stickerDialog.found) stringResource(id = R.string.found_title) else stringResource(
                                 id = R.string.not_found_title
                             ),
                             fontSize = 8.sp,
@@ -254,9 +251,9 @@ class UpdateAlbumActivity : ComponentActivity() {
                     }
                 }
 
-                if (!sticker.found) {
+                if (!state.stickerDialog.found) {
                     Button(
-                        onClick = { state.onFoundClick(sticker) },
+                        onClick = { state.onFoundNotFoundClick(true) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Gray
                         ),
@@ -274,7 +271,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                     }
                 } else {
                     Button(
-                        onClick = { state.onNotFoundClick(sticker) },
+                        onClick = { state.onFoundNotFoundClick(false) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Gray
                         ),
@@ -320,7 +317,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                                     .shadow(4.dp, CircleShape)
                                     .background(Color.Gray, CircleShape)
                                     .padding(4.dp)
-                                    .clickable { state.onChangeRepeatedStickerClick(sticker, -1) }
+                                    .clickable { state.onChangeRepeatedStickerClick(-1) }
                             )
 
                             Box(
@@ -329,7 +326,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                                     .padding(horizontal = 10.dp)
                             ) {
                                 Text(
-                                    text = sticker.repeated.toString(),
+                                    text = state.stickerDialog.repeated.toString(),
                                     fontSize = 14.sp,
                                     modifier = Modifier
                                         .align(Alignment.Center)
@@ -346,7 +343,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                                     .shadow(4.dp, CircleShape)
                                     .background(Color.Gray, CircleShape)
                                     .padding(4.dp)
-                                    .clickable { state.onChangeRepeatedStickerClick(sticker, 1) }
+                                    .clickable { state.onChangeRepeatedStickerClick(1) }
                             )
                         }
                     }
@@ -360,12 +357,13 @@ class UpdateAlbumActivity : ComponentActivity() {
     fun StickerOptionsDialogPreview() {
         MyStickerAlbumTheme {
             StickerOptionsDialog(
-                sticker = Sticker(
-                    "1",
-                    true,
-                    0
-                ),
-                state = UpdateAlbumUIState()
+                state = UpdateAlbumUIState(
+                    stickerDialog = Sticker(
+                        "1",
+                        true,
+                        0
+                    )
+                )
             )
         }
     }
