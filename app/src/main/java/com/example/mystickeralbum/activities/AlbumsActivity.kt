@@ -151,7 +151,17 @@ class AlbumsActivity : ComponentActivity() {
                         onLongClick = state.onAlbumLongClick,
                         onDeleteClick = state.onDeleteClick,
                         onCloseEditModeClick = state.onCloseEditModeClick
-                    )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 6.dp, vertical = 4.dp),
+                            verticalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            AlbumProgress(it.album)
+                            AlbumStickersInfo(it.album)
+                        }
+                    }
                 }
             }
         }
@@ -162,10 +172,11 @@ class AlbumsActivity : ComponentActivity() {
     @Composable
     fun AlbumItem(
         albumItem: AlbumItem,
-        onClick: (Activity, AlbumItem) -> Unit,
-        onLongClick: (AlbumItem) -> Unit,
-        onDeleteClick: (AlbumItem) -> Unit,
-        onCloseEditModeClick: (AlbumItem) -> Unit
+        onClick: ((Activity, AlbumItem) -> Unit)? = null,
+        onLongClick: ((AlbumItem) -> Unit)? = null,
+        onDeleteClick: ((AlbumItem) -> Unit)? = null,
+        onCloseEditModeClick: ((AlbumItem) -> Unit)? = null,
+        content: @Composable () -> Unit
     ) {
         Surface(
             modifier = Modifier
@@ -173,13 +184,13 @@ class AlbumsActivity : ComponentActivity() {
                 .height(200.dp)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
                 .combinedClickable(
-                    onClick = { onClick(this, albumItem) },
-                    onLongClick = { onLongClick(albumItem) }
+                    enabled = onClick != null || onLongClick != null,
+                    onClick = { onClick?.invoke(this, albumItem) },
+                    onLongClick = { onLongClick?.invoke(albumItem) }
                 ),
             shape = RoundedCornerShape(10.dp),
             color = MaterialTheme.colorScheme.secondary
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -217,69 +228,68 @@ class AlbumsActivity : ComponentActivity() {
                     )
                 }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 6.dp, vertical = 4.dp),
-                    verticalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    AlbumProgress(albumItem.album)
-                    AlbumStickersInfo(albumItem.album)
-                }
+                content()
             }
 
-            AnimatedVisibility(
-                visible = albumItem.editMode,
-                enter = slideInHorizontally(
-                    initialOffsetX = { it }
-                ),
-                exit = slideOutHorizontally(
-                    targetOffsetX = { it }
-                )
-            ) {
-                Box(
-                    modifier = Modifier
+            if (albumItem.editMode != null) {
+                AnimatedVisibility(
+                    visible = albumItem.editMode,
+                    enter = slideInHorizontally(
+                        initialOffsetX = { it }
+                    ),
+                    exit = slideOutHorizontally(
+                        targetOffsetX = { it }
+                    )
                 ) {
-                    Row(
+                    Box(
                         modifier = Modifier
-                            .align(TopEnd)
-                            .padding(horizontal = 6.dp, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_delete),
-                            contentDescription = null,
+                        Row(
                             modifier = Modifier
-                                .shadow(4.dp, CircleShape, false)
-                                .background(Color.LightGray, CircleShape)
-                                .clip(CircleShape)
-                                .clickable { onDeleteClick(albumItem) }
-                                .padding(4.dp)
-                        )
+                                .align(TopEnd)
+                                .padding(horizontal = 6.dp, vertical = 6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_delete),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .shadow(4.dp, CircleShape, false)
+                                    .background(Color.LightGray, CircleShape)
+                                    .clip(CircleShape)
+                                    .clickable(
+                                        enabled = onDeleteClick != null
+                                    ) { onDeleteClick?.invoke(albumItem) }
+                                    .padding(4.dp)
+                            )
 
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_edit),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .shadow(4.dp, CircleShape, false)
-                                .background(Color.LightGray, CircleShape)
-                                .clip(CircleShape)
-                                .clickable { }
-                                .padding(4.dp)
-                        )
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_edit),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .shadow(4.dp, CircleShape, false)
+                                    .background(Color.LightGray, CircleShape)
+                                    .clip(CircleShape)
+                                    .clickable { }
+                                    .padding(4.dp)
+                            )
 
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_close),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .shadow(4.dp, CircleShape, false)
-                                .background(Color.Gray, CircleShape)
-                                .clip(CircleShape)
-                                .clickable { onCloseEditModeClick(albumItem) }
-                                .padding(4.dp)
-                        )
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_close),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .shadow(4.dp, CircleShape, false)
+                                    .background(Color.Gray, CircleShape)
+                                    .clip(CircleShape)
+                                    .clickable(
+                                        enabled = onCloseEditModeClick != null
+                                    ) { onCloseEditModeClick?.invoke(albumItem) }
+                                    .padding(4.dp)
+                            )
+                        }
                     }
                 }
+
             }
         }
     }
