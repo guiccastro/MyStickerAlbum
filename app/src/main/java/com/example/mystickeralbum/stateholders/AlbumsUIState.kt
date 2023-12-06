@@ -1,14 +1,10 @@
 package com.example.mystickeralbum.stateholders
 
 import android.app.Activity
-import com.example.mystickeralbum.model.AlbumItem
+import com.example.mystickeralbum.model.Album
 
 data class AlbumsUIState(
-    val albumsList: List<AlbumItem> = emptyList(),
+    val albumsList: List<Album> = emptyList(),
     val onFabClick: (Activity) -> Unit = {},
-    val onAlbumClick: (Activity, AlbumItem) -> Unit = { _, _ -> },
-    val onAlbumLongClick: (AlbumItem) -> Unit = {},
-    val onDeleteClick: (AlbumItem) -> Unit = {},
-    val onEditClick: (AlbumItem) -> Unit = {},
-    val onCloseEditModeClick: (AlbumItem) -> Unit = {}
+    val onAlbumClick: (Activity, Album) -> Unit = { _, _ -> }
 )

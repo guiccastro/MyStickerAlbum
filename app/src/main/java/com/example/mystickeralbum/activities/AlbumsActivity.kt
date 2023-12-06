@@ -6,15 +6,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,10 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -59,7 +50,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
-import com.example.mystickeralbum.model.AlbumItem
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
@@ -146,11 +136,8 @@ class AlbumsActivity : ComponentActivity() {
             LazyColumn {
                 items(state.albumsList) {
                     AlbumItem(
-                        albumItem = it,
-                        onClick = state.onAlbumClick,
-                        onLongClick = state.onAlbumLongClick,
-                        onDeleteClick = state.onDeleteClick,
-                        onCloseEditModeClick = state.onCloseEditModeClick
+                        album = it,
+                        onClick = state.onAlbumClick
                     ) {
                         Column(
                             modifier = Modifier
@@ -158,8 +145,8 @@ class AlbumsActivity : ComponentActivity() {
                                 .padding(horizontal = 6.dp, vertical = 4.dp),
                             verticalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            AlbumProgress(it.album)
-                            AlbumStickersInfo(it.album)
+                            AlbumProgress(it)
+                            AlbumStickersInfo(it)
                         }
                     }
                 }
@@ -171,11 +158,8 @@ class AlbumsActivity : ComponentActivity() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun AlbumItem(
-        albumItem: AlbumItem,
-        onClick: ((Activity, AlbumItem) -> Unit)? = null,
-        onLongClick: ((AlbumItem) -> Unit)? = null,
-        onDeleteClick: ((AlbumItem) -> Unit)? = null,
-        onCloseEditModeClick: ((AlbumItem) -> Unit)? = null,
+        album: Album,
+        onClick: ((Activity, Album) -> Unit)? = null,
         content: @Composable () -> Unit
     ) {
         Surface(
@@ -183,11 +167,11 @@ class AlbumsActivity : ComponentActivity() {
                 .fillMaxWidth()
                 .height(200.dp)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
-                .combinedClickable(
-                    enabled = onClick != null || onLongClick != null,
-                    onClick = { onClick?.invoke(this, albumItem) },
-                    onLongClick = { onLongClick?.invoke(albumItem) }
-                ),
+                .clickable(
+                    enabled = onClick != null
+                ) {
+                    onClick?.invoke(this, album)
+                },
             shape = RoundedCornerShape(10.dp),
             color = MaterialTheme.colorScheme.secondary
         ) {
@@ -201,7 +185,7 @@ class AlbumsActivity : ComponentActivity() {
                         .fillMaxHeight(0.5F),
                 ) {
                     AsyncImage(
-                        model = albumItem.album.albumImage,
+                        model = album.albumImage,
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -210,7 +194,7 @@ class AlbumsActivity : ComponentActivity() {
                     )
 
                     Text(
-                        text = albumItem.album.name,
+                        text = album.name,
                         fontSize = 20.sp,
                         modifier = Modifier
                             .background(
@@ -229,67 +213,6 @@ class AlbumsActivity : ComponentActivity() {
                 }
 
                 content()
-            }
-
-            if (albumItem.editMode != null) {
-                AnimatedVisibility(
-                    visible = albumItem.editMode,
-                    enter = slideInHorizontally(
-                        initialOffsetX = { it }
-                    ),
-                    exit = slideOutHorizontally(
-                        targetOffsetX = { it }
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .align(TopEnd)
-                                .padding(horizontal = 6.dp, vertical = 6.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_delete),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .shadow(4.dp, CircleShape, false)
-                                    .background(Color.LightGray, CircleShape)
-                                    .clip(CircleShape)
-                                    .clickable(
-                                        enabled = onDeleteClick != null
-                                    ) { onDeleteClick?.invoke(albumItem) }
-                                    .padding(4.dp)
-                            )
-
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_edit),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .shadow(4.dp, CircleShape, false)
-                                    .background(Color.LightGray, CircleShape)
-                                    .clip(CircleShape)
-                                    .clickable { }
-                                    .padding(4.dp)
-                            )
-
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_close),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .shadow(4.dp, CircleShape, false)
-                                    .background(Color.Gray, CircleShape)
-                                    .clip(CircleShape)
-                                    .clickable(
-                                        enabled = onCloseEditModeClick != null
-                                    ) { onCloseEditModeClick?.invoke(albumItem) }
-                                    .padding(4.dp)
-                            )
-                        }
-                    }
-                }
-
             }
         }
     }
@@ -455,35 +378,29 @@ class AlbumsActivity : ComponentActivity() {
             AlbumsScreen(
                 state = AlbumsUIState(
                     albumsList = listOf(
-                        AlbumItem(
-                            album = Album(
-                                "Album 1",
-                                StickersList(
-                                    listOf(
-                                        Sticker("1", false, 0),
-                                        Sticker("2", true, 1),
-                                        Sticker("3", true, 2)
-                                    )
-                                ),
-                                AlbumStatus.Completing,
-                                "https://i0.wp.com/maquinadoesporte.com.br/wp-content/uploads/2023/10/foto-maquina-do-esporte-1200-675-3-8.png?fit=616%2C308&ssl=1"
+                        Album(
+                            "Album 1",
+                            StickersList(
+                                listOf(
+                                    Sticker("1", false, 0),
+                                    Sticker("2", true, 1),
+                                    Sticker("3", true, 2)
+                                )
                             ),
-                            editMode = true
+                            AlbumStatus.Completing,
+                            "https://i0.wp.com/maquinadoesporte.com.br/wp-content/uploads/2023/10/foto-maquina-do-esporte-1200-675-3-8.png?fit=616%2C308&ssl=1"
                         ),
-                        AlbumItem(
-                            album = Album(
-                                "Album 2",
-                                StickersList(
-                                    listOf(
-                                        Sticker("1", false, 0),
-                                        Sticker("2", false, 0),
-                                        Sticker("3", false, 0)
-                                    )
-                                ),
-                                AlbumStatus.Completing,
-                                "https://ultraverso.com.br/wp-content/uploads/2023/07/2-1.jpg"
+                        Album(
+                            "Album 2",
+                            StickersList(
+                                listOf(
+                                    Sticker("1", false, 0),
+                                    Sticker("2", false, 0),
+                                    Sticker("3", false, 0)
+                                )
                             ),
-                            editMode = false
+                            AlbumStatus.Completing,
+                            "https://ultraverso.com.br/wp-content/uploads/2023/07/2-1.jpg"
                         )
                     )
                 )

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
 import com.example.mystickeralbum.activities.AddAlbumActivity
 import com.example.mystickeralbum.activities.UpdateAlbumActivity
-import com.example.mystickeralbum.model.AlbumItem
+import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.stateholders.AlbumsUIState
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,10 +30,7 @@ class AlbumsViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 onFabClick = ::onFabClick,
-                onAlbumClick = ::onAlbumClick,
-                onAlbumLongClick = ::onAlbumLongClick,
-                onDeleteClick = ::onDeleteClick,
-                onCloseEditModeClick = ::onCloseEditModeClick
+                onAlbumClick = ::onAlbumClick
             )
         }
 
@@ -45,7 +42,7 @@ class AlbumsViewModel : ViewModel() {
             _uiState.update {
                 it.copy(
                     albumsList = withContext(IO) {
-                        AlbumsRepository.getAllAlbums().map { album -> AlbumItem(album, false) }
+                        AlbumsRepository.getAllAlbums()
                     }
                 )
             }
@@ -59,53 +56,11 @@ class AlbumsViewModel : ViewModel() {
         }
     }
 
-    private fun onAlbumClick(activity: Activity, albumItem: AlbumItem) {
+    private fun onAlbumClick(activity: Activity, album: Album) {
         activity.apply {
             val intent = Intent(this, UpdateAlbumActivity::class.java)
-            intent.putExtra(ALBUM_NAME, albumItem.album.name)
+            intent.putExtra(ALBUM_NAME, album.name)
             startActivity(intent)
-        }
-    }
-
-    private fun onAlbumLongClick(albumItem: AlbumItem) {
-        val newList = _uiState.value.albumsList.map {
-            if (albumItem == it) {
-                it.copy(editMode = true)
-            } else {
-                it
-            }
-        }
-
-        _uiState.update {
-            it.copy(
-                albumsList = newList
-            )
-        }
-    }
-
-    private fun onDeleteClick(albumItem: AlbumItem) {
-        viewModelScope.launch {
-            withContext(IO) {
-                AlbumsRepository.removeAlbum(albumItem.album)
-            }
-
-            updateAlbumsList()
-        }
-    }
-
-    private fun onCloseEditModeClick(albumItem: AlbumItem) {
-        val newList = _uiState.value.albumsList.map {
-            if (albumItem == it) {
-                it.copy(editMode = false)
-            } else {
-                it
-            }
-        }
-
-        _uiState.update {
-            it.copy(
-                albumsList = newList
-            )
         }
     }
 }
