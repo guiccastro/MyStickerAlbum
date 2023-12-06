@@ -42,7 +42,7 @@ class AlbumsViewModel : ViewModel() {
             _uiState.update {
                 it.copy(
                     albumsList = withContext(IO) {
-                        AlbumsRepository.getAllAlbums()
+                        AlbumsRepository.getAllAlbums().reversed()
                     }
                 )
             }
