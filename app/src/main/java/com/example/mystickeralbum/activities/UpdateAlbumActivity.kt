@@ -56,6 +56,7 @@ import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
+import com.example.mystickeralbum.model.TopBarItem
 import com.example.mystickeralbum.stateholders.UpdateAlbumUIState
 import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.AlbumStickerInfo
@@ -88,7 +89,7 @@ class UpdateAlbumActivity : ComponentActivity() {
     fun UpdateAlbumScreen(state: UpdateAlbumUIState) {
         Scaffold(
             topBar = {
-                UpdateAlbumTopBar()
+                UpdateAlbumTopBar(state)
             }
         ) {
             Surface(
@@ -119,10 +120,14 @@ class UpdateAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun UpdateAlbumTopBar() {
+    fun UpdateAlbumTopBar(state: UpdateAlbumUIState) {
         TopBar(
             title = R.string.update_album_title,
-            onReturn = { finish() }
+            onReturn = { finish() },
+            itemsList = listOf(
+                TopBarItem(R.drawable.ic_delete) { state.onDeleteAlbumClick() },
+                TopBarItem(R.drawable.ic_edit) { state.onEditAlbumClick(this) }
+            )
         )
     }
 

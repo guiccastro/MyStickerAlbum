@@ -1,5 +1,6 @@
 package com.example.mystickeralbum.stateholders
 
+import android.app.Activity
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
@@ -14,4 +15,6 @@ data class UpdateAlbumUIState(
     val showDialog: Boolean = false,
     val onFoundNotFoundClick: (Boolean) -> Unit = {},
     val onChangeRepeatedStickerClick: (Int) -> Unit = {},
+    val onDeleteAlbumClick: () -> Unit = {},
+    val onEditAlbumClick: (Activity) -> Unit = {}
 )

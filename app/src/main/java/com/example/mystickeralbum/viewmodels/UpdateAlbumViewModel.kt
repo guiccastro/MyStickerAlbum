@@ -104,4 +104,8 @@ class UpdateAlbumViewModel : ViewModel() {
             )
         }
     }
+
+    private fun onDeleteAlbum() {
+
+    }
 }
