@@ -31,8 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -53,6 +51,7 @@ import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.stateholders.AddAlbumUIState
 import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.TextField
+import com.example.mystickeralbum.ui.TopBar
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AddAlbumViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -657,24 +656,11 @@ class AddAlbumActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun AddAlbumTopBar() {
-        TopAppBar(
-            title = {
-                Text(
-                    text = stringResource(id = R.string.add_album_title),
-                    fontSize = 24.sp,
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp),
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.White,
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
-            colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
+        TopBar(
+            title = R.string.add_album_title,
+            onReturn = { finish() }
         )
     }
 
