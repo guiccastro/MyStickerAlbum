@@ -24,6 +24,7 @@ class UpdateAlbumViewModel : ViewModel() {
             it.copy(
                 onReceivedAlbumName = ::onReceiveAlbumName,
                 onStickerClick = ::onStickerClick,
+                onCloseDialog = ::onCloseDialog,
                 onFoundNotFoundClick = ::onFoundNotFoundClick,
                 onChangeRepeatedStickerClick = ::onChangeRepeatedStickerClick
             )
@@ -49,6 +50,14 @@ class UpdateAlbumViewModel : ViewModel() {
             it.copy(
                 showDialog = true,
                 stickerDialog = sticker
+            )
+        }
+    }
+
+    private fun onCloseDialog() {
+        _uiState.update {
+            it.copy(
+                showDialog = false
             )
         }
     }

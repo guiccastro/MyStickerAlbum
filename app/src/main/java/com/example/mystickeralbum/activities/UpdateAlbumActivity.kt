@@ -196,7 +196,7 @@ class UpdateAlbumActivity : ComponentActivity() {
     @Composable
     fun StickerOptionsDialog(state: UpdateAlbumUIState) {
         Dialog(
-            onDismissRequest = {}
+            onDismissRequest = { state.onCloseDialog() }
         ) {
             Column(
                 modifier = Modifier
