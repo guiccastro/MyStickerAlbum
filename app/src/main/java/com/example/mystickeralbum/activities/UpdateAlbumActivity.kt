@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -151,6 +152,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                     if (sticker.found) Color.DarkGray else Color.LightGray,
                     RoundedCornerShape(8.dp)
                 )
+                .clip(RoundedCornerShape(8.dp))
                 .clickable { state.onStickerClick(sticker) }
         ) {
             Text(
@@ -316,8 +318,9 @@ class UpdateAlbumActivity : ComponentActivity() {
                                     .aspectRatio(1F)
                                     .shadow(4.dp, CircleShape)
                                     .background(Color.Gray, CircleShape)
-                                    .padding(4.dp)
+                                    .clip(CircleShape)
                                     .clickable { state.onChangeRepeatedStickerClick(-1) }
+                                    .padding(4.dp)
                             )
 
                             Box(
@@ -342,8 +345,9 @@ class UpdateAlbumActivity : ComponentActivity() {
                                     .aspectRatio(1F)
                                     .shadow(4.dp, CircleShape)
                                     .background(Color.Gray, CircleShape)
-                                    .padding(4.dp)
+                                    .clip(CircleShape)
                                     .clickable { state.onChangeRepeatedStickerClick(1) }
+                                    .padding(4.dp)
                             )
                         }
                     }
