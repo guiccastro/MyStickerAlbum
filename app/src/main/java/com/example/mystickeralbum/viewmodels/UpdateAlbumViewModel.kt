@@ -1,5 +1,6 @@
 package com.example.mystickeralbum.viewmodels
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
@@ -24,9 +25,12 @@ class UpdateAlbumViewModel : ViewModel() {
             it.copy(
                 onReceivedAlbumName = ::onReceiveAlbumName,
                 onStickerClick = ::onStickerClick,
-                onCloseDialog = ::onCloseDialog,
+                onCloseStickerDialog = ::onCloseDialog,
                 onFoundNotFoundClick = ::onFoundNotFoundClick,
-                onChangeRepeatedStickerClick = ::onChangeRepeatedStickerClick
+                onChangeRepeatedStickerClick = ::onChangeRepeatedStickerClick,
+                onDeleteAlbumClick = ::onDeleteAlbumClick,
+                onCloseDeleteAlbumDialog = ::onCloseDeleteAlbumDialog,
+                onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog
             )
         }
     }
@@ -48,7 +52,7 @@ class UpdateAlbumViewModel : ViewModel() {
     private fun onStickerClick(sticker: Sticker) {
         _uiState.update {
             it.copy(
-                showDialog = true,
+                showStickerDialog = true,
                 stickerDialog = sticker
             )
         }
@@ -57,7 +61,7 @@ class UpdateAlbumViewModel : ViewModel() {
     private fun onCloseDialog() {
         _uiState.update {
             it.copy(
-                showDialog = false
+                showStickerDialog = false
             )
         }
     }
@@ -105,7 +109,29 @@ class UpdateAlbumViewModel : ViewModel() {
         }
     }
 
-    private fun onDeleteAlbum() {
+    private fun onDeleteAlbumClick() {
+        _uiState.update {
+            it.copy(
+                showDeleteAlbumDialog = true
+            )
+        }
+    }
 
+    private fun onCloseDeleteAlbumDialog() {
+        _uiState.update {
+            it.copy(
+                showDeleteAlbumDialog = false
+            )
+        }
+    }
+
+    private fun onConfirmDeleteAlbumDialog(activity: Activity) {
+        viewModelScope.launch {
+            withContext(IO) {
+                AlbumsRepository.removeAlbum(_uiState.value.album)
+            }
+
+            activity.finish()
+        }
     }
 }

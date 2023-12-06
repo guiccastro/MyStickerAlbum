@@ -1,6 +1,5 @@
 package com.example.mystickeralbum.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,8 +26,8 @@ import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @Composable
 fun SimpleDialog(
-    @StringRes title: Int? = null,
-    @StringRes description: Int? = null,
+    title: String? = null,
+    description: String? = null,
     negativeButton: ButtonItem? = null,
     positiveButton: ButtonItem? = null
 ) {
@@ -42,7 +41,7 @@ fun SimpleDialog(
         ) {
             if (title != null) {
                 Text(
-                    text = stringResource(id = title).uppercase(),
+                    text = title.uppercase(),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -50,7 +49,7 @@ fun SimpleDialog(
 
             if (description != null) {
                 Text(
-                    text = stringResource(id = description),
+                    text = description,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center
                 )
@@ -67,7 +66,7 @@ fun SimpleDialog(
                             containerColor = Color.Gray
                         )
                     ) {
-                        Text(text = stringResource(id = negativeButton.text))
+                        Text(text = negativeButton.text)
                     }
                 }
 
@@ -76,7 +75,7 @@ fun SimpleDialog(
                         onClick = { positiveButton.onClick() },
                         shape = RoundedCornerShape(4.dp)
                     ) {
-                        Text(text = stringResource(id = positiveButton.text))
+                        Text(text = positiveButton.text)
                     }
                 }
             }
@@ -89,10 +88,10 @@ fun SimpleDialog(
 fun SimpleDialogPreview() {
     MyStickerAlbumTheme {
         SimpleDialog(
-            title = R.string.album_list_title,
-            description = R.string.album_list_empty,
-            negativeButton = ButtonItem(text = R.string.cancel_button) {},
-            positiveButton = ButtonItem(text = R.string.create_button) {},
+            title = stringResource(id = R.string.album_list_title),
+            description = stringResource(id = R.string.album_list_empty),
+            negativeButton = ButtonItem(text = stringResource(id = R.string.cancel_button)) {},
+            positiveButton = ButtonItem(text = stringResource(id = R.string.create_button)) {},
         )
     }
 }

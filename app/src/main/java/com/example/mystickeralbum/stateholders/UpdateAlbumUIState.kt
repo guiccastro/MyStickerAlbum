@@ -10,11 +10,15 @@ data class UpdateAlbumUIState(
     val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, ""),
     val onReceivedAlbumName: (String) -> Unit = {},
     val onStickerClick: (Sticker) -> Unit = {},
-    val onCloseDialog: () -> Unit = {},
+    val onCloseStickerDialog: () -> Unit = {},
     val stickerDialog: Sticker = Sticker("", false, 0),
-    val showDialog: Boolean = false,
+    val showStickerDialog: Boolean = false,
     val onFoundNotFoundClick: (Boolean) -> Unit = {},
     val onChangeRepeatedStickerClick: (Int) -> Unit = {},
     val onDeleteAlbumClick: () -> Unit = {},
+    val showDeleteAlbumDialog: Boolean = false,
+    val onCloseDeleteAlbumDialog: () -> Unit = {},
+    val onConfirmDeleteAlbumDialog: (Activity) -> Unit = {},
+    val onNewScreenCall: (Activity) -> Unit = {},
     val onEditAlbumClick: (Activity) -> Unit = {}
 )

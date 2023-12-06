@@ -28,6 +28,7 @@
 
     <string name="create_button">Create</string>
     <string name="cancel_button">Cancel</string>
+    <string name="confirm_button">Confirm</string>
 
     <string name="error_empty_text_field">Field must not be empty.</string>
     <string name="error_zero_text_field">Value must be greater than zero.</string>
@@ -39,5 +40,7 @@
     <string name="found_title">Found</string>
     <string name="not_found_title">Not Found</string>
     <string name="repeated_stickers_title">Repeated Stickers</string>
+    <string name="delete_album_title">Delete Album</string>
+    <string name="confirm_delete_album_desc">Do you want to delete the album \'%1$s\'?</string>
 
 </resources>

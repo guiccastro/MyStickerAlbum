@@ -54,12 +54,14 @@ import androidx.compose.ui.window.Dialog
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
+import com.example.mystickeralbum.model.ButtonItem
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.model.TopBarItem
 import com.example.mystickeralbum.stateholders.UpdateAlbumUIState
 import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.AlbumStickerInfo
+import com.example.mystickeralbum.ui.SimpleDialog
 import com.example.mystickeralbum.ui.TopBar
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AlbumsViewModel
@@ -80,8 +82,28 @@ class UpdateAlbumActivity : ComponentActivity() {
                 val state = viewModel.uiState.collectAsState().value
                 state.onReceivedAlbumName(albumName)
                 UpdateAlbumScreen(state)
+
+                if (state.showDeleteAlbumDialog) {
+                    DeleteAlbumDialog(state)
+                }
             }
         }
+    }
+
+    @Composable
+    fun DeleteAlbumDialog(state: UpdateAlbumUIState) {
+        SimpleDialog(
+            title = stringResource(id = R.string.delete_album_title),
+            description = stringResource(id = R.string.confirm_delete_album_desc, state.album.name),
+            negativeButton = ButtonItem(
+                text = stringResource(id = R.string.cancel_button),
+                onClick = state.onCloseDeleteAlbumDialog
+            ),
+            positiveButton = ButtonItem(
+                text = stringResource(id = R.string.confirm_button),
+                onClick = { state.onConfirmDeleteAlbumDialog(this) }
+            )
+        )
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +125,7 @@ class UpdateAlbumActivity : ComponentActivity() {
                     StickersGrid(state)
                 }
 
-                if (state.showDialog) {
+                if (state.showStickerDialog) {
                     StickerOptionsDialog(state)
                 }
             }
@@ -200,7 +222,7 @@ class UpdateAlbumActivity : ComponentActivity() {
     @Composable
     fun StickerOptionsDialog(state: UpdateAlbumUIState) {
         Dialog(
-            onDismissRequest = { state.onCloseDialog() }
+            onDismissRequest = { state.onCloseStickerDialog() }
         ) {
             Column(
                 modifier = Modifier
