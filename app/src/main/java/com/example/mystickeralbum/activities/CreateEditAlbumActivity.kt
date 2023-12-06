@@ -48,32 +48,36 @@ import androidx.compose.ui.zIndex
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.SpecialStickerType
-import com.example.mystickeralbum.stateholders.AddAlbumUIState
+import com.example.mystickeralbum.stateholders.CreateEditAlbumUIState
 import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.TextField
 import com.example.mystickeralbum.ui.TopBar
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
-import com.example.mystickeralbum.viewmodels.AddAlbumViewModel
+import com.example.mystickeralbum.viewmodels.CreateEditAlbumViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddAlbumActivity : ComponentActivity() {
+class CreateEditAlbumActivity : ComponentActivity() {
 
-    private val viewModel: AddAlbumViewModel by viewModels()
+    private val viewModel: CreateEditAlbumViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val albumName = intent.getStringExtra(CreateEditAlbumViewModel.ALBUM_NAME_EXTRA) ?: ""
+
         setContent {
             MyStickerAlbumTheme {
-                AddAlbumScreen(viewModel.uiState.collectAsState().value)
+                val state = viewModel.uiState.collectAsState().value
+                state.onReceivedAlbumName(albumName)
+                AddAlbumScreen(state)
             }
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun AddAlbumScreen(state: AddAlbumUIState) {
+    fun AddAlbumScreen(state: CreateEditAlbumUIState) {
         Scaffold(
             topBar = {
                 AddAlbumTopBar()
@@ -107,7 +111,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun BasicAlbumInfo(state: AddAlbumUIState) {
+    fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
         Column {
             Text(
                 text = stringResource(id = R.string.album_name_label),
@@ -195,7 +199,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun StickersInfo(state: AddAlbumUIState) {
+    fun StickersInfo(state: CreateEditAlbumUIState) {
         Column(
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
@@ -210,7 +214,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun NormalStickerInfo(state: AddAlbumUIState) {
+    fun NormalStickerInfo(state: CreateEditAlbumUIState) {
         Text(
             text = stringResource(id = R.string.normal_stickers_label),
             fontSize = 16.sp,
@@ -290,7 +294,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SpecialStickerInfo(state: AddAlbumUIState) {
+    fun SpecialStickerInfo(state: CreateEditAlbumUIState) {
         Row(
             modifier = Modifier
                 .height(30.dp)
@@ -432,7 +436,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun LetterInputSpecialSticker(state: AddAlbumUIState) {
+    fun LetterInputSpecialSticker(state: CreateEditAlbumUIState) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
@@ -524,7 +528,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun NumberInputSpecialSticker(state: AddAlbumUIState) {
+    fun NumberInputSpecialSticker(state: CreateEditAlbumUIState) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
@@ -610,7 +614,7 @@ class AddAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun BottomButtons(state: AddAlbumUIState) {
+    fun BottomButtons(state: CreateEditAlbumUIState) {
         Row(
             modifier = Modifier
                 .height(60.dp)
@@ -668,7 +672,7 @@ class AddAlbumActivity : ComponentActivity() {
     @Composable
     fun AddAlbumScreenPreview() {
         MyStickerAlbumTheme {
-            AddAlbumScreen(AddAlbumUIState(hasSpecialStickers = true))
+            AddAlbumScreen(CreateEditAlbumUIState(hasSpecialStickers = true))
         }
     }
 }

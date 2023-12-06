@@ -64,7 +64,6 @@ import com.example.mystickeralbum.ui.AlbumStickerInfo
 import com.example.mystickeralbum.ui.SimpleDialog
 import com.example.mystickeralbum.ui.TopBar
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
-import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 import com.example.mystickeralbum.viewmodels.UpdateAlbumViewModel
 
 
@@ -75,7 +74,7 @@ class UpdateAlbumActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val albumName = intent.getStringExtra(AlbumsViewModel.ALBUM_NAME) ?: ""
+        val albumName = intent.getStringExtra(UpdateAlbumViewModel.ALBUM_NAME_EXTRA) ?: ""
 
         setContent {
             MyStickerAlbumTheme {

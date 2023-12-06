@@ -6,7 +6,7 @@ import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.model.TextFieldValues
 
-data class AddAlbumUIState(
+data class CreateEditAlbumUIState(
     val albumNameTextField: TextFieldValues = TextFieldValues(),
     val albumImageUrlTextField: TextFieldValues = TextFieldValues(),
     val normalStickersFromTextField: TextFieldValues = TextFieldValues(),
@@ -21,5 +21,6 @@ data class AddAlbumUIState(
     val onSpecialStickerTypeChange: (SpecialStickerType) -> Unit = {},
     val onCreateClick: () -> Boolean = { false },
     val totalStickers: Int = 0,
-    val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, "")
+    val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, ""),
+    val onReceivedAlbumName: (String) -> Unit = {}
 )

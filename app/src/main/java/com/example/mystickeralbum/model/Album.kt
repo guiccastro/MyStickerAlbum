@@ -46,4 +46,12 @@ data class Album(
     fun getTotalStickers(): Int {
         return stickersList.stickers.size
     }
+
+    fun getNormalStickers(): List<Sticker> {
+        return stickersList.stickers.filter { it.identifier.toIntOrNull() != null }
+    }
+
+    fun getSpecialStickers(): List<Sticker> {
+        return stickersList.stickers.filter { it.identifier.toIntOrNull() == null }
+    }
 }

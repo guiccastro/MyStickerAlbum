@@ -27,7 +27,7 @@
         </activity>
 
         <activity
-            android:name=".activities.AddAlbumActivity"
+            android:name=".activities.CreateEditAlbumActivity"
             android:exported="true"
             android:theme="@style/Theme.MyStickerAlbum">
         </activity>

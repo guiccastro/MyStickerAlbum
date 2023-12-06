@@ -11,7 +11,7 @@ import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.model.TextFieldValues
-import com.example.mystickeralbum.stateholders.AddAlbumUIState
+import com.example.mystickeralbum.stateholders.CreateEditAlbumUIState
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,10 +19,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddAlbumViewModel : ViewModel() {
+class CreateEditAlbumViewModel : ViewModel() {
 
-    private val _uiState: MutableStateFlow<AddAlbumUIState> =
-        MutableStateFlow(AddAlbumUIState())
+    private val _uiState: MutableStateFlow<CreateEditAlbumUIState> =
+        MutableStateFlow(CreateEditAlbumUIState())
     val uiState get() = _uiState.asStateFlow()
 
     init {
@@ -38,9 +38,14 @@ class AddAlbumViewModel : ViewModel() {
                 specialStickersLetterToTextField = TextFieldValues(onTextChange = ::onSpecialStickersLetterToChange),
                 specialStickersNumberFromTextField = TextFieldValues(onTextChange = ::onSpecialStickersNumberFromChange),
                 specialStickersNumberToTextField = TextFieldValues(onTextChange = ::onSpecialStickersNumberToChange),
-                onCreateClick = ::onCreateClick
+                onCreateClick = ::onCreateClick,
+                onReceivedAlbumName = ::onReceivedAlbumName
             )
         }
+    }
+
+    companion object {
+        const val ALBUM_NAME_EXTRA = "ALBUM_NAME"
     }
 
     private fun onAlbumNameChange(name: String) {
@@ -437,6 +442,45 @@ class AddAlbumViewModel : ViewModel() {
             it.copy(
                 totalStickers = total
             )
+        }
+    }
+
+    private fun onReceivedAlbumName(albumName: String) {
+        viewModelScope.launch {
+            val album = withContext(IO) {
+                return@withContext AlbumsRepository.getAlbumByName(albumName)
+            } ?: return@launch
+
+            _uiState.update {
+                it.copy(
+                    album = album
+                )
+            }
+
+            onAlbumNameChange(album.name)
+            onAlbumImageUrlChange(album.albumImage)
+            onNormalStickersFromChange(album.getNormalStickers().first().identifier)
+            onNormalStickersToChange(album.getNormalStickers().last().identifier)
+
+            onHasSpecialStickersChange(album.getSpecialStickers().isNotEmpty())
+            onSpecialStickerTypeChange(
+                if (album.getSpecialStickers().first().identifier[0].toString()
+                        .toIntOrNull() != null
+                ) SpecialStickerType.LetterNumber else SpecialStickerType.NumberLetter
+            )
+
+            val lettersList =
+                album.getSpecialStickers().map { it.identifier.replace(Regex("[0-9 ]"), "") }
+                    .toSet()
+            onSpecialStickersLetterFromChange(lettersList.first())
+            onSpecialStickersLetterToChange(lettersList.last())
+            val numbersList =
+                album.getSpecialStickers().map { it.identifier.replace(Regex("[^0-9 ]"), "") }
+                    .toSet()
+            onSpecialStickersNumberFromChange(numbersList.first())
+            onSpecialStickersNumberToChange(numbersList.last())
+
+
         }
     }
 }

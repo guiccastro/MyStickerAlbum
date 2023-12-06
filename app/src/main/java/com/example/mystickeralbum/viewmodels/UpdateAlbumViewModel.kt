@@ -1,9 +1,11 @@
 package com.example.mystickeralbum.viewmodels
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
+import com.example.mystickeralbum.activities.CreateEditAlbumActivity
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.stateholders.UpdateAlbumUIState
@@ -20,6 +22,10 @@ class UpdateAlbumViewModel : ViewModel() {
         MutableStateFlow(UpdateAlbumUIState())
     val uiState get() = _uiState.asStateFlow()
 
+    companion object {
+        const val ALBUM_NAME_EXTRA = "ALBUM_NAME"
+    }
+
     init {
         _uiState.update {
             it.copy(
@@ -30,7 +36,8 @@ class UpdateAlbumViewModel : ViewModel() {
                 onChangeRepeatedStickerClick = ::onChangeRepeatedStickerClick,
                 onDeleteAlbumClick = ::onDeleteAlbumClick,
                 onCloseDeleteAlbumDialog = ::onCloseDeleteAlbumDialog,
-                onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog
+                onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog,
+                onEditAlbumClick = ::onEditAlbumClick
             )
         }
     }
@@ -132,6 +139,14 @@ class UpdateAlbumViewModel : ViewModel() {
             }
 
             activity.finish()
+        }
+    }
+
+    private fun onEditAlbumClick(activity: Activity) {
+        activity.apply {
+            val intent = Intent(this, CreateEditAlbumActivity::class.java)
+            intent.putExtra(CreateEditAlbumViewModel.ALBUM_NAME_EXTRA, _uiState.value.album.name)
+            startActivity(intent)
         }
     }
 }
