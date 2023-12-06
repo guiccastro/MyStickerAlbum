@@ -33,7 +33,9 @@ data class Album(
     fun getProgress(): Float {
         val total = getTotalStickers().toFloat()
         val found = getFound().size.toFloat()
-        return found / total
+        val result = found / total
+
+        return if (result.isNaN()) 0F else result
     }
 
     fun getFormattedProgress(): String {

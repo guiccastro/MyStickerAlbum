@@ -60,6 +60,8 @@ import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.stateholders.UpdateAlbumUIState
+import com.example.mystickeralbum.ui.AlbumCard
+import com.example.mystickeralbum.ui.AlbumStickerInfo
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 import com.example.mystickeralbum.viewmodels.UpdateAlbumViewModel
@@ -97,12 +99,24 @@ class UpdateAlbumActivity : ComponentActivity() {
                     .fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-                StickersGrid(state)
+                Column {
+                    AlbumView(state.album)
+                    StickersGrid(state)
+                }
 
                 if (state.showDialog) {
                     StickerOptionsDialog(state)
                 }
             }
+        }
+    }
+
+    @Composable
+    fun AlbumView(album: Album) {
+        AlbumCard(
+            album = album
+        ) {
+            AlbumStickerInfo(album)
         }
     }
 

@@ -1,10 +1,13 @@
 package com.example.mystickeralbum.ui
 
 import android.app.Activity
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,10 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 
 @Composable
@@ -88,5 +94,157 @@ fun AlbumCard(
 
             content()
         }
+    }
+}
+
+@Composable
+fun AlbumProgress(album: Album) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.album_item_progress),
+            fontSize = 14.sp,
+            modifier = Modifier
+                .align(Alignment.CenterVertically),
+            overflow = TextOverflow.Ellipsis
+        )
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp),
+            shape = RoundedCornerShape(10.dp),
+            color = Color.White,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(album.getProgress())
+                        .background(MaterialTheme.colorScheme.primary)
+                )
+
+                Text(
+                    text = album.getFormattedProgress(),
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.Center),
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Black
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AlbumStickersInfo(album: Album) {
+    Column {
+        Text(
+            text = stringResource(id = R.string.album_item_stickers),
+            fontSize = 12.sp,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row {
+                Text(
+                    text = stringResource(id = R.string.album_item_total),
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = album.getTotalStickers().toString(),
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(horizontal = 4.dp),
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Row {
+                Text(
+                    text = stringResource(id = R.string.album_item_found),
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = album.getFound().size.toString(),
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(horizontal = 4.dp),
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Row {
+                Text(
+                    text = stringResource(id = R.string.album_item_missing),
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = album.getMissing().size.toString(),
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(horizontal = 4.dp),
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Row {
+                Text(
+                    text = stringResource(id = R.string.album_item_repeated),
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = album.getRepeated().size.toString(),
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(horizontal = 4.dp),
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AlbumStickerInfo(album: Album) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 6.dp, vertical = 4.dp),
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
+        AlbumProgress(album)
+        AlbumStickersInfo(album)
     }
 }

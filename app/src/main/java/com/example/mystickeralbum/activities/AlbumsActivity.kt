@@ -6,20 +6,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,8 +22,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -50,6 +39,7 @@ import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.stateholders.AlbumsUIState
 import com.example.mystickeralbum.ui.AlbumCard
+import com.example.mystickeralbum.ui.AlbumStickerInfo
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 
@@ -147,155 +137,7 @@ class AlbumsActivity : ComponentActivity() {
             activity = this,
             onClick = state.onAlbumClick
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 6.dp, vertical = 4.dp),
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                AlbumProgress(album)
-                AlbumStickersInfo(album)
-            }
-        }
-    }
-
-    @Composable
-    fun AlbumProgress(album: Album) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.album_item_progress),
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(CenterVertically),
-                overflow = TextOverflow.Ellipsis
-            )
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(20.dp),
-                shape = RoundedCornerShape(10.dp),
-                color = Color.White,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(album.getProgress())
-                            .background(MaterialTheme.colorScheme.primary)
-                    )
-
-                    Text(
-                        text = album.getFormattedProgress(),
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .align(Center),
-                        overflow = TextOverflow.Ellipsis,
-                        color = Color.Black
-                    )
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun AlbumStickersInfo(album: Album) {
-        Column {
-            Text(
-                text = stringResource(id = R.string.album_item_stickers),
-                fontSize = 12.sp,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row {
-                    Text(
-                        text = stringResource(id = R.string.album_item_total),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(CenterVertically),
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    Text(
-                        text = album.getTotalStickers().toString(),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(CenterVertically)
-                            .padding(horizontal = 4.dp),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Row {
-                    Text(
-                        text = stringResource(id = R.string.album_item_found),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(CenterVertically),
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    Text(
-                        text = album.getFound().size.toString(),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(CenterVertically)
-                            .padding(horizontal = 4.dp),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Row {
-                    Text(
-                        text = stringResource(id = R.string.album_item_missing),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(CenterVertically),
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    Text(
-                        text = album.getMissing().size.toString(),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(CenterVertically)
-                            .padding(horizontal = 4.dp),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Row {
-                    Text(
-                        text = stringResource(id = R.string.album_item_repeated),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(CenterVertically),
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    Text(
-                        text = album.getRepeated().size.toString(),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(CenterVertically)
-                            .padding(horizontal = 4.dp),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
+            AlbumStickerInfo(album)
         }
     }
 
