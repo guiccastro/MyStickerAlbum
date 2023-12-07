@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.max
 
 class CreateEditAlbumViewModel : ViewModel() {
 
@@ -300,13 +299,11 @@ class CreateEditAlbumViewModel : ViewModel() {
 
                 val resultSticker = ArrayList<Sticker>()
 
-                val normalMaxIndex = max(newNormalStickersList.size, oldNormalStickerList.size)
-                repeat(normalMaxIndex) { index ->
-                    val newSticker = newNormalStickersList.getOrNull(index)
-                    val oldSticker = oldNormalStickerList.getOrNull(index)
-
+                newNormalStickersList.forEach { newSticker ->
+                    val oldSticker =
+                        oldNormalStickerList.find { it.identifier == newSticker.identifier }
                     if (oldSticker == null) {
-                        newSticker?.let {
+                        newSticker.let {
                             resultSticker.add(it)
                         }
                     } else {
@@ -319,16 +316,15 @@ class CreateEditAlbumViewModel : ViewModel() {
                 val oldSpecialStickerList =
                     oldStickerList.filter { it.identifier.toIntOrNull() == null }
 
-                val specialMaxIndex = max(newSpecialStickersList.size, oldSpecialStickerList.size)
                 if (_uiState.value.specialStickerType != _uiState.value.album.getSpecialStickerType() || !_uiState.value.hasSpecialStickers) {
                     resultSticker.addAll(newSpecialStickersList)
                 } else {
-                    repeat(specialMaxIndex) { index ->
-                        val newSticker = newSpecialStickersList.getOrNull(index)
-                        val oldSticker = oldSpecialStickerList.getOrNull(index)
+                    newSpecialStickersList.forEach { newSticker ->
+                        val oldSticker =
+                            oldSpecialStickerList.find { it.identifier == newSticker.identifier }
 
                         if (oldSticker == null) {
-                            newSticker?.let {
+                            newSticker.let {
                                 resultSticker.add(it)
                             }
                         } else {
