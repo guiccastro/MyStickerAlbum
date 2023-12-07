@@ -230,22 +230,16 @@ class CreateEditAlbumActivity : ComponentActivity() {
 
         Row(
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.from_label),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.from_label),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal
+            )
             TextField(
                 text = state.normalStickersFromTextField.text,
                 onValueChange = {
@@ -263,20 +257,13 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     .width(50.dp)
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.to_label),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.to_label),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal
+            )
             TextField(
                 text = state.normalStickersToTextField.text,
                 onValueChange = {
@@ -333,22 +320,17 @@ class CreateEditAlbumActivity : ComponentActivity() {
             Row(
                 modifier = Modifier
                     .height(30.dp)
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.type_label),
-                        fontSize = 14.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Normal,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                    )
-                }
+
+                Text(
+                    text = stringResource(id = R.string.type_label),
+                    fontSize = 14.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Normal
+                )
 
                 Row(
                     modifier = Modifier
@@ -442,38 +424,26 @@ class CreateEditAlbumActivity : ComponentActivity() {
     fun LetterInputSpecialSticker(state: CreateEditAlbumUIState) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
+            Text(
+                text = stringResource(id = R.string.letter_label),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.letter_label),
-                    fontSize = 14.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(end = 6.dp)
-                )
-            }
+                    .padding(end = 6.dp)
+            )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.from_label),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.from_label),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal
+            )
             TextField(
                 text = state.specialStickersLetterFromTextField.text,
                 onValueChange = {
@@ -494,20 +464,13 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     .width(50.dp)
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.to_label),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.to_label),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal
+            )
             TextField(
                 text = state.specialStickersLetterToTextField.text,
                 onValueChange = {
@@ -534,38 +497,26 @@ class CreateEditAlbumActivity : ComponentActivity() {
     fun NumberInputSpecialSticker(state: CreateEditAlbumUIState) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
+            Text(
+                text = stringResource(id = R.string.number_label),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.number_label),
-                    fontSize = 14.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(end = 6.dp)
-                )
-            }
+                    .padding(end = 6.dp)
+            )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.from_label),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.from_label),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal
+            )
             TextField(
                 text = state.specialStickersNumberFromTextField.text,
                 onValueChange = {
@@ -583,20 +534,13 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     .width(50.dp)
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.to_label),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.to_label),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                fontWeight = FontWeight.Normal
+            )
             TextField(
                 text = state.specialStickersNumberToTextField.text,
                 onValueChange = {
