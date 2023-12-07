@@ -2,6 +2,7 @@ package com.example.mystickeralbum.viewmodels
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
@@ -24,6 +25,7 @@ class UpdateAlbumViewModel : ViewModel() {
 
     companion object {
         const val ALBUM_NAME_EXTRA = "ALBUM_NAME"
+        val REQUEST_CODE = this.hashCode()
     }
 
     init {
@@ -104,7 +106,7 @@ class UpdateAlbumViewModel : ViewModel() {
 
         viewModelScope.launch {
             withContext(IO) {
-                AlbumsRepository.updateAlbum(newAlbum)
+                AlbumsRepository.updateStickers(newAlbum)
             }
         }
 
@@ -146,7 +148,20 @@ class UpdateAlbumViewModel : ViewModel() {
         activity.apply {
             val intent = Intent(this, CreateEditAlbumActivity::class.java)
             intent.putExtra(CreateEditAlbumViewModel.ALBUM_NAME_EXTRA, _uiState.value.album.name)
-            startActivity(intent)
+            startActivityForResult(intent, REQUEST_CODE)
+        }
+    }
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                val albumName = data?.getStringExtra(ALBUM_NAME_EXTRA) ?: ""
+                Log.println(Log.ASSERT, "albumName", albumName)
+                onReceiveAlbumName(albumName)
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
+            }
         }
     }
 }

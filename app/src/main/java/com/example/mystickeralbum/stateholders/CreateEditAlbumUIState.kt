@@ -1,5 +1,6 @@
 package com.example.mystickeralbum.stateholders
 
+import android.app.Activity
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.SpecialStickerType
@@ -19,8 +20,9 @@ data class CreateEditAlbumUIState(
     val onHasSpecialStickersChange: (Boolean) -> Unit = {},
     val specialStickerType: SpecialStickerType = SpecialStickerType.LetterNumber,
     val onSpecialStickerTypeChange: (SpecialStickerType) -> Unit = {},
-    val onCreateClick: () -> Boolean = { false },
+    val onCreateEditClick: (Activity) -> Unit = { },
     val totalStickers: Int = 0,
     val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, ""),
-    val onReceivedAlbumName: (String) -> Unit = {}
+    val onReceivedAlbumName: (String) -> Unit = {},
+    val isCreateAlbum: Boolean = true
 )

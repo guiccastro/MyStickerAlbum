@@ -1,5 +1,7 @@
 package com.example.mystickeralbum.viewmodels
 
+import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
@@ -18,12 +20,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.max
 
 class CreateEditAlbumViewModel : ViewModel() {
 
     private val _uiState: MutableStateFlow<CreateEditAlbumUIState> =
         MutableStateFlow(CreateEditAlbumUIState())
     val uiState get() = _uiState.asStateFlow()
+
+    private var oldAlbum = _uiState.value.album
 
     init {
         _uiState.update {
@@ -38,7 +43,7 @@ class CreateEditAlbumViewModel : ViewModel() {
                 specialStickersLetterToTextField = TextFieldValues(onTextChange = ::onSpecialStickersLetterToChange),
                 specialStickersNumberFromTextField = TextFieldValues(onTextChange = ::onSpecialStickersNumberFromChange),
                 specialStickersNumberToTextField = TextFieldValues(onTextChange = ::onSpecialStickersNumberToChange),
-                onCreateClick = ::onCreateClick,
+                onCreateEditClick = ::onCreateEditClick,
                 onReceivedAlbumName = ::onReceivedAlbumName
             )
         }
@@ -275,25 +280,84 @@ class CreateEditAlbumViewModel : ViewModel() {
         return errorFrom || errorTo
     }
 
-    private fun onCreateClick(): Boolean {
+    private fun onCreateEditClick(activity: Activity) {
         if (!hasError()) {
-            val album = Album(
-                name = _uiState.value.albumNameTextField.text,
-                stickersList = createStickersList(),
-                status = AlbumStatus.Completing,
-                albumImage = _uiState.value.albumImageUrlTextField.text
-            )
+            val album = if (_uiState.value.isCreateAlbum) {
+                Album(
+                    name = _uiState.value.albumNameTextField.text,
+                    stickersList = createStickersList(),
+                    status = AlbumStatus.Completing,
+                    albumImage = _uiState.value.albumImageUrlTextField.text
+                )
+            } else {
+                val newStickersList = createStickersList().stickers
+                val oldStickerList = _uiState.value.album.stickersList.stickers
+
+                val newNormalStickersList =
+                    newStickersList.filter { it.identifier.toIntOrNull() != null }
+                val oldNormalStickerList =
+                    oldStickerList.filter { it.identifier.toIntOrNull() != null }
+
+                val resultSticker = ArrayList<Sticker>()
+
+                val normalMaxIndex = max(newNormalStickersList.size, oldNormalStickerList.size)
+                repeat(normalMaxIndex) { index ->
+                    val newSticker = newNormalStickersList.getOrNull(index)
+                    val oldSticker = oldNormalStickerList.getOrNull(index)
+
+                    if (oldSticker == null) {
+                        newSticker?.let {
+                            resultSticker.add(it)
+                        }
+                    } else {
+                        resultSticker.add(oldSticker)
+                    }
+                }
+
+                val newSpecialStickersList =
+                    newStickersList.filter { it.identifier.toIntOrNull() == null }
+                val oldSpecialStickerList =
+                    oldStickerList.filter { it.identifier.toIntOrNull() == null }
+
+                val specialMaxIndex = max(newSpecialStickersList.size, oldSpecialStickerList.size)
+                if (_uiState.value.specialStickerType != _uiState.value.album.getSpecialStickerType() || !_uiState.value.hasSpecialStickers) {
+                    resultSticker.addAll(newSpecialStickersList)
+                } else {
+                    repeat(specialMaxIndex) { index ->
+                        val newSticker = newSpecialStickersList.getOrNull(index)
+                        val oldSticker = oldSpecialStickerList.getOrNull(index)
+
+                        if (oldSticker == null) {
+                            newSticker?.let {
+                                resultSticker.add(it)
+                            }
+                        } else {
+                            resultSticker.add(oldSticker)
+                        }
+                    }
+                }
+
+                Album(
+                    name = _uiState.value.albumNameTextField.text,
+                    stickersList = StickersList(resultSticker),
+                    status = AlbumStatus.Completing,
+                    albumImage = _uiState.value.albumImageUrlTextField.text
+                )
+            }
 
             viewModelScope.launch {
                 withContext(IO) {
-                    AlbumsRepository.addAlbum(album)
+                    AlbumsRepository.updateAlbum(album, oldAlbum)
                 }
             }
 
-            return true
+            activity.apply {
+                val returnIntent = Intent()
+                returnIntent.putExtra(UpdateAlbumViewModel.ALBUM_NAME_EXTRA, album.name)
+                setResult(Activity.RESULT_OK, returnIntent)
+                finish()
+            }
         }
-
-        return false
     }
 
     private fun createStickersList(): StickersList {
@@ -449,11 +513,21 @@ class CreateEditAlbumViewModel : ViewModel() {
         viewModelScope.launch {
             val album = withContext(IO) {
                 return@withContext AlbumsRepository.getAlbumByName(albumName)
-            } ?: return@launch
+            } ?: run {
+                _uiState.update {
+                    it.copy(
+                        isCreateAlbum = true
+                    )
+                }
+                return@launch
+            }
+
+            oldAlbum = album
 
             _uiState.update {
                 it.copy(
-                    album = album
+                    album = album,
+                    isCreateAlbum = false
                 )
             }
 
@@ -464,23 +538,24 @@ class CreateEditAlbumViewModel : ViewModel() {
 
             onHasSpecialStickersChange(album.getSpecialStickers().isNotEmpty())
             onSpecialStickerTypeChange(
-                if (album.getSpecialStickers().first().identifier[0].toString()
-                        .toIntOrNull() != null
-                ) SpecialStickerType.LetterNumber else SpecialStickerType.NumberLetter
+                album.getSpecialStickerType() ?: SpecialStickerType.LetterNumber
             )
 
             val lettersList =
                 album.getSpecialStickers().map { it.identifier.replace(Regex("[0-9 ]"), "") }
                     .toSet()
-            onSpecialStickersLetterFromChange(lettersList.first())
-            onSpecialStickersLetterToChange(lettersList.last())
+            if (lettersList.isNotEmpty()) {
+                onSpecialStickersLetterFromChange(lettersList.first())
+                onSpecialStickersLetterToChange(lettersList.last())
+            }
+
             val numbersList =
                 album.getSpecialStickers().map { it.identifier.replace(Regex("[^0-9 ]"), "") }
                     .toSet()
-            onSpecialStickersNumberFromChange(numbersList.first())
-            onSpecialStickersNumberToChange(numbersList.last())
-
-
+            if (numbersList.isNotEmpty()) {
+                onSpecialStickersNumberFromChange(numbersList.first())
+                onSpecialStickersNumberToChange(numbersList.last())
+            }
         }
     }
 }

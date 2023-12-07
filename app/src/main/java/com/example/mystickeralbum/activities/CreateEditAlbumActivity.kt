@@ -32,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +70,9 @@ class CreateEditAlbumActivity : ComponentActivity() {
         setContent {
             MyStickerAlbumTheme {
                 val state = viewModel.uiState.collectAsState().value
-                state.onReceivedAlbumName(albumName)
+                LaunchedEffect(Unit) {
+                    state.onReceivedAlbumName(albumName)
+                }
                 AddAlbumScreen(state)
             }
         }
@@ -80,7 +83,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
     fun AddAlbumScreen(state: CreateEditAlbumUIState) {
         Scaffold(
             topBar = {
-                AddAlbumTopBar()
+                AddAlbumTopBar(state)
             }
         ) {
             Surface(
@@ -641,16 +644,14 @@ class CreateEditAlbumActivity : ComponentActivity() {
             }
 
             Button(
-                onClick = {
-                    if (state.onCreateClick()) finish()
-                },
+                onClick = { state.onCreateEditClick(this@CreateEditAlbumActivity) },
                 modifier = Modifier
                     .weight(1F)
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.create_button),
+                    text = stringResource(id = if (state.isCreateAlbum) R.string.create_button else R.string.edit_button),
                     fontSize = 16.sp,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.White,
@@ -661,9 +662,9 @@ class CreateEditAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun AddAlbumTopBar() {
+    fun AddAlbumTopBar(state: CreateEditAlbumUIState) {
         TopBar(
-            title = R.string.add_album_title,
+            title = if (state.isCreateAlbum) R.string.create_album_title else R.string.edit_album_title,
             onReturn = { finish() }
         )
     }

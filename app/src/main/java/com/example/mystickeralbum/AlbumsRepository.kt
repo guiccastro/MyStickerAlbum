@@ -13,7 +13,12 @@ object AlbumsRepository {
         albumDao.insert(album)
     }
 
-    fun updateAlbum(album: Album) {
+    fun updateAlbum(newAlbum: Album, oldAlbum: Album) {
+        albumDao.delete(oldAlbum)
+        albumDao.insert(newAlbum)
+    }
+
+    fun updateStickers(album: Album) {
         albumDao.insert(album)
     }
 

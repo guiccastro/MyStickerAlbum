@@ -1,5 +1,6 @@
 package com.example.mystickeralbum.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,6 +36,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,7 +81,9 @@ class UpdateAlbumActivity : ComponentActivity() {
         setContent {
             MyStickerAlbumTheme {
                 val state = viewModel.uiState.collectAsState().value
-                state.onReceivedAlbumName(albumName)
+                LaunchedEffect(Unit) {
+                    state.onReceivedAlbumName(albumName)
+                }
                 UpdateAlbumScreen(state)
 
                 if (state.showDeleteAlbumDialog) {
@@ -87,6 +91,11 @@ class UpdateAlbumActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     @Composable

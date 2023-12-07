@@ -1,6 +1,7 @@
 package com.example.mystickeralbum.stateholders
 
 import android.app.Activity
+import androidx.activity.ComponentActivity
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
@@ -20,5 +21,5 @@ data class UpdateAlbumUIState(
     val onCloseDeleteAlbumDialog: () -> Unit = {},
     val onConfirmDeleteAlbumDialog: (Activity) -> Unit = {},
     val onNewScreenCall: (Activity) -> Unit = {},
-    val onEditAlbumClick: (Activity) -> Unit = {}
+    val onEditAlbumClick: (ComponentActivity) -> Unit = {}
 )

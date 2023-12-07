@@ -54,4 +54,14 @@ data class Album(
     fun getSpecialStickers(): List<Sticker> {
         return stickersList.stickers.filter { it.identifier.toIntOrNull() == null }
     }
+
+    fun getSpecialStickerType(): SpecialStickerType? {
+        val firstChar = getSpecialStickers().firstOrNull()?.identifier?.getOrNull(0) ?: return null
+
+        return if (firstChar.toString().toIntOrNull() != null) {
+            SpecialStickerType.NumberLetter
+        } else {
+            SpecialStickerType.LetterNumber
+        }
+    }
 }
