@@ -234,7 +234,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.from_label),
@@ -252,7 +252,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     state.normalStickersFromTextField.onTextChange(it)
                 },
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -265,7 +265,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
 
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.to_label),
@@ -283,7 +283,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     state.normalStickersToTextField.onTextChange(it)
                 },
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -446,7 +446,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.letter_label),
@@ -462,7 +462,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
 
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.from_label),
@@ -480,7 +480,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     state.specialStickersLetterFromTextField.onTextChange(it)
                 },
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -496,7 +496,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
 
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.to_label),
@@ -514,7 +514,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     state.specialStickersLetterToTextField.onTextChange(it)
                 },
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -538,7 +538,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.number_label),
@@ -554,7 +554,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
 
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.from_label),
@@ -572,7 +572,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     state.specialStickersNumberFromTextField.onTextChange(it)
                 },
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
@@ -585,7 +585,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
 
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.to_label),
@@ -603,7 +603,7 @@ class CreateEditAlbumActivity : ComponentActivity() {
                     state.specialStickersNumberToTextField.onTextChange(it)
                 },
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(32.dp)
                     .width(50.dp),
                 textSize = 14.sp,
                 paddingValues = PaddingValues(horizontal = 10.dp),
