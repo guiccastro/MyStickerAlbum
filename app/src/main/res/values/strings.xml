@@ -36,6 +36,7 @@
     <string name="error_zero_text_field">Value must be greater than zero.</string>
     <string name="error_smaller_text_field">Value must be smaller than value \'to\'.</string>
     <string name="error_grater_text_field">Value must be greater than value \'from\'.</string>
+    <string name="error_album_name_exists">This album name already exists.</string>
 
     <string name="update_album_title">Update Album</string>
     <string name="sticker_title">Sticker</string>
