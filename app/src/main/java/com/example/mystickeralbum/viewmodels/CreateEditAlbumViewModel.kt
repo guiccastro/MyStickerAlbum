@@ -348,13 +348,13 @@ class CreateEditAlbumViewModel : ViewModel() {
                     withContext(IO) {
                         AlbumsRepository.updateAlbum(album, oldAlbum)
                     }
-                }
 
-                activity.apply {
-                    val returnIntent = Intent()
-                    returnIntent.putExtra(UpdateAlbumViewModel.ALBUM_NAME_EXTRA, album.name)
-                    setResult(Activity.RESULT_OK, returnIntent)
-                    finish()
+                    activity.apply {
+                        val returnIntent = Intent()
+                        returnIntent.putExtra(UpdateAlbumViewModel.ALBUM_NAME_EXTRA, album.name)
+                        setResult(Activity.RESULT_OK, returnIntent)
+                        finish()
+                    }
                 }
             }
 

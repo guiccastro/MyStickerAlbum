@@ -29,8 +29,6 @@ class AlbumsViewModel : ViewModel() {
                 onAlbumClick = ::onAlbumClick
             )
         }
-
-        updateAlbumsList()
     }
 
     fun updateAlbumsList() {
