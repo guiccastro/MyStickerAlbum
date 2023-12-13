@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -30,6 +31,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -126,10 +128,16 @@ class UpdateAlbumActivity : ComponentActivity() {
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3F)
             ) {
                 Column {
                     AlbumView(state.album)
+                    CopyStickersButtons(state)
+                    Divider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 2.dp,
+                        color = Color.Gray
+                    )
                     StickersGrid(state)
                 }
 
@@ -162,8 +170,11 @@ class UpdateAlbumActivity : ComponentActivity() {
     }
 
     @Composable
-    fun StickersGrid(state: UpdateAlbumUIState) {
+    fun ColumnScope.StickersGrid(state: UpdateAlbumUIState) {
         LazyVerticalGrid(
+            modifier = Modifier
+                .weight(1F)
+                .background(Color.White),
             columns = GridCells.Fixed(6),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -386,6 +397,75 @@ class UpdateAlbumActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun CopyStickersButtons(state: UpdateAlbumUIState) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .padding(bottom = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .clickable {
+                        state.onCopyMissingStickersClick(this@UpdateAlbumActivity)
+                    }
+                    .weight(1F)
+                    .shadow(4.dp, RoundedCornerShape(4.dp))
+                    .background(Color.Gray, RoundedCornerShape(4.dp))
+                    .padding(vertical = 6.dp, horizontal = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_copy),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+
+                Text(
+                    text = stringResource(id = R.string.copy_missing_stickers),
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .clickable {
+                        state.onCopyRepeatedStickersClick(this@UpdateAlbumActivity)
+                    }
+                    .weight(1F)
+                    .shadow(4.dp, RoundedCornerShape(4.dp))
+                    .background(Color.Gray, RoundedCornerShape(4.dp))
+                    .padding(vertical = 6.dp, horizontal = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_copy),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+
+                Text(
+                    text = stringResource(id = R.string.copy_repeated_stickers),
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
             }
         }
     }

@@ -1,11 +1,16 @@
 package com.example.mystickeralbum.viewmodels
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
+import com.example.mystickeralbum.R
 import com.example.mystickeralbum.activities.CreateEditAlbumActivity
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
@@ -39,7 +44,9 @@ class UpdateAlbumViewModel : ViewModel() {
                 onDeleteAlbumClick = ::onDeleteAlbumClick,
                 onCloseDeleteAlbumDialog = ::onCloseDeleteAlbumDialog,
                 onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog,
-                onEditAlbumClick = ::onEditAlbumClick
+                onEditAlbumClick = ::onEditAlbumClick,
+                onCopyMissingStickersClick = ::onCopyMissingStickersClick,
+                onCopyRepeatedStickersClick = ::onCopyRepeatedStickersClick
             )
         }
     }
@@ -160,9 +167,32 @@ class UpdateAlbumViewModel : ViewModel() {
                 Log.println(Log.ASSERT, "albumName", albumName)
                 onReceiveAlbumName(albumName)
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
-            }
         }
+    }
+
+    private fun copyTextToClipboard(activity: Activity, text: String) {
+        val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Label", text)
+        clipboard.setPrimaryClip(clip)
+    }
+
+    private fun onCopyMissingStickersClick(activity: Activity) {
+        copyTextToClipboard(activity, getMissingStickersText())
+        Toast.makeText(activity, R.string.message_missing_stickers_copied, Toast.LENGTH_SHORT)
+            .show()
+    }
+
+    private fun onCopyRepeatedStickersClick(activity: Activity) {
+        copyTextToClipboard(activity, getRepeatedStickersText())
+        Toast.makeText(activity, R.string.message_repeated_stickers_copied, Toast.LENGTH_SHORT)
+            .show()
+    }
+
+    private fun getMissingStickersText(): String {
+        return _uiState.value.album.getMissing().joinToString(" - ") { it.identifier }
+    }
+
+    private fun getRepeatedStickersText(): String {
+        return _uiState.value.album.getRepeated().joinToString(" - ") { it.identifier }
     }
 }
