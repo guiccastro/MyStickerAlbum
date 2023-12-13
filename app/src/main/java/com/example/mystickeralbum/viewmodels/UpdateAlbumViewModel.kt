@@ -78,6 +78,7 @@ class UpdateAlbumViewModel : ViewModel() {
     private fun onFoundNotFoundClick(found: Boolean) {
         val newSticker = _uiState.value.stickerDialog.copy(found = found, repeated = 0)
         updateSticker(newSticker)
+        onCloseDialog()
     }
 
     private fun onChangeRepeatedStickerClick(value: Int) {
