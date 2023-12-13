@@ -51,4 +51,7 @@
     <string name="message_missing_stickers_copied">Missing stickers copied!</string>
     <string name="message_repeated_stickers_copied">Repeated stickers copied!</string>
 
+    <string name="drawer_item_settings_title">Settings</string>
+    <string name="drawer_item_about_title">About</string>
+
 </resources>

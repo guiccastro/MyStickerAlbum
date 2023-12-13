@@ -3,7 +3,6 @@ package com.example.mystickeralbum
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -16,7 +15,6 @@ import com.example.mystickeralbum.model.TopBarState
 import com.example.mystickeralbum.ui.TopBar
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScaffold(
     floatingActionButton: @Composable () -> Unit = {},
@@ -29,7 +27,7 @@ fun MainScaffold(
     ModalNavigationDrawer(
         drawerState = state,
         drawerContent = {
-            DrawerContent()
+            DrawerContent(MainDrawerMenuComponent.drawerMenuState())
         },
     ) {
         Scaffold(
