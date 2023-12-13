@@ -29,10 +29,10 @@ import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
+import com.example.mystickeralbum.model.TopBarState
 import com.example.mystickeralbum.stateholders.AlbumsUIState
 import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.AlbumStickerInfo
-import com.example.mystickeralbum.ui.TopBar
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.AlbumsViewModel
 
@@ -62,17 +62,10 @@ class AlbumsActivity : ComponentActivity() {
             floatingActionButton = {
                 AddAlbumFab(state.onFabClick)
             },
-            topBar = {
-                AlbumsTopBar()
-            }
+            topBarState = TopBarState(title = R.string.album_list_title)
         ) {
             AlbumsList(state)
         }
-    }
-
-    @Composable
-    fun AlbumsTopBar() {
-        TopBar(title = R.string.album_list_title)
     }
 
     @Composable

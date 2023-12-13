@@ -59,11 +59,11 @@ import com.example.mystickeralbum.model.ButtonItem
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.model.TopBarItem
+import com.example.mystickeralbum.model.TopBarState
 import com.example.mystickeralbum.stateholders.UpdateAlbumUIState
 import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.AlbumStickerInfo
 import com.example.mystickeralbum.ui.SimpleDialog
-import com.example.mystickeralbum.ui.TopBar
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.UpdateAlbumViewModel
 
@@ -116,9 +116,14 @@ class UpdateAlbumActivity : ComponentActivity() {
     @Composable
     fun UpdateAlbumScreen(state: UpdateAlbumUIState) {
         MainScaffold(
-            topBar = {
-                UpdateAlbumTopBar(state)
-            }
+            topBarState = TopBarState(
+                title = R.string.update_album_title,
+                onReturn = { finish() },
+                itemsList = listOf(
+                    TopBarItem(R.drawable.ic_delete) { state.onDeleteAlbumClick() },
+                    TopBarItem(R.drawable.ic_edit) { state.onEditAlbumClick(this) }
+                )
+            )
         ) {
             Column {
                 AlbumView(state.album)
@@ -144,18 +149,6 @@ class UpdateAlbumActivity : ComponentActivity() {
         ) {
             AlbumStickerInfo(album)
         }
-    }
-
-    @Composable
-    fun UpdateAlbumTopBar(state: UpdateAlbumUIState) {
-        TopBar(
-            title = R.string.update_album_title,
-            onReturn = { finish() },
-            itemsList = listOf(
-                TopBarItem(R.drawable.ic_delete) { state.onDeleteAlbumClick() },
-                TopBarItem(R.drawable.ic_edit) { state.onEditAlbumClick(this) }
-            )
-        )
     }
 
     @Composable

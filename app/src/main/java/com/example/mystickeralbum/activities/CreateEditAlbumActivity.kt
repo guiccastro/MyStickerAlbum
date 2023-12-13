@@ -47,10 +47,10 @@ import com.example.mystickeralbum.MainScaffold
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.SpecialStickerType
+import com.example.mystickeralbum.model.TopBarState
 import com.example.mystickeralbum.stateholders.CreateEditAlbumUIState
 import com.example.mystickeralbum.ui.AlbumCard
 import com.example.mystickeralbum.ui.TextField
-import com.example.mystickeralbum.ui.TopBar
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.viewmodels.CreateEditAlbumViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -79,9 +79,10 @@ class CreateEditAlbumActivity : ComponentActivity() {
     @Composable
     fun AddAlbumScreen(state: CreateEditAlbumUIState) {
         MainScaffold(
-            topBar = {
-                AddAlbumTopBar(state)
-            }
+            topBarState = TopBarState(
+                title = if (state.isCreateAlbum) R.string.create_album_title else R.string.edit_album_title,
+                onReturn = { finish() }
+            )
         ) {
             Column(
                 modifier = Modifier
@@ -649,14 +650,6 @@ class CreateEditAlbumActivity : ComponentActivity() {
                 )
             }
         }
-    }
-
-    @Composable
-    fun AddAlbumTopBar(state: CreateEditAlbumUIState) {
-        TopBar(
-            title = if (state.isCreateAlbum) R.string.create_album_title else R.string.edit_album_title,
-            onReturn = { finish() }
-        )
     }
 
     @Preview(showSystemUi = true)
