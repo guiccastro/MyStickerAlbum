@@ -25,10 +25,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.example.mystickeralbum.MainScaffold
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.SpecialStickerType
@@ -78,37 +76,29 @@ class CreateEditAlbumActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun AddAlbumScreen(state: CreateEditAlbumUIState) {
-        Scaffold(
+        MainScaffold(
             topBar = {
                 AddAlbumTopBar(state)
             }
         ) {
-            Surface(
+            Column(
                 modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                    .fillMaxSize()
             ) {
                 Column(
                     modifier = Modifier
+                        .weight(1f)
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        BasicAlbumInfo(state)
-                        StickersInfo(state)
-                    }
-
-                    BottomButtons(state)
+                    BasicAlbumInfo(state)
+                    StickersInfo(state)
                 }
+
+                BottomButtons(state)
             }
         }
     }

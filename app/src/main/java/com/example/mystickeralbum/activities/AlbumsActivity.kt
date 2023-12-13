@@ -1,22 +1,17 @@
 package com.example.mystickeralbum.activities
 
-import android.R.attr.value
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mystickeralbum.MainScaffold
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
@@ -60,10 +56,9 @@ class AlbumsActivity : ComponentActivity() {
         viewModel.updateAlbumsList()
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun AlbumsScreen(state: AlbumsUIState) {
-        Scaffold(
+        MainScaffold(
             floatingActionButton = {
                 AddAlbumFab(state.onFabClick)
             },
@@ -71,14 +66,7 @@ class AlbumsActivity : ComponentActivity() {
                 AlbumsTopBar()
             }
         ) {
-            Surface(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                AlbumsList(state)
-            }
+            AlbumsList(state)
         }
     }
 

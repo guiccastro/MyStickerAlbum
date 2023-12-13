@@ -35,6 +35,7 @@ import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 fun TopBar(
     @StringRes title: Int,
     onReturn: (() -> Unit)? = null,
+    onMenuClick: () -> Unit = {},
     itemsList: List<TopBarItem> = emptyList()
 ) {
     TopAppBar(
@@ -62,6 +63,16 @@ fun TopBar(
                         .size(40.dp)
                         .clip(CircleShape)
                         .clickable { onReturn() },
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_menu),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .clickable { onMenuClick() },
                     colorFilter = ColorFilter.tint(Color.White)
                 )
             }

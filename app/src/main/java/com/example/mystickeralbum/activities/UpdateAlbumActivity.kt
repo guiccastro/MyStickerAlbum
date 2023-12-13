@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -32,10 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.mystickeralbum.MainScaffold
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
@@ -116,34 +113,26 @@ class UpdateAlbumActivity : ComponentActivity() {
         )
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun UpdateAlbumScreen(state: UpdateAlbumUIState) {
-        Scaffold(
+        MainScaffold(
             topBar = {
                 UpdateAlbumTopBar(state)
             }
         ) {
-            Surface(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize(),
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3F)
-            ) {
-                Column {
-                    AlbumView(state.album)
-                    CopyStickersButtons(state)
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(),
-                        thickness = 2.dp,
-                        color = Color.Gray
-                    )
-                    StickersGrid(state)
-                }
+            Column {
+                AlbumView(state.album)
+                CopyStickersButtons(state)
+                Divider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 2.dp,
+                    color = Color.Gray
+                )
+                StickersGrid(state)
+            }
 
-                if (state.showStickerDialog) {
-                    StickerOptionsDialog(state)
-                }
+            if (state.showStickerDialog) {
+                StickerOptionsDialog(state)
             }
         }
     }
