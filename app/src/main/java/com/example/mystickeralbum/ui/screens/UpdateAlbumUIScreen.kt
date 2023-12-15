@@ -52,10 +52,10 @@ import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.ButtonItem
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
-import com.example.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import com.example.mystickeralbum.ui.components.AlbumCard
 import com.example.mystickeralbum.ui.components.AlbumStickerInfo
 import com.example.mystickeralbum.ui.components.SimpleDialog
+import com.example.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.ui.viewmodels.UpdateAlbumViewModel
 
@@ -87,7 +87,10 @@ fun DeleteAlbumDialog(state: UpdateAlbumUIState) {
 
 @Composable
 fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
-    Column {
+    Column(
+        modifier = Modifier
+            .background(Color.LightGray)
+    ) {
         AlbumView(state.album)
         CopyStickersButtons(state)
         HorizontalDivider(
@@ -356,13 +359,13 @@ fun CopyStickersButtons(state: UpdateAlbumUIState) {
         val context = LocalContext.current
         Row(
             modifier = Modifier
+                .weight(1F)
+                .shadow(4.dp, RoundedCornerShape(4.dp))
+                .background(Color.Gray, RoundedCornerShape(4.dp))
                 .clip(RoundedCornerShape(4.dp))
                 .clickable {
                     state.onCopyMissingStickersClick(context)
                 }
-                .weight(1F)
-                .shadow(4.dp, RoundedCornerShape(4.dp))
-                .background(Color.Gray, RoundedCornerShape(4.dp))
                 .padding(vertical = 6.dp, horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -385,13 +388,13 @@ fun CopyStickersButtons(state: UpdateAlbumUIState) {
 
         Row(
             modifier = Modifier
+                .weight(1F)
+                .shadow(4.dp, RoundedCornerShape(4.dp))
+                .background(Color.Gray, RoundedCornerShape(4.dp))
                 .clip(RoundedCornerShape(4.dp))
                 .clickable {
                     state.onCopyRepeatedStickersClick(context)
                 }
-                .weight(1F)
-                .shadow(4.dp, RoundedCornerShape(4.dp))
-                .background(Color.Gray, RoundedCornerShape(4.dp))
                 .padding(vertical = 6.dp, horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)

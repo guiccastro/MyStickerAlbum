@@ -1,6 +1,8 @@
 package com.example.mystickeralbum.navigation
 
 import android.os.Bundle
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
@@ -58,7 +60,11 @@ class MainNavComponent private constructor() {
 
             NavHost(
                 navController = navController,
-                startDestination = AlbumsListScreen.routeScreen
+                startDestination = AlbumsListScreen.routeScreen,
+                enterTransition = { slideInHorizontally(initialOffsetX = { it }) },
+                exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
+                popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
+                popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
             ) {
                 screensList.forEach {
                     it.apply {
