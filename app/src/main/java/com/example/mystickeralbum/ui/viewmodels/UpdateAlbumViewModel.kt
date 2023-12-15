@@ -8,12 +8,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
-import com.example.mystickeralbum.navigation.screens.CreateEditAlbumScreen
-import com.example.mystickeralbum.navigation.MainNavComponent.Companion.albumNameArgument
-import com.example.mystickeralbum.navigation.MainNavComponent.Companion.navController
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
+import com.example.mystickeralbum.navigation.MainNavComponent.Companion.albumNameArgument
+import com.example.mystickeralbum.navigation.MainNavComponent.Companion.navController
+import com.example.mystickeralbum.navigation.screens.EditAlbumScreen
 import com.example.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -162,7 +162,7 @@ class UpdateAlbumViewModel @Inject constructor(
 
     fun onEditAlbumClick() {
         navController.apply {
-            CreateEditAlbumScreen.apply {
+            EditAlbumScreen.apply {
                 navigateToItself(albumName = _uiState.value.album.name)
             }
         }

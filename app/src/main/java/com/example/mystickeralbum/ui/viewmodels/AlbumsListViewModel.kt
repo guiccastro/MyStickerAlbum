@@ -3,10 +3,10 @@ package com.example.mystickeralbum.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
-import com.example.mystickeralbum.navigation.screens.CreateEditAlbumScreen
-import com.example.mystickeralbum.navigation.MainNavComponent
-import com.example.mystickeralbum.navigation.screens.UpdateAlbumScreen
 import com.example.mystickeralbum.model.Album
+import com.example.mystickeralbum.navigation.MainNavComponent
+import com.example.mystickeralbum.navigation.screens.CreateAlbumScreen
+import com.example.mystickeralbum.navigation.screens.UpdateAlbumScreen
 import com.example.mystickeralbum.ui.stateholders.AlbumsListUIState
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +44,7 @@ class AlbumsListViewModel : ViewModel() {
 
     fun onFabClick() {
         MainNavComponent.navController.apply {
-            CreateEditAlbumScreen.apply {
+            CreateAlbumScreen.apply {
                 navigateToItself()
             }
         }

@@ -7,16 +7,16 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.mystickeralbum.model.FABComponent
-import com.example.mystickeralbum.navigation.MainNavComponent
 import com.example.mystickeralbum.R
-import com.example.mystickeralbum.navigation.interfaces.Screen
+import com.example.mystickeralbum.model.FABComponent
 import com.example.mystickeralbum.model.TopAppBarActionItem
 import com.example.mystickeralbum.model.TopAppBarComponent
+import com.example.mystickeralbum.navigation.MainNavComponent
+import com.example.mystickeralbum.navigation.interfaces.Screen
 import com.example.mystickeralbum.ui.screens.CreateEditAlbumUIScreen
 import com.example.mystickeralbum.ui.viewmodels.CreateEditAlbumViewModel
 
-object CreateEditAlbumScreen : Screen {
+object CreateAlbumScreen : Screen {
 
     private lateinit var viewModel: CreateEditAlbumViewModel
 
@@ -45,7 +45,7 @@ object CreateEditAlbumScreen : Screen {
         }
     }
 
-    override val routeScreen: String = "CreateEditAlbumScreen"
+    override val routeScreen: String = "CreateAlbumScreen"
 
     override fun NavController.navigateToItself(albumName: String?, navOptions: NavOptions?) =
         navigate("$routeScreen/${albumName}", navOptions)

@@ -10,17 +10,18 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.example.mystickeralbum.model.MainDrawerMenuComponent
 import com.example.mystickeralbum.model.MainDrawerMenuComponent.updateDrawerMenuState
 import com.example.mystickeralbum.model.MainFABComponent.updateFabState
 import com.example.mystickeralbum.model.MainTopAppBarComponent.updateTopAppBarState
 import com.example.mystickeralbum.navigation.interfaces.Screen
-import com.example.mystickeralbum.ui.stateholders.TopAppBarUIState
-import com.example.mystickeralbum.model.MainDrawerMenuComponent
 import com.example.mystickeralbum.navigation.screens.AlbumsListScreen
-import com.example.mystickeralbum.navigation.screens.CreateEditAlbumScreen
+import com.example.mystickeralbum.navigation.screens.CreateAlbumScreen
+import com.example.mystickeralbum.navigation.screens.EditAlbumScreen
 import com.example.mystickeralbum.navigation.screens.UpdateAlbumScreen
 import com.example.mystickeralbum.ui.stateholders.DrawerMenuUIState
 import com.example.mystickeralbum.ui.stateholders.FabUIState
+import com.example.mystickeralbum.ui.stateholders.TopAppBarUIState
 
 class MainNavComponent private constructor() {
 
@@ -38,7 +39,8 @@ class MainNavComponent private constructor() {
 
         private val screensList = listOf(
             AlbumsListScreen,
-            CreateEditAlbumScreen,
+            CreateAlbumScreen,
+            EditAlbumScreen,
             UpdateAlbumScreen
         )
 
