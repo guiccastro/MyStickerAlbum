@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Albums List Screen -->
+    <string name="album_item_progress">Progresso:</string>
+    <string name="album_item_stickers">Figurinhas:</string>
+    <string name="album_item_total">Total:</string>
+    <string name="album_item_found">Encontradas:</string>
+    <string name="album_item_missing">Faltando:</string>
+    <string name="album_item_repeated">Repetidas:</string>
+    <string name="album_list_title">Meus Álbuns</string>
+    <string name="album_list_empty">Sua lista de álbuns está vazia.</string>
+
+    <!-- Create Edit Album Screen -->
+    <string name="create_album_title">Criar Novo Álbum</string>
+    <string name="edit_album_title">Editar Álbum</string>
+    <string name="album_name_label">Nome do Álbum</string>
+    <string name="image_url_label">URL da Imagem</string>
+    <string name="preview_label">Pré-Visualização</string>
+    <string name="normal_stickers_label">Figurinhas Normais</string>
+    <string name="from_label">De</string>
+    <string name="to_label">até</string>
+    <string name="special_stickers_label">Figurinhas Especiais</string>
+    <string name="type_label">Tipo:</string>
+    <string name="letter_label">Letra:</string>
+    <string name="number_label">Número:</string>
+    <string name="letter_number">LetraNúmero</string>
+    <string name="number_letter">NúmeroLetra</string>
+    <string name="total_stickers_label">Figurinhas Totais:</string>
+
+    <!-- Buttons -->
+    <string name="create_button">Criar</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="confirm_button">Confirmar</string>
+    <string name="edit_button">Editar</string>
+
+    <!-- Error Text Field -->
+    <string name="error_empty_text_field">Campo não pode ser vazio.</string>
+    <string name="error_zero_text_field">Valor deve ser maior que zero.</string>
+    <string name="error_smaller_text_field">Valor deve ser menor que \'até\'.</string>
+    <string name="error_grater_text_field">Valor deve ser maior que \'de\'.</string>
+    <string name="error_album_name_exists">Nome do álbum já existe.</string>
+
+    <!-- Update Album Screen -->
+    <string name="update_album_title">Atualizar Álbum</string>
+    <string name="sticker_title">Figurinha</string>
+    <string name="found_title">Encontrado</string>
+    <string name="not_found_title">Não Encontrado</string>
+    <string name="repeated_stickers_title">Figurinhas Repetidas</string>
+    <string name="delete_album_title">Deletar Álbum</string>
+    <string name="confirm_delete_album_desc">Você deseja deletar o álbum \'%1$s\'?</string>
+    <string name="copy_missing_stickers">Figurinhas Faltantes</string>
+    <string name="copy_repeated_stickers">Figurinhas Repetidas</string>
+    <string name="message_missing_stickers_copied">Figurinhas faltantes copiadas!</string>
+    <string name="message_repeated_stickers_copied">Figurinhas repetidas copiadas!</string>
+
+    <!-- Drawer Menu -->
+    <string name="drawer_item_settings_title">Configurações</string>
+    <string name="drawer_item_about_title">Sobre</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_language_title">Linguagem</string>
+
+    <!-- Language Screen -->
+    <string name="language_screen_title">Selecionar Linguagem</string>
+
+    <!-- Language Options -->
+    <string name="english_language_option">Inglês</string>
+    <string name="portuguese_language_option">Português Brasileiro</string>
+
+</resources>

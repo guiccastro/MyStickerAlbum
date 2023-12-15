@@ -31,6 +31,7 @@ class MyStickerAlbumApplication : Application() {
             getContext(),
             AlbumDatabase::class.java, databaseName
         ).build()
+        LanguageRepository.initiateLanguage(baseContext)
     }
 
     fun getContext(): Context {

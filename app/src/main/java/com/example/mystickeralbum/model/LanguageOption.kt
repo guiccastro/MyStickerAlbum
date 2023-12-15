@@ -1,14 +1,18 @@
 package com.example.mystickeralbum.model
 
-import java.util.Locale
+import androidx.annotation.StringRes
+import com.example.mystickeralbum.R
 
 enum class LanguageOption(
-    val locale: Locale
+    @StringRes val title: Int,
+    val localeOption: LocaleOption
 ) {
-    English(
-        locale = Locale("en", "US")
+    EnglishOption(
+        title = R.string.english_language_option,
+        localeOption = LocaleOption.English
     ),
-    Portuguese(
-        locale = Locale("pt", "BR")
+    PortugueseOption(
+        title = R.string.portuguese_language_option,
+        localeOption = LocaleOption.Portuguese
     )
 }

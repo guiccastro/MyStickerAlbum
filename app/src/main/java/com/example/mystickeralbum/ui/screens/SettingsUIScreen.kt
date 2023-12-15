@@ -16,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mystickeralbum.LanguageRepository
 import com.example.mystickeralbum.extensions.bottomBorder
 import com.example.mystickeralbum.extensions.topBorder
 import com.example.mystickeralbum.model.SettingsOptionItem
@@ -65,17 +67,16 @@ fun SettingsUIScreen() {
                         .weight(1F)
                 )
 
-//                if (option == SettingsOptionItem.LanguageSettingItem) {
-//                    Text(
-//                        text = LanguageRepository.getCurrentLanguage().toLanguageTag().uppercase(),
-//                        style = PokemonGB,
-//                        color = BlackTextColor.copy(alpha = 0.5F),
-//                        fontSize = 12.sp,
-//                        fontWeight = FontWeight.Bold,
-//                        modifier = Modifier
-//                            .padding(horizontal = 10.dp)
-//                    )
-//                }
+                if (option == SettingsOptionItem.LanguageSettingItem) {
+                    Text(
+                        text = LanguageRepository.getCurrentLanguage().toLanguageTag().uppercase(),
+                        color = Color.Black.copy(alpha = 0.5F),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                    )
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">MyStickerAlbum</string>
+    <string name="app_name" translatable="false">MyStickerAlbum</string>
 
+    <!-- Albums List Screen -->
     <string name="album_item_progress">Progress:</string>
     <string name="album_item_stickers">Stickers:</string>
     <string name="album_item_total">Total:</string>
@@ -10,7 +11,7 @@
     <string name="album_list_title">My Albums</string>
     <string name="album_list_empty">Your album list is empty.</string>
 
-
+    <!-- Create Edit Album Screen -->
     <string name="create_album_title">Create New Album</string>
     <string name="edit_album_title">Edit Album</string>
     <string name="album_name_label">Album Name</string>
@@ -27,17 +28,20 @@
     <string name="number_letter">NumberLetter</string>
     <string name="total_stickers_label">Total Stickers:</string>
 
+    <!-- Buttons -->
     <string name="create_button">Create</string>
     <string name="cancel_button">Cancel</string>
     <string name="confirm_button">Confirm</string>
     <string name="edit_button">Edit</string>
 
+    <!-- Error Text Field -->
     <string name="error_empty_text_field">Field must not be empty.</string>
     <string name="error_zero_text_field">Value must be greater than zero.</string>
     <string name="error_smaller_text_field">Value must be smaller than value \'to\'.</string>
     <string name="error_grater_text_field">Value must be greater than value \'from\'.</string>
-    <string name="error_album_name_exists">This album name already exists.</string>
+    <string name="error_album_name_exists">Album name already exists.</string>
 
+    <!-- Update Album Screen -->
     <string name="update_album_title">Update Album</string>
     <string name="sticker_title">Sticker</string>
     <string name="found_title">Found</string>
@@ -45,18 +49,22 @@
     <string name="repeated_stickers_title">Repeated Stickers</string>
     <string name="delete_album_title">Delete Album</string>
     <string name="confirm_delete_album_desc">Do you want to delete the album \'%1$s\'?</string>
-
     <string name="copy_missing_stickers">Missing Stickers</string>
     <string name="copy_repeated_stickers">Repeated Stickers</string>
     <string name="message_missing_stickers_copied">Missing stickers copied!</string>
     <string name="message_repeated_stickers_copied">Repeated stickers copied!</string>
 
+    <!-- Drawer Menu -->
     <string name="drawer_item_settings_title">Settings</string>
     <string name="drawer_item_about_title">About</string>
 
+    <!-- Settings Screen -->
     <string name="settings_language_title">Language</string>
+
+    <!-- Language Screen -->
     <string name="language_screen_title">Select Language</string>
 
+    <!-- Language Options -->
     <string name="english_language_option">English</string>
     <string name="portuguese_language_option">Brazilian Portuguese</string>
 
