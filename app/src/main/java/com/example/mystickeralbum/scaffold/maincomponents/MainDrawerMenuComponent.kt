@@ -1,11 +1,12 @@
-package com.example.mystickeralbum.model
+package com.example.mystickeralbum.scaffold.maincomponents
 
 import androidx.compose.material3.DrawerValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import com.example.mystickeralbum.navigation.MainNavComponent
 import com.example.mystickeralbum.navigation.interfaces.Screen
-import com.example.mystickeralbum.ui.stateholders.DrawerMenuUIState
+import com.example.mystickeralbum.scaffold.models.DrawerMenuItem
+import com.example.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

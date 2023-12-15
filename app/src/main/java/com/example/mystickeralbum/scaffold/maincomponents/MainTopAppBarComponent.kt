@@ -1,8 +1,8 @@
-package com.example.mystickeralbum.model
+package com.example.mystickeralbum.scaffold.maincomponents
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import com.example.mystickeralbum.ui.stateholders.TopAppBarUIState
+import com.example.mystickeralbum.scaffold.stateholders.TopAppBarUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

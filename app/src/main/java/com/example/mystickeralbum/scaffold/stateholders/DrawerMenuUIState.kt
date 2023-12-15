@@ -1,7 +1,7 @@
-package com.example.mystickeralbum.ui.stateholders
+package com.example.mystickeralbum.scaffold.stateholders
 
 import androidx.compose.material3.DrawerValue
-import com.example.mystickeralbum.model.DrawerMenuItem
+import com.example.mystickeralbum.scaffold.models.DrawerMenuItem
 
 data class DrawerMenuUIState(
     val itemSelected: DrawerMenuItem? = null,

@@ -1,4 +1,4 @@
-package com.example.mystickeralbum.ui.components
+package com.example.mystickeralbum.scaffold.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -27,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mystickeralbum.R
-import com.example.mystickeralbum.model.TopAppBarActionItem
-import com.example.mystickeralbum.ui.stateholders.TopAppBarUIState
+import com.example.mystickeralbum.scaffold.models.TopAppBarActionItem
+import com.example.mystickeralbum.scaffold.stateholders.TopAppBarUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

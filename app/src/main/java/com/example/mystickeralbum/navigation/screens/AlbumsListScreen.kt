@@ -5,11 +5,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.example.mystickeralbum.model.FABComponent
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.navigation.interfaces.Screen
-import com.example.mystickeralbum.model.TopAppBarActionItem
-import com.example.mystickeralbum.model.TopAppBarComponent
+import com.example.mystickeralbum.scaffold.models.FABComponent
+import com.example.mystickeralbum.scaffold.models.TopAppBarActionItem
+import com.example.mystickeralbum.scaffold.models.TopAppBarComponent
 import com.example.mystickeralbum.ui.screens.AlbumsListUIScreen
 import com.example.mystickeralbum.ui.viewmodels.AlbumsListViewModel
 

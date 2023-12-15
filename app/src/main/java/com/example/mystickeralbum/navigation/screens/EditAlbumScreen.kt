@@ -8,11 +8,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.mystickeralbum.R
-import com.example.mystickeralbum.model.FABComponent
-import com.example.mystickeralbum.model.TopAppBarActionItem
-import com.example.mystickeralbum.model.TopAppBarComponent
 import com.example.mystickeralbum.navigation.MainNavComponent
 import com.example.mystickeralbum.navigation.interfaces.Screen
+import com.example.mystickeralbum.scaffold.models.FABComponent
+import com.example.mystickeralbum.scaffold.models.TopAppBarActionItem
+import com.example.mystickeralbum.scaffold.models.TopAppBarComponent
 import com.example.mystickeralbum.ui.screens.CreateEditAlbumUIScreen
 import com.example.mystickeralbum.ui.viewmodels.CreateEditAlbumViewModel
 

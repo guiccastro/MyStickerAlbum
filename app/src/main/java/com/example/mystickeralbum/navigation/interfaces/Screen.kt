@@ -1,7 +1,7 @@
 package com.example.mystickeralbum.navigation.interfaces
 
-import com.example.mystickeralbum.model.FABComponent
-import com.example.mystickeralbum.model.TopAppBarComponent
+import com.example.mystickeralbum.scaffold.models.FABComponent
+import com.example.mystickeralbum.scaffold.models.TopAppBarComponent
 
 interface Screen : NavigationComponent {
 

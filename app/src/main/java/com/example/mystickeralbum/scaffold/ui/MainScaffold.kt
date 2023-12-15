@@ -1,4 +1,4 @@
-package com.example.mystickeralbum.ui.components
+package com.example.mystickeralbum.scaffold.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,13 +11,13 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.example.mystickeralbum.model.MainTopAppBarComponent
-import com.example.mystickeralbum.ui.stateholders.TopAppBarUIState
-import com.example.mystickeralbum.model.MainDrawerMenuComponent
-import com.example.mystickeralbum.model.MainDrawerMenuComponent.changeDrawerState
-import com.example.mystickeralbum.model.MainFABComponent
-import com.example.mystickeralbum.ui.stateholders.DrawerMenuUIState
-import com.example.mystickeralbum.ui.stateholders.FabUIState
+import com.example.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
+import com.example.mystickeralbum.scaffold.stateholders.FabUIState
+import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent
+import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent.changeDrawerState
+import com.example.mystickeralbum.scaffold.maincomponents.MainFABComponent
+import com.example.mystickeralbum.scaffold.maincomponents.MainTopAppBarComponent
+import com.example.mystickeralbum.scaffold.stateholders.TopAppBarUIState
 import kotlinx.coroutines.launch
 
 @Composable

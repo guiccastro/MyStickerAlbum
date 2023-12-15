@@ -1,7 +1,6 @@
-package com.example.mystickeralbum.model
+package com.example.mystickeralbum.scaffold.models
 
 import androidx.annotation.StringRes
-import com.example.mystickeralbum.model.TopAppBarActionItem
 
 interface TopAppBarComponent {
 

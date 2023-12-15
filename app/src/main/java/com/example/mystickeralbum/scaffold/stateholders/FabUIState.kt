@@ -1,4 +1,4 @@
-package com.example.mystickeralbum.ui.stateholders
+package com.example.mystickeralbum.scaffold.stateholders
 
 import androidx.annotation.DrawableRes
 import com.example.mystickeralbum.R
