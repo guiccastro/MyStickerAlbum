@@ -16,8 +16,6 @@ object MainDrawerMenuComponent {
     private var drawerMenuState: MutableStateFlow<DrawerMenuUIState> =
         MutableStateFlow(DrawerMenuUIState())
 
-    val drawerItems: List<DrawerMenuItem> = DrawerMenuItem.values().toList()
-
     @Composable
     fun drawerMenuState(): DrawerMenuUIState {
         return drawerMenuState.asStateFlow().collectAsState().value
@@ -38,7 +36,7 @@ object MainDrawerMenuComponent {
 
     fun findItemByScreen(screen: Screen?): DrawerMenuItem? {
         if (screen == null) return null
-        return drawerItems.find { it.screen == screen }
+        return DrawerMenuItem.values().find { it.screen == screen }
     }
 
     fun changeDrawerState(drawerValue: DrawerValue? = null) {

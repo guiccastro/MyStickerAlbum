@@ -25,7 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -93,7 +93,7 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
     ) {
         AlbumView(state.album)
         CopyStickersButtons(state)
-        HorizontalDivider(
+        Divider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 2.dp,
             color = Color.Gray

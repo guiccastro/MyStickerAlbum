@@ -2,14 +2,15 @@ package com.example.mystickeralbum.scaffold.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -27,15 +28,16 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mystickeralbum.BuildConfig
 import com.example.mystickeralbum.R
+import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent.onClickDrawerMenuItem
 import com.example.mystickeralbum.scaffold.models.DrawerMenuItem
 import com.example.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
-import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent
-import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent.onClickDrawerMenuItem
 import com.example.mystickeralbum.scaffold.stateholders.TopAppBarUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
@@ -48,7 +50,8 @@ fun DrawerContent(state: DrawerMenuUIState) {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -56,6 +59,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
+                    .padding(top = 10.dp)
             )
 
             Text(
@@ -63,13 +67,15 @@ fun DrawerContent(state: DrawerMenuUIState) {
                 fontWeight = FontWeight.SemiBold
             )
 
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
                 thickness = 2.dp,
                 color = Color.White
             )
 
-            MainDrawerMenuComponent.drawerItems.forEach { drawerItem ->
+            DrawerMenuItem.values().forEach { drawerItem ->
                 NavigationDrawerItem(
                     label = {
                         Text(
@@ -101,6 +107,16 @@ fun DrawerContent(state: DrawerMenuUIState) {
                 )
             }
 
+            Spacer(modifier = Modifier.weight(1F))
+
+            Text(
+                text = "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontSize = 10.sp
+            )
         }
     }
 }
