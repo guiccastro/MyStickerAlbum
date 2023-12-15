@@ -16,13 +16,15 @@ import com.example.mystickeralbum.navigation.interfaces.Screen
 import com.example.mystickeralbum.navigation.screens.AlbumsListScreen
 import com.example.mystickeralbum.navigation.screens.CreateAlbumScreen
 import com.example.mystickeralbum.navigation.screens.EditAlbumScreen
+import com.example.mystickeralbum.navigation.screens.LanguageScreen
+import com.example.mystickeralbum.navigation.screens.SettingsScreen
 import com.example.mystickeralbum.navigation.screens.UpdateAlbumScreen
-import com.example.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
-import com.example.mystickeralbum.scaffold.stateholders.FabUIState
 import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent
 import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent.updateDrawerMenuState
 import com.example.mystickeralbum.scaffold.maincomponents.MainFABComponent.updateFabState
 import com.example.mystickeralbum.scaffold.maincomponents.MainTopAppBarComponent.updateTopAppBarState
+import com.example.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
+import com.example.mystickeralbum.scaffold.stateholders.FabUIState
 import com.example.mystickeralbum.scaffold.stateholders.TopAppBarUIState
 
 class MainNavComponent private constructor() {
@@ -43,7 +45,9 @@ class MainNavComponent private constructor() {
             AlbumsListScreen,
             CreateAlbumScreen,
             EditAlbumScreen,
-            UpdateAlbumScreen
+            UpdateAlbumScreen,
+            SettingsScreen,
+            LanguageScreen
         )
 
         val navController: NavHostController get() = getInstance()._navController

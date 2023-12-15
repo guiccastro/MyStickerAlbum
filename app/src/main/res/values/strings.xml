@@ -54,4 +54,10 @@
     <string name="drawer_item_settings_title">Settings</string>
     <string name="drawer_item_about_title">About</string>
 
+    <string name="settings_language_title">Language</string>
+    <string name="language_screen_title">Select Language</string>
+
+    <string name="english_language_option">English</string>
+    <string name="portuguese_language_option">Brazilian Portuguese</string>
+
 </resources>
