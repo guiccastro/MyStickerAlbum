@@ -1,53 +1,61 @@
-package com.example.mystickeralbum.viewmodels
+package com.example.mystickeralbum.ui.viewmodels
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
+import com.example.mystickeralbum.navigation.screens.CreateEditAlbumScreen
+import com.example.mystickeralbum.navigation.MainNavComponent.Companion.albumNameArgument
+import com.example.mystickeralbum.navigation.MainNavComponent.Companion.navController
 import com.example.mystickeralbum.R
-import com.example.mystickeralbum.activities.CreateEditAlbumActivity
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
-import com.example.mystickeralbum.stateholders.UpdateAlbumUIState
+import com.example.mystickeralbum.ui.stateholders.UpdateAlbumUIState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class UpdateAlbumViewModel : ViewModel() {
+@HiltViewModel
+class UpdateAlbumViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UpdateAlbumUIState> =
         MutableStateFlow(UpdateAlbumUIState())
     val uiState get() = _uiState.asStateFlow()
 
-    companion object {
-        const val ALBUM_NAME_EXTRA = "ALBUM_NAME"
-        val REQUEST_CODE = this.hashCode()
-    }
-
     init {
         _uiState.update {
             it.copy(
-                onReceivedAlbumName = ::onReceiveAlbumName,
                 onStickerClick = ::onStickerClick,
                 onCloseStickerDialog = ::onCloseDialog,
                 onFoundNotFoundClick = ::onFoundNotFoundClick,
                 onChangeRepeatedStickerClick = ::onChangeRepeatedStickerClick,
-                onDeleteAlbumClick = ::onDeleteAlbumClick,
                 onCloseDeleteAlbumDialog = ::onCloseDeleteAlbumDialog,
                 onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog,
-                onEditAlbumClick = ::onEditAlbumClick,
                 onCopyMissingStickersClick = ::onCopyMissingStickersClick,
                 onCopyRepeatedStickersClick = ::onCopyRepeatedStickersClick
             )
+        }
+
+        CoroutineScope(IO).launch {
+            savedStateHandle
+                .getStateFlow<String?>(albumNameArgument, null)
+                .filterNotNull()
+                .collect { albumName ->
+                    onReceiveAlbumName(albumName)
+                }
         }
     }
 
@@ -126,7 +134,7 @@ class UpdateAlbumViewModel : ViewModel() {
         }
     }
 
-    private fun onDeleteAlbumClick() {
+    fun onDeleteAlbumClick() {
         _uiState.update {
             it.copy(
                 showDeleteAlbumDialog = true
@@ -142,49 +150,39 @@ class UpdateAlbumViewModel : ViewModel() {
         }
     }
 
-    private fun onConfirmDeleteAlbumDialog(activity: Activity) {
+    private fun onConfirmDeleteAlbumDialog() {
         viewModelScope.launch {
             withContext(IO) {
                 AlbumsRepository.removeAlbum(_uiState.value.album)
             }
 
-            activity.finish()
+            navController.popBackStack()
         }
     }
 
-    private fun onEditAlbumClick(activity: Activity) {
-        activity.apply {
-            val intent = Intent(this, CreateEditAlbumActivity::class.java)
-            intent.putExtra(CreateEditAlbumViewModel.ALBUM_NAME_EXTRA, _uiState.value.album.name)
-            startActivityForResult(intent, REQUEST_CODE)
-        }
-    }
-
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                val albumName = data?.getStringExtra(ALBUM_NAME_EXTRA) ?: ""
-                Log.println(Log.ASSERT, "albumName", albumName)
-                onReceiveAlbumName(albumName)
+    fun onEditAlbumClick() {
+        navController.apply {
+            CreateEditAlbumScreen.apply {
+                navigateToItself(albumName = _uiState.value.album.name)
             }
         }
     }
 
-    private fun copyTextToClipboard(activity: Activity, text: String) {
-        val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    private fun copyTextToClipboard(context: Context, text: String) {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Label", text)
         clipboard.setPrimaryClip(clip)
     }
 
-    private fun onCopyMissingStickersClick(activity: Activity) {
-        copyTextToClipboard(activity, getMissingStickersText())
-        Toast.makeText(activity, R.string.message_missing_stickers_copied, Toast.LENGTH_SHORT)
+    private fun onCopyMissingStickersClick(context: Context) {
+        copyTextToClipboard(context, getMissingStickersText())
+        Toast.makeText(context, R.string.message_missing_stickers_copied, Toast.LENGTH_SHORT)
             .show()
     }
 
-    private fun onCopyRepeatedStickersClick(activity: Activity) {
-        copyTextToClipboard(activity, getRepeatedStickersText())
-        Toast.makeText(activity, R.string.message_repeated_stickers_copied, Toast.LENGTH_SHORT)
+    private fun onCopyRepeatedStickersClick(context: Context) {
+        copyTextToClipboard(context, getRepeatedStickersText())
+        Toast.makeText(context, R.string.message_repeated_stickers_copied, Toast.LENGTH_SHORT)
             .show()
     }
 

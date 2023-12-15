@@ -1,4 +1,4 @@
-package com.example.mystickeralbum.ui
+package com.example.mystickeralbum.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -27,20 +27,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mystickeralbum.R
-import com.example.mystickeralbum.model.TopBarItem
-import com.example.mystickeralbum.model.TopBarState
+import com.example.mystickeralbum.model.TopAppBarActionItem
+import com.example.mystickeralbum.ui.stateholders.TopAppBarUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    topBarState: TopBarState,
+    state: TopAppBarUIState = TopAppBarUIState(),
     onMenuClick: () -> Unit = {}
 ) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(id = topBarState.title),
+                text = stringResource(id = state.title),
                 fontSize = 24.sp,
                 modifier = Modifier
                     .padding(horizontal = 10.dp),
@@ -49,11 +49,11 @@ fun TopBar(
                 fontWeight = FontWeight.SemiBold
             )
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary
         ),
         navigationIcon = {
-            if (topBarState.onReturn != null) {
+            if (state.hasReturn) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_long_arrow_right),
                     contentDescription = null,
@@ -61,10 +61,10 @@ fun TopBar(
                         .rotate(180F)
                         .size(32.dp)
                         .clip(CircleShape)
-                        .clickable { topBarState.onReturn.invoke() },
+                        .clickable { state.onClickReturn() },
                     colorFilter = ColorFilter.tint(Color.White)
                 )
-            } else {
+            } else if (state.hasMenu) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_menu),
                     contentDescription = null,
@@ -78,9 +78,9 @@ fun TopBar(
             }
         },
         actions = {
-            topBarState.itemsList.forEach {
+            state.actionItems.forEach {
                 Image(
-                    painter = painterResource(id = it.image),
+                    painter = painterResource(id = it.icon),
                     contentDescription = null,
                     modifier = Modifier
                         .size(40.dp)
@@ -94,7 +94,6 @@ fun TopBar(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showSystemUi = true)
 @Composable
 fun TopBarPreview() {
@@ -102,11 +101,11 @@ fun TopBarPreview() {
         Scaffold(
             topBar = {
                 TopBar(
-                    topBarState = TopBarState(
+                    state = TopAppBarUIState(
                         title = R.string.album_list_title,
-                        itemsList = listOf(
-                            TopBarItem(R.drawable.ic_delete) {},
-                            TopBarItem(R.drawable.ic_edit) {}
+                        actionItems = listOf(
+                            TopAppBarActionItem(R.drawable.ic_delete) {},
+                            TopAppBarActionItem(R.drawable.ic_edit) {}
                         )
                     )
                 )

@@ -1,11 +1,14 @@
-package com.example.mystickeralbum.viewmodels
+package com.example.mystickeralbum.ui.viewmodels
 
-import android.app.Activity
-import android.content.Intent
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystickeralbum.AlbumsRepository
+import com.example.mystickeralbum.navigation.MainNavComponent
+import com.example.mystickeralbum.navigation.MainNavComponent.Companion.getSingleTopWithPopUpTo
+import com.example.mystickeralbum.navigation.MainNavComponent.Companion.navController
 import com.example.mystickeralbum.R
+import com.example.mystickeralbum.navigation.screens.UpdateAlbumScreen
 import com.example.mystickeralbum.extensions.onlyLetters
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
@@ -13,15 +16,22 @@ import com.example.mystickeralbum.model.SpecialStickerType
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.model.TextFieldValues
-import com.example.mystickeralbum.stateholders.CreateEditAlbumUIState
+import com.example.mystickeralbum.ui.stateholders.CreateEditAlbumUIState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CreateEditAlbumViewModel : ViewModel() {
+@HiltViewModel
+class CreateEditAlbumViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<CreateEditAlbumUIState> =
         MutableStateFlow(CreateEditAlbumUIState())
@@ -43,13 +53,18 @@ class CreateEditAlbumViewModel : ViewModel() {
                 specialStickersNumberFromTextField = TextFieldValues(onTextChange = ::onSpecialStickersNumberFromChange),
                 specialStickersNumberToTextField = TextFieldValues(onTextChange = ::onSpecialStickersNumberToChange),
                 onCreateEditClick = ::onCreateEditClick,
-                onReceivedAlbumName = ::onReceivedAlbumName
+                onCancelClick = ::onCancelClick
             )
         }
-    }
 
-    companion object {
-        const val ALBUM_NAME_EXTRA = "ALBUM_NAME"
+        CoroutineScope(IO).launch {
+            savedStateHandle
+                .getStateFlow<String?>(MainNavComponent.albumNameArgument, null)
+                .filterNotNull()
+                .collect { albumName ->
+                    onReceivedAlbumName(albumName)
+                }
+        }
     }
 
     private fun onAlbumNameChange(name: String) {
@@ -281,7 +296,7 @@ class CreateEditAlbumViewModel : ViewModel() {
         return errorFrom || errorTo
     }
 
-    private fun onCreateEditClick(activity: Activity) {
+    private fun onCreateEditClick() {
         viewModelScope.launch {
             if (!hasError()) {
                 val album = if (_uiState.value.isCreateAlbum) {
@@ -349,16 +364,26 @@ class CreateEditAlbumViewModel : ViewModel() {
                         AlbumsRepository.updateAlbum(album, oldAlbum)
                     }
 
-                    activity.apply {
-                        val returnIntent = Intent()
-                        returnIntent.putExtra(UpdateAlbumViewModel.ALBUM_NAME_EXTRA, album.name)
-                        setResult(Activity.RESULT_OK, returnIntent)
-                        finish()
+                    if (_uiState.value.isCreateAlbum) {
+                        navController.popBackStack()
+                    } else {
+                        navController.apply {
+                            UpdateAlbumScreen.apply {
+                                navigateToItself(
+                                    albumName = album.name,
+                                    navOptions = getSingleTopWithPopUpTo(routeScreen, true)
+                                )
+                            }
+                        }
                     }
                 }
             }
 
         }
+    }
+
+    private fun onCancelClick() {
+        navController.popBackStack()
     }
 
     private fun createStickersList(): StickersList {

@@ -16,7 +16,7 @@
         android:name=".MyStickerAlbumApplication"
         tools:targetApi="31">
         <activity
-            android:name=".activities.AlbumsActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyStickerAlbum">
             <intent-filter>
@@ -24,18 +24,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".activities.CreateEditAlbumActivity"
-            android:exported="true"
-            android:theme="@style/Theme.MyStickerAlbum">
-        </activity>
-
-        <activity
-            android:name=".activities.UpdateAlbumActivity"
-            android:exported="true"
-            android:theme="@style/Theme.MyStickerAlbum">
         </activity>
     </application>
 

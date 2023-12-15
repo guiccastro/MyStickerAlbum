@@ -1,6 +1,5 @@
-package com.example.mystickeralbum.ui
+package com.example.mystickeralbum.ui.components
 
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,8 +37,7 @@ import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 @Composable
 fun AlbumCard(
     album: Album,
-    activity: Activity? = null,
-    onClick: ((Activity, Album) -> Unit)? = null,
+    onClick: ((Album) -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Surface(
@@ -50,8 +48,8 @@ fun AlbumCard(
             .clickable(
                 enabled = onClick != null
             ) {
-                activity?.let {
-                    onClick?.invoke(it, album)
+                if (onClick != null) {
+                    onClick(album)
                 }
             },
         shape = RoundedCornerShape(10.dp),

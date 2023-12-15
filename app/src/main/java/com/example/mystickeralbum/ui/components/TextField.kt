@@ -1,4 +1,4 @@
-package com.example.mystickeralbum.ui
+package com.example.mystickeralbum.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

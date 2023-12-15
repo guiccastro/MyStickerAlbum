@@ -1,4 +1,4 @@
-package com.example.mystickeralbum
+package com.example.mystickeralbum.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -31,9 +31,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mystickeralbum.MainDrawerMenuComponent.onClickDrawerMenuItem
-import com.example.mystickeralbum.model.TopBarState
-import com.example.mystickeralbum.ui.TopBar
+import com.example.mystickeralbum.model.DrawerMenuItem
+import com.example.mystickeralbum.ui.stateholders.DrawerMenuUIState
+import com.example.mystickeralbum.model.MainDrawerMenuComponent
+import com.example.mystickeralbum.model.MainDrawerMenuComponent.onClickDrawerMenuItem
+import com.example.mystickeralbum.R
+import com.example.mystickeralbum.ui.stateholders.TopAppBarUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @Composable
@@ -123,7 +126,7 @@ fun DrawerContentPreview() {
             Scaffold(
                 topBar = {
                     TopBar(
-                        topBarState = TopBarState(title = R.string.album_list_title),
+                        state = TopAppBarUIState(title = R.string.album_list_title),
                     )
                 }
             ) {

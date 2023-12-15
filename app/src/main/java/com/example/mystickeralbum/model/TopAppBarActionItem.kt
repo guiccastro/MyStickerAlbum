@@ -2,7 +2,7 @@ package com.example.mystickeralbum.model
 
 import androidx.annotation.DrawableRes
 
-data class TopBarItem(
-    @DrawableRes val image: Int,
+data class TopAppBarActionItem(
+    @DrawableRes val icon: Int,
     val onClick: () -> Unit
 )
