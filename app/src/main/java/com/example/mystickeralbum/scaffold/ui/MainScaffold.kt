@@ -11,12 +11,12 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.example.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
-import com.example.mystickeralbum.scaffold.stateholders.FabUIState
 import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent
 import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent.changeDrawerState
 import com.example.mystickeralbum.scaffold.maincomponents.MainFABComponent
 import com.example.mystickeralbum.scaffold.maincomponents.MainTopAppBarComponent
+import com.example.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
+import com.example.mystickeralbum.scaffold.stateholders.FabUIState
 import com.example.mystickeralbum.scaffold.stateholders.TopAppBarUIState
 import kotlinx.coroutines.launch
 
@@ -48,6 +48,7 @@ fun MainScaffold(
         drawerContent = {
             DrawerContent(drawerMenuState)
         },
+        gesturesEnabled = topAppBarState.hasMenu
     ) {
         Scaffold(
             floatingActionButton = { FabApp(fabState) },

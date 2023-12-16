@@ -137,7 +137,7 @@ fun DrawerContentPreview() {
                         state = DrawerMenuUIState(itemSelected = DrawerMenuItem.SettingsDrawerMenuItem)
                     )
                 }
-            },
+            }
         ) {
             Scaffold(
                 topBar = {
