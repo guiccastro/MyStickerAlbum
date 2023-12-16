@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mystickeralbum.LanguageRepository
 import com.example.mystickeralbum.R
-import com.example.mystickeralbum.extensions.bottomBorder
-import com.example.mystickeralbum.extensions.topBorder
 import com.example.mystickeralbum.model.LanguageOption
 import com.example.mystickeralbum.scaffold.ui.MainScaffold
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
@@ -43,8 +41,6 @@ fun LanguageUIScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .topBorder((0.5).dp, Color.Black)
-                    .bottomBorder((0.5).dp, Color.Black)
                     .shadow(4.dp)
                     .clickable {
                         LanguageRepository.changeLanguage(context, option.localeOption.locale)
