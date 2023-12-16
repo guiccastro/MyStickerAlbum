@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,7 +47,6 @@ fun AlbumCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
-            .padding(horizontal = 10.dp, vertical = 10.dp)
             .clickable(
                 enabled = onClick != null
             ) {
@@ -89,7 +91,8 @@ fun AlbumCard(
                             )
                             .align(Alignment.BottomStart)
                             .padding(horizontal = 10.dp),
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
@@ -104,13 +107,6 @@ fun AlbumProgress(album: Album) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Text(
-            text = stringResource(id = R.string.album_item_progress),
-            fontSize = 14.sp,
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
-            overflow = TextOverflow.Ellipsis
-        )
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,7 +133,8 @@ fun AlbumProgress(album: Album) {
                         .fillMaxSize()
                         .align(Alignment.Center),
                     overflow = TextOverflow.Ellipsis,
-                    color = Color.Black
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
@@ -147,93 +144,80 @@ fun AlbumProgress(album: Album) {
 @Composable
 fun AlbumStickersInfo(album: Album) {
     Column {
-        Text(
-            text = stringResource(id = R.string.album_item_stickers),
-            fontSize = 12.sp,
-            overflow = TextOverflow.Ellipsis
-        )
-
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Row {
-                Text(
-                    text = stringResource(id = R.string.album_item_total),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically),
-                    overflow = TextOverflow.Ellipsis
-                )
+            StickerInfoComponent(
+                title = stringResource(id = R.string.album_item_total).uppercase(),
+                value = album.getTotalStickers().toString()
+            )
 
-                Text(
-                    text = album.getTotalStickers().toString(),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(horizontal = 4.dp),
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            Spacer(
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(1.dp)
+                    .padding(vertical = 4.dp)
+                    .background(Color.White),
+            )
 
-            Row {
-                Text(
-                    text = stringResource(id = R.string.album_item_found),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically),
-                    overflow = TextOverflow.Ellipsis
-                )
+            StickerInfoComponent(
+                title = stringResource(id = R.string.album_item_found).uppercase(),
+                value = album.getFound().size.toString()
+            )
 
-                Text(
-                    text = album.getFound().size.toString(),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(horizontal = 4.dp),
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            Spacer(
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(1.dp)
+                    .padding(vertical = 4.dp)
+                    .background(Color.White),
+            )
 
-            Row {
-                Text(
-                    text = stringResource(id = R.string.album_item_missing),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically),
-                    overflow = TextOverflow.Ellipsis
-                )
+            StickerInfoComponent(
+                title = stringResource(id = R.string.album_item_missing).uppercase(),
+                value = album.getMissing().size.toString()
+            )
 
-                Text(
-                    text = album.getMissing().size.toString(),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(horizontal = 4.dp),
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            Spacer(
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(1.dp)
+                    .padding(vertical = 4.dp)
+                    .background(Color.White),
+            )
 
-            Row {
-                Text(
-                    text = stringResource(id = R.string.album_item_repeated),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically),
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Text(
-                    text = album.getRepeated().size.toString(),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(horizontal = 4.dp),
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            StickerInfoComponent(
+                title = stringResource(id = R.string.album_item_repeated).uppercase(),
+                value = album.getRepeated().size.toString()
+            )
         }
+    }
+}
+
+@Composable
+fun StickerInfoComponent(title: String, value: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+    ) {
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            modifier = Modifier,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Text(
+            text = value,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .padding(start = 2.dp, end = 4.dp),
+            overflow = TextOverflow.Ellipsis,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 

@@ -1,5 +1,7 @@
 package com.example.mystickeralbum.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,9 +22,9 @@ import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.Sticker
 import com.example.mystickeralbum.model.StickersList
-import com.example.mystickeralbum.ui.stateholders.AlbumsListUIState
 import com.example.mystickeralbum.ui.components.AlbumCard
 import com.example.mystickeralbum.ui.components.AlbumStickerInfo
+import com.example.mystickeralbum.ui.stateholders.AlbumsListUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.ui.viewmodels.AlbumsListViewModel
 
@@ -48,7 +50,10 @@ fun AlbumsListUIScreen(state: AlbumsListUIState) {
             textAlign = TextAlign.Center
         )
     } else {
-        LazyColumn {
+        LazyColumn(
+            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
             items(state.albumsList) {
                 AlbumItem(
                     album = it,
