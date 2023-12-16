@@ -1,6 +1,7 @@
 package com.example.mystickeralbum.scaffold.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -39,6 +42,7 @@ import com.example.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponen
 import com.example.mystickeralbum.scaffold.models.DrawerMenuItem
 import com.example.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
 import com.example.mystickeralbum.scaffold.stateholders.TopAppBarUIState
+import com.example.mystickeralbum.ui.theme.Main1
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @Composable
@@ -55,11 +59,22 @@ fun DrawerContent(state: DrawerMenuUIState) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_app),
+                painter = painterResource(id = R.drawable.ic_app_transparent),
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
                     .padding(top = 10.dp)
+                    .background(
+                        Brush.radialGradient(
+                            listOf(
+                                Main1.copy(alpha = 0.5F),
+                                Main1.copy(alpha = 0.5F),
+                                Main1.copy(alpha = 0.5F),
+                                Color.Transparent
+                            )
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    )
             )
 
             Text(
