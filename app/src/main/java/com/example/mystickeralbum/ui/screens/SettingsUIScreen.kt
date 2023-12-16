@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +33,7 @@ import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 fun SettingsUIScreen() {
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5F))
+            .background(MaterialTheme.colorScheme.tertiary)
             .padding(vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -64,7 +62,7 @@ fun SettingsUIScreen() {
                 Image(
                     painter = painterResource(id = option.icon),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color.White),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                     modifier = Modifier
                         .padding(end = 10.dp)
                         .size(28.dp)
@@ -72,7 +70,7 @@ fun SettingsUIScreen() {
 
                 Text(
                     text = stringResource(id = option.title),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontSize = 18.sp,
                     modifier = Modifier
                         .weight(1F)
@@ -81,7 +79,7 @@ fun SettingsUIScreen() {
                 if (option == SettingsOptionItem.LanguageSettingItem) {
                     Text(
                         text = LanguageRepository.getCurrentLanguage().toLanguageTag().uppercase(),
-                        color = Color.White.copy(alpha = 0.7F),
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7F),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -92,7 +90,7 @@ fun SettingsUIScreen() {
                 Image(
                     painter = painterResource(id = R.drawable.ic_short_arrow_right),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color.White),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .size(28.dp)
@@ -107,9 +105,7 @@ fun SettingsUIScreen() {
 fun SettingsScreenPreview() {
     MyStickerAlbumTheme {
         MainScaffold {
-            Surface {
-                SettingsUIScreen()
-            }
+            SettingsUIScreen()
         }
     }
 }

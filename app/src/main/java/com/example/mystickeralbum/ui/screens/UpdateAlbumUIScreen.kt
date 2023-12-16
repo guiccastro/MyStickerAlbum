@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,6 +57,7 @@ import com.example.mystickeralbum.ui.components.AlbumStickerInfo
 import com.example.mystickeralbum.ui.components.SimpleDialog
 import com.example.mystickeralbum.ui.components.TitleSection
 import com.example.mystickeralbum.ui.stateholders.UpdateAlbumUIState
+import com.example.mystickeralbum.ui.theme.BorderColor
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.ui.viewmodels.UpdateAlbumViewModel
 
@@ -105,7 +105,7 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
         item {
             TitleSection(
                 title = stringResource(id = R.string.sticker_grid_title),
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -156,7 +156,7 @@ fun RowScope.StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
             .aspectRatio(1F)
             .shadow(4.dp, RoundedCornerShape(8.dp), clip = false)
             .background(
-                if (sticker.found) Color.DarkGray else Color.LightGray,
+                if (sticker.found) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.primaryContainer,
                 RoundedCornerShape(8.dp)
             )
             .clip(RoundedCornerShape(8.dp))
@@ -168,7 +168,8 @@ fun RowScope.StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
             modifier = Modifier
                 .align(Alignment.Center),
             textDecoration = if (sticker.found) TextDecoration.LineThrough else null,
-            fontWeight = if (sticker.found) FontWeight.Normal else FontWeight.SemiBold
+            fontWeight = if (sticker.found) FontWeight.Normal else FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         )
 
         if (sticker.found) {
@@ -178,7 +179,7 @@ fun RowScope.StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
                     .aspectRatio(1F)
                     .align(Alignment.TopEnd)
                     .background(
-                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary,
                         RoundedCornerShape(
                             topStart = 0.dp,
                             topEnd = 8.dp,
@@ -190,7 +191,7 @@ fun RowScope.StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
                 Text(
                     text = sticker.repeated.toString(),
                     fontSize = 12.sp,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier
                         .align(Alignment.Center),
                     fontWeight = FontWeight.SemiBold
@@ -208,7 +209,7 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
         Column(
             modifier = Modifier
                 .width(200.dp)
-                .background(Color.LightGray, RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp))
                 .padding(horizontal = 20.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -236,15 +237,16 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                             .offset(y = (-4).dp)
                             .border(
                                 1.dp,
-                                Color.Black,
+                                BorderColor,
                                 RoundedCornerShape(4.dp)
                             )
                             .background(
-                                Color.Gray, RoundedCornerShape(4.dp)
+                                MaterialTheme.colorScheme.secondaryContainer,
+                                RoundedCornerShape(4.dp)
                             )
                             .padding(horizontal = 4.dp, vertical = 2.dp),
                         textAlign = TextAlign.Center,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
                         letterSpacing = (0.1).sp
                     )
                 }
@@ -254,7 +256,7 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                 Button(
                     onClick = { state.onFoundNotFoundClick(true) },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Gray
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
                     ),
                     shape = RoundedCornerShape(4.dp),
                     elevation = ButtonDefaults.buttonElevation(
@@ -265,14 +267,15 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                 ) {
                     Text(
                         text = stringResource(id = R.string.found_title),
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
             } else {
                 Button(
                     onClick = { state.onFoundNotFoundClick(false) },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Gray
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
                     ),
                     shape = RoundedCornerShape(4.dp),
                     elevation = ButtonDefaults.buttonElevation(
@@ -283,7 +286,8 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                 ) {
                     Text(
                         text = stringResource(id = R.string.not_found_title),
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
 
@@ -298,7 +302,8 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         letterSpacing = (0.1).sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
 
                     Row(
@@ -311,12 +316,15 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_remove),
                             contentDescription = null,
-                            colorFilter = ColorFilter.tint(Color.White),
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer),
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .aspectRatio(1F)
                                 .shadow(4.dp, CircleShape)
-                                .background(Color.Gray, CircleShape)
+                                .background(
+                                    MaterialTheme.colorScheme.secondaryContainer,
+                                    CircleShape
+                                )
                                 .clip(CircleShape)
                                 .clickable { state.onChangeRepeatedStickerClick(-1) }
                                 .padding(4.dp)
@@ -332,19 +340,23 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                                 fontSize = 14.sp,
                                 modifier = Modifier
                                     .align(Alignment.Center),
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
 
                         Image(
                             painter = painterResource(id = R.drawable.ic_add),
                             contentDescription = null,
-                            colorFilter = ColorFilter.tint(Color.White),
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer),
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .aspectRatio(1F)
                                 .shadow(4.dp, CircleShape)
-                                .background(Color.Gray, CircleShape)
+                                .background(
+                                    MaterialTheme.colorScheme.secondaryContainer,
+                                    CircleShape
+                                )
                                 .clip(CircleShape)
                                 .clickable { state.onChangeRepeatedStickerClick(1) }
                                 .padding(4.dp)
@@ -368,7 +380,7 @@ fun CopyStickersButtons(state: UpdateAlbumUIState) {
             modifier = Modifier
                 .weight(1F)
                 .shadow(4.dp, RoundedCornerShape(4.dp))
-                .background(Color.Gray, RoundedCornerShape(4.dp))
+                .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(4.dp))
                 .clip(RoundedCornerShape(4.dp))
                 .clickable {
                     state.onCopyMissingStickersClick(context)
@@ -380,13 +392,13 @@ fun CopyStickersButtons(state: UpdateAlbumUIState) {
             Image(
                 painter = painterResource(id = R.drawable.ic_copy),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(Color.White)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer)
             )
 
             Text(
                 text = stringResource(id = R.string.copy_missing_stickers),
                 textAlign = TextAlign.Center,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -397,7 +409,7 @@ fun CopyStickersButtons(state: UpdateAlbumUIState) {
             modifier = Modifier
                 .weight(1F)
                 .shadow(4.dp, RoundedCornerShape(4.dp))
-                .background(Color.Gray, RoundedCornerShape(4.dp))
+                .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(4.dp))
                 .clip(RoundedCornerShape(4.dp))
                 .clickable {
                     state.onCopyRepeatedStickersClick(context)
@@ -409,13 +421,13 @@ fun CopyStickersButtons(state: UpdateAlbumUIState) {
             Image(
                 painter = painterResource(id = R.drawable.ic_copy),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(Color.White)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer)
             )
 
             Text(
                 text = stringResource(id = R.string.copy_repeated_stickers),
                 textAlign = TextAlign.Center,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()

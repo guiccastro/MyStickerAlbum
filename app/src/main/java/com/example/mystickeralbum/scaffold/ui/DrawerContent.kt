@@ -64,7 +64,8 @@ fun DrawerContent(state: DrawerMenuUIState) {
 
             Text(
                 text = stringResource(id = R.string.app_name),
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onPrimary
             )
 
             Divider(
@@ -72,7 +73,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
                     .fillMaxWidth()
                     .padding(vertical = 20.dp),
                 thickness = 2.dp,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
 
             DrawerMenuItem.values().forEach { drawerItem ->
@@ -81,7 +82,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
                         Text(
                             text = stringResource(id = drawerItem.title),
                             fontSize = 14.sp,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
@@ -91,7 +92,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(vertical = 10.dp),
-                            colorFilter = ColorFilter.tint(Color.White)
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                         )
                     },
                     modifier = Modifier
@@ -101,7 +102,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
                         onClickDrawerMenuItem(drawerItem)
                     },
                     colors = NavigationDrawerItemDefaults.colors(
-                        selectedContainerColor = Color.White.copy(alpha = 0.2F),
+                        selectedContainerColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2F),
                         unselectedContainerColor = Color.Transparent
                     )
                 )
@@ -111,7 +112,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
 
             Text(
                 text = "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,

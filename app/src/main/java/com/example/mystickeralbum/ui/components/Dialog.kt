@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,7 +34,7 @@ fun SimpleDialog(
     Dialog(onDismissRequest = { negativeButton?.onClick?.invoke() }) {
         Column(
             modifier = Modifier
-                .background(Color.LightGray, RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
                 .padding(horizontal = 20.dp, vertical = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -63,7 +63,7 @@ fun SimpleDialog(
                         onClick = { negativeButton.onClick() },
                         shape = RoundedCornerShape(4.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Gray
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
                         )
                     ) {
                         Text(text = negativeButton.text)

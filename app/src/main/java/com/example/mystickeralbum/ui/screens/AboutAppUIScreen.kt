@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -34,7 +33,7 @@ fun AboutAppUIScreen() {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8F))
+            .background(MaterialTheme.colorScheme.tertiary)
             .padding(vertical = 20.dp, horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {
@@ -46,7 +45,7 @@ fun AboutAppUIScreen() {
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
                 letterSpacing = 2.sp,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onTertiary
             )
         }
 
@@ -58,7 +57,7 @@ fun AboutAppUIScreen() {
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
                 letterSpacing = 2.sp,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onTertiary
             )
         }
 
@@ -70,13 +69,14 @@ fun AboutAppUIScreen() {
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
                 letterSpacing = 2.sp,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onTertiary
             )
         }
 
         item {
             TitleSection(
-                title = stringResource(id = R.string.about_app_contact_title)
+                title = stringResource(id = R.string.about_app_contact_title),
+                color = MaterialTheme.colorScheme.onTertiary
             )
 
             Text(
@@ -86,7 +86,7 @@ fun AboutAppUIScreen() {
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
                 letterSpacing = 2.sp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onTertiary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp)
@@ -101,7 +101,7 @@ fun AboutAppUIScreen() {
                 Image(
                     painter = painterResource(id = R.drawable.ic_logo_linkedin),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color.White),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiary),
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(50.dp)

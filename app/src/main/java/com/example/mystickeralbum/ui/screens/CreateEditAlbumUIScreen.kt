@@ -58,7 +58,7 @@ fun CreateEditAlbumUIScreen(state: CreateEditAlbumUIState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .padding(horizontal = 10.dp, vertical = 10.dp)
     ) {
         Column(
             modifier = Modifier

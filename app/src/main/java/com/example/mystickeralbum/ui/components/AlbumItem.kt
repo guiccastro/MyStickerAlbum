@@ -54,8 +54,7 @@ fun AlbumCard(
                     onClick(album)
                 }
             },
-        shape = RoundedCornerShape(10.dp),
-        color = MaterialTheme.colorScheme.secondary
+        shape = RoundedCornerShape(10.dp)
     ) {
         Column(
             modifier = Modifier
@@ -81,7 +80,7 @@ fun AlbumCard(
                         fontSize = 20.sp,
                         modifier = Modifier
                             .background(
-                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary,
                                 RoundedCornerShape(
                                     topStart = 0.dp,
                                     topEnd = 10.dp,
@@ -122,7 +121,7 @@ fun AlbumProgress(album: Album) {
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth(album.getProgress())
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.7F))
+                        .background(MaterialTheme.colorScheme.secondary)
                 )
 
                 Text(
@@ -133,7 +132,6 @@ fun AlbumProgress(album: Album) {
                         .fillMaxSize()
                         .align(Alignment.Center),
                     overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
                     fontWeight = FontWeight.SemiBold
                 )
             }

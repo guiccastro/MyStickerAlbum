@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,7 +30,7 @@ import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 fun LanguageUIScreen() {
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5F))
+            .background(MaterialTheme.colorScheme.tertiary)
             .padding(vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -50,7 +49,7 @@ fun LanguageUIScreen() {
             ) {
                 Text(
                     text = stringResource(id = option.title),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontSize = 18.sp,
                     modifier = Modifier
                         .weight(1F)
@@ -60,7 +59,7 @@ fun LanguageUIScreen() {
                     Image(
                         painter = painterResource(id = R.drawable.ic_check),
                         contentDescription = null,
-                        colorFilter = ColorFilter.tint(Color.White)
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                     )
                 }
             }
