@@ -41,9 +41,9 @@ import androidx.compose.ui.zIndex
 import com.example.mystickeralbum.R
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.SpecialStickerType
-import com.example.mystickeralbum.ui.stateholders.CreateEditAlbumUIState
 import com.example.mystickeralbum.ui.components.AlbumCard
 import com.example.mystickeralbum.ui.components.TextField
+import com.example.mystickeralbum.ui.stateholders.CreateEditAlbumUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.ui.viewmodels.CreateEditAlbumViewModel
 
@@ -58,6 +58,7 @@ fun CreateEditAlbumUIScreen(state: CreateEditAlbumUIState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(horizontal = 20.dp, vertical = 10.dp)
     ) {
         Column(
             modifier = Modifier
@@ -78,14 +79,12 @@ fun CreateEditAlbumUIScreen(state: CreateEditAlbumUIState) {
 fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
     Column {
         Text(
-            text = stringResource(id = R.string.album_name_label),
+            text = stringResource(id = R.string.album_name_label).uppercase(),
             fontSize = 16.sp,
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .padding(top = 10.dp),
             overflow = TextOverflow.Ellipsis,
             color = Color.Black,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (0.1).sp
         )
         TextField(
             text = state.albumNameTextField.text,
@@ -95,7 +94,6 @@ fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
             modifier = Modifier
                 .height(40.dp),
             textSize = 14.sp,
-            paddingValues = PaddingValues(horizontal = 20.dp),
             error = state.albumNameTextField.error,
             errorMessage = stringResource(id = state.albumNameTextField.errorMessage)
         )
@@ -103,13 +101,12 @@ fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
 
     Column {
         Text(
-            text = stringResource(id = R.string.image_url_label),
+            text = stringResource(id = R.string.image_url_label).uppercase(),
             fontSize = 16.sp,
-            modifier = Modifier
-                .padding(horizontal = 20.dp),
             overflow = TextOverflow.Ellipsis,
             color = Color.Black,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (0.1).sp
         )
         TextField(
             text = state.albumImageUrlTextField.text,
@@ -118,20 +115,18 @@ fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
             },
             modifier = Modifier
                 .height(40.dp),
-            textSize = 14.sp,
-            paddingValues = PaddingValues(horizontal = 20.dp)
+            textSize = 14.sp
         )
     }
 
     Column {
         Text(
-            text = stringResource(id = R.string.preview_label),
+            text = stringResource(id = R.string.preview_label).uppercase(),
             fontSize = 16.sp,
-            modifier = Modifier
-                .padding(horizontal = 20.dp),
             overflow = TextOverflow.Ellipsis,
             color = Color.Black,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (0.1).sp
         )
         PreviewAlbum(
             album = state.album,
@@ -180,19 +175,15 @@ fun StickersInfo(state: CreateEditAlbumUIState) {
 @Composable
 fun NormalStickerInfo(state: CreateEditAlbumUIState) {
     Text(
-        text = stringResource(id = R.string.normal_stickers_label),
+        text = stringResource(id = R.string.normal_stickers_label).uppercase(),
         fontSize = 16.sp,
-        modifier = Modifier
-            .padding(horizontal = 20.dp),
         overflow = TextOverflow.Ellipsis,
         color = Color.Black,
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = (0.1).sp
     )
 
-    Row(
-        modifier = Modifier
-            .padding(horizontal = 20.dp)
-    ) {
+    Row {
         Box(
             modifier = Modifier
                 .height(32.dp)
@@ -261,8 +252,7 @@ fun NormalStickerInfo(state: CreateEditAlbumUIState) {
 fun SpecialStickerInfo(state: CreateEditAlbumUIState) {
     Row(
         modifier = Modifier
-            .height(30.dp)
-            .padding(horizontal = 20.dp),
+            .height(30.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
@@ -270,13 +260,14 @@ fun SpecialStickerInfo(state: CreateEditAlbumUIState) {
                 .fillMaxHeight()
         ) {
             Text(
-                text = stringResource(id = R.string.special_stickers_label),
+                text = stringResource(id = R.string.special_stickers_label).uppercase(),
                 fontSize = 16.sp,
                 overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .align(Alignment.Center),
+                letterSpacing = (0.1).sp
             )
         }
 
@@ -294,7 +285,6 @@ fun SpecialStickerInfo(state: CreateEditAlbumUIState) {
         Row(
             modifier = Modifier
                 .height(30.dp)
-                .padding(horizontal = 20.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -305,7 +295,7 @@ fun SpecialStickerInfo(state: CreateEditAlbumUIState) {
                     fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.Black,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Medium,
                     modifier = Modifier
                         .align(Alignment.Center)
                 )
@@ -401,10 +391,7 @@ fun SpecialStickerInfo(state: CreateEditAlbumUIState) {
 
 @Composable
 fun LetterInputSpecialSticker(state: CreateEditAlbumUIState) {
-    Row(
-        modifier = Modifier
-            .padding(horizontal = 20.dp)
-    ) {
+    Row {
         Box(
             modifier = Modifier
                 .height(32.dp)
@@ -414,7 +401,7 @@ fun LetterInputSpecialSticker(state: CreateEditAlbumUIState) {
                 fontSize = 14.sp,
                 overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(end = 6.dp)
@@ -493,10 +480,7 @@ fun LetterInputSpecialSticker(state: CreateEditAlbumUIState) {
 
 @Composable
 fun NumberInputSpecialSticker(state: CreateEditAlbumUIState) {
-    Row(
-        modifier = Modifier
-            .padding(horizontal = 20.dp)
-    ) {
+    Row {
         Box(
             modifier = Modifier
                 .height(32.dp)
@@ -506,7 +490,7 @@ fun NumberInputSpecialSticker(state: CreateEditAlbumUIState) {
                 fontSize = 14.sp,
                 overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(end = 6.dp)
@@ -582,7 +566,7 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
     Row(
         modifier = Modifier
             .height(60.dp)
-            .padding(horizontal = 20.dp, 10.dp),
+            .padding(top = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Button(
