@@ -68,4 +68,11 @@
     <string name="english_language_option">English</string>
     <string name="portuguese_language_option">Brazilian Portuguese</string>
 
+    <!-- About App Screen -->
+    <string name="about_app_title">About App</string>
+    <string name="about_me">Hi! My name is Guilherme, I\'m a brazilian mobile developer.</string>
+    <string name="about_app_message">This app was made by a collector for collectors. I hope you enjoy the app and it be of great help to make it easier to everyone to complete their sticker albums.</string>
+    <string name="about_app_feedback">Feel free to give me some feedback and ideas about the app.</string>
+    <string name="about_app_contact_title">Contact</string>
+    <string name="about_app_contact">You can contact me through my Linkedin.</string>
 </resources>

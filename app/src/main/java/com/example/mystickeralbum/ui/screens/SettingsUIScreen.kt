@@ -61,7 +61,7 @@ fun SettingsUIScreen() {
             ) {
                 Text(
                     text = stringResource(id = option.title),
-                    color = Color.Black,
+                    color = Color.White,
                     fontSize = 18.sp,
                     modifier = Modifier
                         .weight(1F)
@@ -70,7 +70,7 @@ fun SettingsUIScreen() {
                 if (option == SettingsOptionItem.LanguageSettingItem) {
                     Text(
                         text = LanguageRepository.getCurrentLanguage().toLanguageTag().uppercase(),
-                        color = Color.Black.copy(alpha = 0.5F),
+                        color = Color.White.copy(alpha = 0.5F),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier

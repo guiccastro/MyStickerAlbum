@@ -43,8 +43,8 @@ fun LanguageUIScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .topBorder(1.dp, Color.Black)
-                    .bottomBorder(1.dp, Color.Black)
+                    .topBorder((0.5).dp, Color.Black)
+                    .bottomBorder((0.5).dp, Color.Black)
                     .shadow(4.dp)
                     .clickable {
                         LanguageRepository.changeLanguage(context, option.localeOption.locale)
@@ -54,7 +54,7 @@ fun LanguageUIScreen() {
             ) {
                 Text(
                     text = stringResource(id = option.title),
-                    color = Color.Black,
+                    color = Color.White,
                     fontSize = 18.sp,
                     modifier = Modifier
                         .weight(1F)
@@ -64,7 +64,7 @@ fun LanguageUIScreen() {
                     Image(
                         painter = painterResource(id = R.drawable.ic_check),
                         contentDescription = null,
-                        colorFilter = ColorFilter.tint(Color.Black)
+                        colorFilter = ColorFilter.tint(Color.White)
                     )
                 }
             }

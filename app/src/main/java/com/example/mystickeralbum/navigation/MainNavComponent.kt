@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.example.mystickeralbum.navigation.interfaces.Screen
+import com.example.mystickeralbum.navigation.screens.AboutAppScreen
 import com.example.mystickeralbum.navigation.screens.AlbumsListScreen
 import com.example.mystickeralbum.navigation.screens.CreateAlbumScreen
 import com.example.mystickeralbum.navigation.screens.EditAlbumScreen
@@ -47,7 +48,8 @@ class MainNavComponent private constructor() {
             EditAlbumScreen,
             UpdateAlbumScreen,
             SettingsScreen,
-            LanguageScreen
+            LanguageScreen,
+            AboutAppScreen
         )
 
         val navController: NavHostController get() = getInstance()._navController

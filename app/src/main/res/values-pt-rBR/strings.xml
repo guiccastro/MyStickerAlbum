@@ -68,4 +68,11 @@
     <string name="english_language_option">Inglês</string>
     <string name="portuguese_language_option">Português Brasileiro</string>
 
+    <!-- About App Screen -->
+    <string name="about_app_title">Sobre o App</string>
+    <string name="about_me">Olá! Meu nome é Guilherme, eu sou um desenvolvedor mobile brasileiro.</string>
+    <string name="about_app_message">Esse aplicativo foi feito por um colecionador para colecionadores. Espero que você goste do aplicativo e que ele seja de grande ajuda para facilitar todo mundo a completar o seu álbum de figurinahs.</string>
+    <string name="about_app_feedback">Sinta-se livre para me dar opiniões e ideias sobre o aplicativo.</string>
+    <string name="about_app_contact_title">Contato</string>
+    <string name="about_app_contact">Você pode me contatar através do meu Linkedin.</string>
 </resources>
