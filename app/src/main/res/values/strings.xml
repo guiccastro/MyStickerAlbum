@@ -24,7 +24,7 @@
     <string name="number_label">Number:</string>
     <string name="letter_number">LetterNumber</string>
     <string name="number_letter">NumberLetter</string>
-    <string name="total_stickers_label">Total Stickers:</string>
+    <string name="total_stickers_label">Total Stickers</string>
 
     <!-- Buttons -->
     <string name="create_button">Create</string>
@@ -51,6 +51,7 @@
     <string name="copy_repeated_stickers">Repeated Stickers</string>
     <string name="message_missing_stickers_copied">Missing stickers copied!</string>
     <string name="message_repeated_stickers_copied">Repeated stickers copied!</string>
+    <string name="sticker_grid_title">Stickers</string>
 
     <!-- Drawer Menu -->
     <string name="drawer_item_settings_title">Settings</string>

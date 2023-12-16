@@ -144,14 +144,24 @@ fun PreviewAlbum(album: Album, totalStickers: Int) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 6.dp, vertical = 4.dp),
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(id = R.string.total_stickers_label) + " $totalStickers",
+                text = stringResource(id = R.string.total_stickers_label).uppercase(),
                 fontSize = 16.sp,
                 modifier = Modifier
                     .padding(horizontal = 10.dp),
                 overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = totalStickers.toString(),
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 10.dp),
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }

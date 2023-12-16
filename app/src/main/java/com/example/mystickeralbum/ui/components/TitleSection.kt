@@ -28,7 +28,7 @@ fun TitleSection(
     ) {
         Divider(
             thickness = 1.dp,
-            color = Color.White,
+            color = color,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1F)
@@ -45,7 +45,7 @@ fun TitleSection(
 
         Divider(
             thickness = 1.dp,
-            color = Color.White,
+            color = color,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1F)

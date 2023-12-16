@@ -7,9 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,14 +19,13 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.mystickeralbum.R
+import com.example.mystickeralbum.extensions.toGrid
 import com.example.mystickeralbum.model.Album
 import com.example.mystickeralbum.model.AlbumStatus
 import com.example.mystickeralbum.model.ButtonItem
@@ -55,6 +56,7 @@ import com.example.mystickeralbum.model.StickersList
 import com.example.mystickeralbum.ui.components.AlbumCard
 import com.example.mystickeralbum.ui.components.AlbumStickerInfo
 import com.example.mystickeralbum.ui.components.SimpleDialog
+import com.example.mystickeralbum.ui.components.TitleSection
 import com.example.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import com.example.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.example.mystickeralbum.ui.viewmodels.UpdateAlbumViewModel
@@ -87,18 +89,27 @@ fun DeleteAlbumDialog(state: UpdateAlbumUIState) {
 
 @Composable
 fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
-    Column(
-        modifier = Modifier
-            .background(Color.LightGray)
+    LazyColumn(
+        modifier = Modifier,
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        AlbumView(state.album)
-        CopyStickersButtons(state)
-        Divider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 2.dp,
-            color = Color.Gray
-        )
-        StickersGrid(state)
+        item {
+            AlbumView(state.album)
+        }
+
+        item {
+            CopyStickersButtons(state)
+        }
+
+        item {
+            TitleSection(
+                title = stringResource(id = R.string.sticker_grid_title),
+                color = Color.Black
+            )
+        }
+
+        stickersGrid(state)
     }
 
     if (state.showStickerDialog) {
@@ -115,30 +126,35 @@ fun AlbumView(album: Album) {
     }
 }
 
-@Composable
-fun ColumnScope.StickersGrid(state: UpdateAlbumUIState) {
-    LazyVerticalGrid(
-        modifier = Modifier
-            .weight(1F)
-            .background(Color.White),
-        columns = GridCells.Fixed(6),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
-    ) {
-        items(state.album.stickersList.stickers) {
-            StickerItem(sticker = it, state = state)
+
+fun LazyListScope.stickersGrid(state: UpdateAlbumUIState) {
+    val columns = 6
+    val grid = state.album.stickersList.stickers.toGrid(columns)
+
+    items(grid) { row ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            row.forEach { sticker ->
+                StickerItem(sticker = sticker, state = state)
+            }
+
+            repeat(columns - row.size) {
+                Spacer(modifier = Modifier.weight(1F))
+            }
         }
     }
 }
 
 @Composable
-fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
+fun RowScope.StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
     Box(
         modifier = Modifier
+            .weight(1F)
             .aspectRatio(1F)
             .shadow(4.dp, RoundedCornerShape(8.dp), clip = false)
-            .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
             .background(
                 if (sticker.found) Color.DarkGray else Color.LightGray,
                 RoundedCornerShape(8.dp)
@@ -198,13 +214,12 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
         ) {
             Column {
                 Text(
-                    text = stringResource(id = R.string.sticker_title) + " " + state.stickerDialog.identifier,
+                    text = (stringResource(id = R.string.sticker_title) + " " + state.stickerDialog.identifier).uppercase(),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.Underline
+                    textAlign = TextAlign.Center
                 )
 
                 Box(
@@ -212,9 +227,9 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = if (state.stickerDialog.found) stringResource(id = R.string.found_title) else stringResource(
+                        text = (if (state.stickerDialog.found) stringResource(id = R.string.found_title) else stringResource(
                             id = R.string.not_found_title
-                        ),
+                        )).uppercase(),
                         fontSize = 8.sp,
                         modifier = Modifier
                             .align(Alignment.Center)
@@ -222,24 +237,15 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                             .border(
                                 1.dp,
                                 Color.Black,
-                                RoundedCornerShape(
-                                    topStart = 0.dp,
-                                    topEnd = 0.dp,
-                                    bottomEnd = 4.dp,
-                                    bottomStart = 4.dp
-                                )
+                                RoundedCornerShape(4.dp)
                             )
                             .background(
-                                Color.Gray, RoundedCornerShape(
-                                    topStart = 0.dp,
-                                    topEnd = 0.dp,
-                                    bottomEnd = 4.dp,
-                                    bottomStart = 4.dp
-                                )
+                                Color.Gray, RoundedCornerShape(4.dp)
                             )
                             .padding(horizontal = 4.dp, vertical = 2.dp),
                         textAlign = TextAlign.Center,
-                        color = Color.White
+                        color = Color.White,
+                        letterSpacing = (0.1).sp
                     )
                 }
             }
@@ -286,11 +292,13 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.repeated_stickers_title),
+                        text = stringResource(id = R.string.repeated_stickers_title).uppercase(),
                         fontSize = 10.sp,
                         modifier = Modifier
                             .fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        letterSpacing = (0.1).sp,
+                        fontWeight = FontWeight.Medium
                     )
 
                     Row(
@@ -323,7 +331,8 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                                 text = state.stickerDialog.repeated.toString(),
                                 fontSize = 14.sp,
                                 modifier = Modifier
-                                    .align(Alignment.Center)
+                                    .align(Alignment.Center),
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
 
@@ -351,9 +360,7 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
 fun CopyStickersButtons(state: UpdateAlbumUIState) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .padding(bottom = 10.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         val context = LocalContext.current

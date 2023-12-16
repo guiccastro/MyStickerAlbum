@@ -24,7 +24,7 @@
     <string name="number_label">Número:</string>
     <string name="letter_number">LetraNúmero</string>
     <string name="number_letter">NúmeroLetra</string>
-    <string name="total_stickers_label">Figurinhas Totais:</string>
+    <string name="total_stickers_label">Figurinhas Totais</string>
 
     <!-- Buttons -->
     <string name="create_button">Criar</string>
@@ -51,6 +51,7 @@
     <string name="copy_repeated_stickers">Figurinhas Repetidas</string>
     <string name="message_missing_stickers_copied">Figurinhas faltantes copiadas!</string>
     <string name="message_repeated_stickers_copied">Figurinhas repetidas copiadas!</string>
+    <string name="sticker_grid_title">Figurinhas</string>
 
     <!-- Drawer Menu -->
     <string name="drawer_item_settings_title">Configurações</string>
