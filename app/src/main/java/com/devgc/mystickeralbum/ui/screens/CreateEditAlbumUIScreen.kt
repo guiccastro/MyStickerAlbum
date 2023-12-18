@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -28,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,13 +58,14 @@ fun CreateEditAlbumUIScreen(state: CreateEditAlbumUIState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 10.dp, vertical = 10.dp)
+            .padding(horizontal = 10.dp)
     ) {
         Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             BasicAlbumInfo(state)
@@ -287,6 +288,7 @@ fun SpecialStickerInfo(state: CreateEditAlbumUIState) {
                 state.onHasSpecialStickersChange(it)
             },
             modifier = Modifier
+                .scale(0.9F)
         )
     }
 
@@ -575,15 +577,16 @@ fun NumberInputSpecialSticker(state: CreateEditAlbumUIState) {
 fun BottomButtons(state: CreateEditAlbumUIState) {
     Row(
         modifier = Modifier
-            .height(60.dp)
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
+            .height(50.dp)
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
             onClick = { state.onCancelClick() },
             modifier = Modifier
                 .weight(1F)
-                .fillMaxWidth(),
+                .fillMaxSize(),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.LightGray
@@ -602,7 +605,7 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
             onClick = { state.onCreateEditClick() },
             modifier = Modifier
                 .weight(1F)
-                .fillMaxWidth(),
+                .fillMaxSize(),
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(

@@ -34,7 +34,7 @@ fun AboutAppUIScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.tertiary)
-            .padding(vertical = 20.dp, horizontal = 20.dp),
+            .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {
         item {
@@ -45,7 +45,9 @@ fun AboutAppUIScreen() {
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
                 letterSpacing = 2.sp,
-                color = MaterialTheme.colorScheme.onTertiary
+                color = MaterialTheme.colorScheme.onTertiary,
+                modifier = Modifier
+                    .padding(top = 20.dp)
             )
         }
 
@@ -108,6 +110,7 @@ fun AboutAppUIScreen() {
                         .clickable {
                             uriHandler.openUri("https://www.linkedin.com/in/guilhermescastro/")
                         }
+                        .padding(bottom = 20.dp)
                 )
             }
         }

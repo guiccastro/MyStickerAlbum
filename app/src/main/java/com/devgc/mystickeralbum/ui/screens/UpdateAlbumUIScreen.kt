@@ -220,7 +220,8 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    letterSpacing = (0.1).sp
                 )
 
                 Box(
@@ -303,7 +304,7 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                         textAlign = TextAlign.Center,
                         letterSpacing = (0.1).sp,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
 
                     Row(
@@ -341,7 +342,7 @@ fun StickerOptionsDialog(state: UpdateAlbumUIState) {
                                 modifier = Modifier
                                     .align(Alignment.Center),
                                 fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
 

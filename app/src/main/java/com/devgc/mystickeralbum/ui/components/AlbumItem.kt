@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -141,71 +142,72 @@ fun AlbumProgress(album: Album) {
 
 @Composable
 fun AlbumStickersInfo(album: Album) {
-    Column {
-        Row(
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        StickerInfoComponent(
+            title = stringResource(id = R.string.album_item_total).uppercase(),
+            value = album.getTotalStickers().toString()
+        )
+
+        Spacer(
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            StickerInfoComponent(
-                title = stringResource(id = R.string.album_item_total).uppercase(),
-                value = album.getTotalStickers().toString()
-            )
+                .height(50.dp)
+                .width(1.dp)
+                .padding(vertical = 4.dp)
+                .background(Color.White),
+        )
 
-            Spacer(
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(1.dp)
-                    .padding(vertical = 4.dp)
-                    .background(Color.White),
-            )
+        StickerInfoComponent(
+            title = stringResource(id = R.string.album_item_found).uppercase(),
+            value = album.getFound().size.toString()
+        )
 
-            StickerInfoComponent(
-                title = stringResource(id = R.string.album_item_found).uppercase(),
-                value = album.getFound().size.toString()
-            )
+        Spacer(
+            modifier = Modifier
+                .height(50.dp)
+                .width(1.dp)
+                .padding(vertical = 4.dp)
+                .background(Color.White),
+        )
 
-            Spacer(
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(1.dp)
-                    .padding(vertical = 4.dp)
-                    .background(Color.White),
-            )
+        StickerInfoComponent(
+            title = stringResource(id = R.string.album_item_missing).uppercase(),
+            value = album.getMissing().size.toString()
+        )
 
-            StickerInfoComponent(
-                title = stringResource(id = R.string.album_item_missing).uppercase(),
-                value = album.getMissing().size.toString()
-            )
+        Spacer(
+            modifier = Modifier
+                .height(50.dp)
+                .width(1.dp)
+                .padding(vertical = 4.dp)
+                .background(Color.White),
+        )
 
-            Spacer(
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(1.dp)
-                    .padding(vertical = 4.dp)
-                    .background(Color.White),
-            )
-
-            StickerInfoComponent(
-                title = stringResource(id = R.string.album_item_repeated).uppercase(),
-                value = album.getRepeated().size.toString()
-            )
-        }
+        StickerInfoComponent(
+            title = stringResource(id = R.string.album_item_repeated).uppercase(),
+            value = album.getRepeated().size.toString()
+        )
     }
+
 }
 
 @Composable
-fun StickerInfoComponent(title: String, value: String) {
+fun RowScope.StickerInfoComponent(title: String, value: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(horizontal = 4.dp)
+            .weight(1F, false)
     ) {
         Text(
             text = title,
             fontSize = 14.sp,
             modifier = Modifier,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
 
         Text(
@@ -214,7 +216,8 @@ fun StickerInfoComponent(title: String, value: String) {
             modifier = Modifier
                 .padding(start = 2.dp, end = 4.dp),
             overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            maxLines = 1
         )
     }
 }
