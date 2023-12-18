@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.devgc.mystickeralbum.MyStickerAlbumApplication
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.extensions.toGrid
 import com.devgc.mystickeralbum.model.Album
@@ -126,9 +127,9 @@ fun AlbumView(album: Album) {
     }
 }
 
-
 fun LazyListScope.stickersGrid(state: UpdateAlbumUIState) {
-    val columns = 6
+    val columns =
+        if (MyStickerAlbumApplication.getInstance().resources.getBoolean(R.bool.isTablet)) 10 else 6
     val grid = state.album.stickersList.stickers.toGrid(columns)
 
     items(grid) { row ->
