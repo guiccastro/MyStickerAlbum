@@ -4,6 +4,8 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -21,6 +23,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        signingConfig = signingConfigs.getByName("debug")
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
@@ -39,6 +42,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            isDebuggable = false
         }
     }
     compileOptions {
@@ -114,4 +118,9 @@ dependencies {
 
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Firebase
+    releaseImplementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    releaseImplementation("com.google.firebase:firebase-crashlytics-ktx")
+    releaseImplementation("com.google.firebase:firebase-analytics-ktx")
 }

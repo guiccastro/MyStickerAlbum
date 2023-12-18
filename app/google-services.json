@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "92072012634",
+    "project_id": "my-sticker-album-d70de",
+    "storage_bucket": "my-sticker-album-d70de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:92072012634:android:5a1f67be23348607576163",
+        "android_client_info": {
+          "package_name": "com.devgc.mystickeralbum"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKXbNdAUaZ8WIiCYI73pwy6WhQZZtiJic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
