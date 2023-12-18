@@ -13,10 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyStickerAlbum"
-        android:name=".MyStickerAlbumApplication"
+        android:name="com.devgc.mystickeralbum.MyStickerAlbumApplication"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.devgc.mystickeralbum.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyStickerAlbum">
             <intent-filter>

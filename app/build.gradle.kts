@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mystickeralbum"
+    namespace = "com.devgc.mystickeralbum"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.mystickeralbum"
+        applicationId = "com.devgc.mystickeralbum"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
