@@ -48,6 +48,7 @@ fun AboutAppUIScreen() {
                 color = MaterialTheme.colorScheme.onTertiary,
                 modifier = Modifier
                     .padding(top = 20.dp)
+                    .fillMaxWidth()
             )
         }
 
@@ -59,7 +60,9 @@ fun AboutAppUIScreen() {
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
                 letterSpacing = 2.sp,
-                color = MaterialTheme.colorScheme.onTertiary
+                color = MaterialTheme.colorScheme.onTertiary,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
 
@@ -71,7 +74,9 @@ fun AboutAppUIScreen() {
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
                 letterSpacing = 2.sp,
-                color = MaterialTheme.colorScheme.onTertiary
+                color = MaterialTheme.colorScheme.onTertiary,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
 
