@@ -44,10 +44,11 @@ fun AlbumCard(
     onClick: ((Album) -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
+    val hasImage = album.albumImage.isNotEmpty()
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(if (hasImage) 200.dp else 200.dp / 1.5F)
             .clickable(
                 enabled = onClick != null
             ) {
@@ -61,38 +62,59 @@ fun AlbumCard(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5F),
-            ) {
-                AsyncImage(
-                    model = album.albumImage,
-                    contentDescription = null,
+            if (hasImage) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Black.copy(alpha = 0.5F)),
-                    contentScale = ContentScale.Crop
-                )
+                        .fillMaxHeight(0.5F),
+                ) {
+                    AsyncImage(
+                        model = album.albumImage,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Black.copy(alpha = 0.5F)),
+                        contentScale = ContentScale.Crop
+                    )
 
-                if (album.name.isNotEmpty()) {
+                    if (album.name.isNotEmpty()) {
+                        Text(
+                            text = album.name,
+                            fontSize = 20.sp,
+                            modifier = Modifier
+                                .background(
+                                    MaterialTheme.colorScheme.secondary,
+                                    RoundedCornerShape(
+                                        topStart = 0.dp,
+                                        topEnd = 10.dp,
+                                        bottomEnd = 0.dp,
+                                        bottomStart = 0.dp
+                                    )
+                                )
+                                .align(Alignment.BottomStart)
+                                .padding(horizontal = 10.dp),
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1
+                        )
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
                     Text(
                         text = album.name,
                         fontSize = 20.sp,
                         modifier = Modifier
-                            .background(
-                                MaterialTheme.colorScheme.secondary,
-                                RoundedCornerShape(
-                                    topStart = 0.dp,
-                                    topEnd = 10.dp,
-                                    bottomEnd = 0.dp,
-                                    bottomStart = 0.dp
-                                )
-                            )
-                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.secondary)
+                            .align(Alignment.Center)
                             .padding(horizontal = 10.dp),
                         overflow = TextOverflow.Ellipsis,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1
                     )
                 }
             }
