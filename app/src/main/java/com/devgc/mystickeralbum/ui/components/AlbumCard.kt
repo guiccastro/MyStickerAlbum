@@ -1,5 +1,7 @@
 package com.devgc.mystickeralbum.ui.components
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,8 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.booleanResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,10 +50,18 @@ fun AlbumCard(
     content: @Composable () -> Unit
 ) {
     val hasImage = album.albumImage.isNotEmpty()
+    val isTablet = booleanResource(id = R.bool.isTablet)
+    val baseHeight = if (isTablet) 300.dp else 200.dp
+    val height = if (hasImage) {
+        baseHeight
+    } else {
+        baseHeight / 1.5F
+    }
+    val albumNameHeight = if (isTablet) 26.sp else 20.sp
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(if (hasImage) 200.dp else 200.dp / 1.5F)
+            .height(height)
             .clickable(
                 enabled = onClick != null
             ) {
@@ -80,7 +93,7 @@ fun AlbumCard(
                     if (album.name.isNotEmpty()) {
                         Text(
                             text = album.name,
-                            fontSize = 20.sp,
+                            fontSize = albumNameHeight,
                             modifier = Modifier
                                 .background(
                                     MaterialTheme.colorScheme.secondary,
@@ -106,7 +119,7 @@ fun AlbumCard(
                 ) {
                     Text(
                         text = album.name,
-                        fontSize = 20.sp,
+                        fontSize = albumNameHeight,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.secondary)
@@ -125,118 +138,125 @@ fun AlbumCard(
 }
 
 @Composable
-fun AlbumProgress(album: Album) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
+fun AlbumProgress(album: Album, isTablet: Boolean) {
+    val progressHeight = if (isTablet) 34.dp else 20.dp
+    val fontSize = if (isTablet) 20.sp else 14.sp
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(progressHeight),
+        shape = RoundedCornerShape(10.dp),
+        color = Color.White
     ) {
-        Surface(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp),
-            shape = RoundedCornerShape(10.dp),
-            color = Color.White
+                .fillMaxSize()
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(album.getProgress())
-                        .background(MaterialTheme.colorScheme.secondary)
-                )
+                    .fillMaxHeight()
+                    .fillMaxWidth(album.getProgress())
+                    .background(MaterialTheme.colorScheme.secondary)
+            )
 
-                Text(
-                    text = album.getFormattedProgress(),
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.Center),
-                    overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            Text(
+                text = album.getFormattedProgress(),
+                fontSize = fontSize,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.Center),
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
+
 }
 
 @Composable
-fun AlbumStickersInfo(album: Album) {
+fun AlbumStickersInfo(album: Album, isTablet: Boolean) {
+    val spacerHeight = if (isTablet) 100.dp else 60.dp
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         StickerInfoComponent(
-            title = stringResource(id = R.string.album_item_total).uppercase(),
-            value = album.getTotalStickers().toString()
+            icon = R.drawable.ic_total,
+            value = album.getTotalStickers().toString(),
+            isTablet = isTablet
         )
 
         Spacer(
             modifier = Modifier
-                .height(50.dp)
+                .height(spacerHeight)
                 .width(1.dp)
                 .padding(vertical = 4.dp)
                 .background(Color.White),
         )
 
         StickerInfoComponent(
-            title = stringResource(id = R.string.album_item_found).uppercase(),
-            value = album.getFound().size.toString()
+            icon = R.drawable.ic_found,
+            value = album.getFound().size.toString(),
+            isTablet = isTablet
         )
 
         Spacer(
             modifier = Modifier
-                .height(50.dp)
+                .height(spacerHeight)
                 .width(1.dp)
                 .padding(vertical = 4.dp)
                 .background(Color.White),
         )
 
         StickerInfoComponent(
-            title = stringResource(id = R.string.album_item_missing).uppercase(),
-            value = album.getMissing().size.toString()
+            icon = R.drawable.ic_missing,
+            value = album.getMissing().size.toString(),
+            isTablet = isTablet
         )
 
         Spacer(
             modifier = Modifier
-                .height(50.dp)
+                .height(spacerHeight)
                 .width(1.dp)
                 .padding(vertical = 4.dp)
                 .background(Color.White),
         )
 
         StickerInfoComponent(
-            title = stringResource(id = R.string.album_item_repeated).uppercase(),
-            value = album.getRepeated().size.toString()
+            icon = R.drawable.ic_repeated,
+            value = album.getRepeated().size.toString(),
+            isTablet = isTablet
         )
     }
 
 }
 
 @Composable
-fun RowScope.StickerInfoComponent(title: String, value: String) {
+fun RowScope.StickerInfoComponent(@DrawableRes icon: Int, value: String, isTablet: Boolean) {
+    val iconHeight = if (isTablet) 50.dp else 30.dp
+    val fontSize = if (isTablet) 20.sp else 14.sp
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(horizontal = 4.dp)
             .weight(1F, false)
     ) {
-        Text(
-            text = title,
-            fontSize = 14.sp,
-            modifier = Modifier,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier
+                .height(iconHeight)
+                .aspectRatio(1F),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
 
         Text(
             text = value,
-            fontSize = 14.sp,
+            fontSize = fontSize,
             modifier = Modifier
-                .padding(start = 2.dp, end = 4.dp),
+                .padding(horizontal = 2.dp),
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold,
             maxLines = 1
@@ -246,14 +266,15 @@ fun RowScope.StickerInfoComponent(title: String, value: String) {
 
 @Composable
 fun AlbumStickerInfo(album: Album) {
+    val isTablet = booleanResource(id = R.bool.isTablet)
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 6.dp, vertical = 4.dp),
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        AlbumProgress(album)
-        AlbumStickersInfo(album)
+        AlbumProgress(album, isTablet)
+        AlbumStickersInfo(album, isTablet)
     }
 }
 

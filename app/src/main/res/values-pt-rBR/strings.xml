@@ -2,10 +2,12 @@
 <resources>
 
     <!-- Albums List Screen -->
+    <!--
     <string name="album_item_total">Total</string>
     <string name="album_item_found">Encontradas</string>
     <string name="album_item_missing">Faltando</string>
     <string name="album_item_repeated">Repetidas</string>
+    -->
     <string name="album_list_title">Meus Álbuns</string>
     <string name="album_list_empty">Sua lista de álbuns está vazia.</string>
 
