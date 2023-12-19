@@ -28,6 +28,7 @@ object UpdateAlbumScreen : Screen {
         override fun hasReturn(): Boolean = true
 
         override fun getActionItems(): List<TopAppBarActionItem> = listOf(
+            TopAppBarActionItem(R.drawable.ic_legend) { viewModel.changeIconsLegendDialogState() },
             TopAppBarActionItem(R.drawable.ic_delete) { viewModel.onDeleteAlbumClick() },
             TopAppBarActionItem(R.drawable.ic_edit) { viewModel.onEditAlbumClick() }
         )

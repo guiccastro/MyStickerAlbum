@@ -24,7 +24,7 @@ object AlbumsListScreen : Screen {
         override fun hasReturn(): Boolean = false
 
         override fun getActionItems(): List<TopAppBarActionItem> = listOf(
-            TopAppBarActionItem(R.drawable.ic_about_app) { viewModel.changeIconsLegendDialogState() }
+            TopAppBarActionItem(R.drawable.ic_legend) { viewModel.changeIconsLegendDialogState() }
         )
     }
 

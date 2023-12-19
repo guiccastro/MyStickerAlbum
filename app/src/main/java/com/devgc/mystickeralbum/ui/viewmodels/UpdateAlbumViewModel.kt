@@ -45,7 +45,8 @@ class UpdateAlbumViewModel @Inject constructor(
                 onCloseDeleteAlbumDialog = ::onCloseDeleteAlbumDialog,
                 onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog,
                 onCopyMissingStickersClick = ::onCopyMissingStickersClick,
-                onCopyRepeatedStickersClick = ::onCopyRepeatedStickersClick
+                onCopyRepeatedStickersClick = ::onCopyRepeatedStickersClick,
+                changeIconsLegendDialogState = ::changeIconsLegendDialogState
             )
         }
 
@@ -192,5 +193,13 @@ class UpdateAlbumViewModel @Inject constructor(
 
     private fun getRepeatedStickersText(): String {
         return _uiState.value.album.getRepeated().joinToString(" - ") { it.identifier }
+    }
+
+    fun changeIconsLegendDialogState() {
+        _uiState.update {
+            it.copy(
+                showIconsLegendDialog = !_uiState.value.showIconsLegendDialog
+            )
+        }
     }
 }

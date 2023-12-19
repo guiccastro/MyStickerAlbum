@@ -18,5 +18,7 @@ data class UpdateAlbumUIState(
     val onCloseDeleteAlbumDialog: () -> Unit = {},
     val onConfirmDeleteAlbumDialog: () -> Unit = {},
     val onCopyMissingStickersClick: (Context) -> Unit = {},
-    val onCopyRepeatedStickersClick: (Context) -> Unit = {}
+    val onCopyRepeatedStickersClick: (Context) -> Unit = {},
+    val changeIconsLegendDialogState: () -> Unit = {},
+    val showIconsLegendDialog: Boolean = false
 )

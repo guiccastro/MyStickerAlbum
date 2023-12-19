@@ -55,6 +55,7 @@ import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
 import com.devgc.mystickeralbum.ui.components.AlbumCard
 import com.devgc.mystickeralbum.ui.components.AlbumStickerInfo
+import com.devgc.mystickeralbum.ui.components.IconsLegendDialog
 import com.devgc.mystickeralbum.ui.components.SimpleDialog
 import com.devgc.mystickeralbum.ui.components.TitleSection
 import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
@@ -69,6 +70,10 @@ fun UpdateAlbumUIScreen(viewModel: UpdateAlbumViewModel) {
 
     if (state.showDeleteAlbumDialog) {
         DeleteAlbumDialog(state)
+    }
+
+    if (state.showIconsLegendDialog) {
+        IconsLegendDialog(state.changeIconsLegendDialogState)
     }
 }
 
