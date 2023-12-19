@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -94,13 +95,16 @@ fun AlbumItem(album: Album, state: AlbumsListUIState) {
 
 @Composable
 fun IconsLegendDialog(state: AlbumsListUIState) {
+    val isTablet = booleanResource(id = R.bool.isTablet)
+    val titleSize = if (isTablet) 24.sp else 16.sp
+    val dividerWidth = if (isTablet) 250.dp else 180.dp
     BaseDialog(
         onDismissRequest = state.changeIconsLegendDialogState,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
             text = stringResource(id = R.string.icons_legend_dialog_title).uppercase(),
-            fontSize = 16.sp,
+            fontSize = titleSize,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -111,7 +115,7 @@ fun IconsLegendDialog(state: AlbumsListUIState) {
 
         Divider(
             modifier = Modifier
-                .width(180.dp),
+                .width(dividerWidth),
             thickness = (0.5).dp,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -123,7 +127,7 @@ fun IconsLegendDialog(state: AlbumsListUIState) {
 
         Divider(
             modifier = Modifier
-                .width(180.dp),
+                .width(dividerWidth),
             thickness = (0.5).dp,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -135,7 +139,7 @@ fun IconsLegendDialog(state: AlbumsListUIState) {
 
         Divider(
             modifier = Modifier
-                .width(180.dp),
+                .width(dividerWidth),
             thickness = (0.5).dp,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -152,26 +156,31 @@ fun IconLegend(
     @DrawableRes icon: Int,
     @StringRes legend: Int
 ) {
+    val isTablet = booleanResource(id = R.bool.isTablet)
+    val rowWidth = if (isTablet) 250.dp else 180.dp
+    val iconSize = if (isTablet) 40.dp else 30.dp
+    val legendSize = if (isTablet) 24.sp else 18.sp
+    val legendPadding = if (isTablet) 20.dp else 10.dp
     Row(
         modifier = Modifier
-            .width(180.dp),
+            .width(rowWidth),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(id = icon),
             contentDescription = null,
             modifier = Modifier
-                .size(30.dp)
+                .size(iconSize)
                 .aspectRatio(1F),
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
         )
 
         Text(
             text = stringResource(id = legend),
-            fontSize = 18.sp,
+            fontSize = legendSize,
             modifier = Modifier
                 .weight(1F)
-                .padding(start = 10.dp),
+                .padding(start = legendPadding),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             maxLines = 1,
