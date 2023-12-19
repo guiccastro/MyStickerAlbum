@@ -23,7 +23,9 @@ object AlbumsListScreen : Screen {
 
         override fun hasReturn(): Boolean = false
 
-        override fun getActionItems(): List<TopAppBarActionItem> = emptyList()
+        override fun getActionItems(): List<TopAppBarActionItem> = listOf(
+            TopAppBarActionItem(R.drawable.ic_about_app) { viewModel.changeIconsLegendDialogState() }
+        )
     }
 
     override val fabComponent: FABComponent = object : FABComponent {

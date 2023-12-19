@@ -1,17 +1,30 @@
 package com.devgc.mystickeralbum.ui.screens
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +37,7 @@ import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
 import com.devgc.mystickeralbum.ui.components.AlbumCard
 import com.devgc.mystickeralbum.ui.components.AlbumStickerInfo
+import com.devgc.mystickeralbum.ui.components.BaseDialog
 import com.devgc.mystickeralbum.ui.stateholders.AlbumsListUIState
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.viewmodels.AlbumsListViewModel
@@ -62,6 +76,10 @@ fun AlbumsListUIScreen(state: AlbumsListUIState) {
             }
         }
     }
+
+    if (state.showIconsLegendDialog) {
+        IconsLegendDialog(state)
+    }
 }
 
 @Composable
@@ -71,6 +89,94 @@ fun AlbumItem(album: Album, state: AlbumsListUIState) {
         onClick = state.onAlbumClick
     ) {
         AlbumStickerInfo(album)
+    }
+}
+
+@Composable
+fun IconsLegendDialog(state: AlbumsListUIState) {
+    BaseDialog(
+        onDismissRequest = state.changeIconsLegendDialogState,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.icons_legend_dialog_title).uppercase(),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        IconLegend(
+            icon = R.drawable.ic_total,
+            legend = R.string.album_item_total
+        )
+
+        Divider(
+            modifier = Modifier
+                .width(180.dp),
+            thickness = (0.5).dp,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+
+        IconLegend(
+            icon = R.drawable.ic_found,
+            legend = R.string.album_item_found
+        )
+
+        Divider(
+            modifier = Modifier
+                .width(180.dp),
+            thickness = (0.5).dp,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+
+        IconLegend(
+            icon = R.drawable.ic_missing,
+            legend = R.string.album_item_missing
+        )
+
+        Divider(
+            modifier = Modifier
+                .width(180.dp),
+            thickness = (0.5).dp,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+
+        IconLegend(
+            icon = R.drawable.ic_repeated,
+            legend = R.string.album_item_repeated
+        )
+    }
+}
+
+@Composable
+fun IconLegend(
+    @DrawableRes icon: Int,
+    @StringRes legend: Int
+) {
+    Row(
+        modifier = Modifier
+            .width(180.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(30.dp)
+                .aspectRatio(1F),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
+        )
+
+        Text(
+            text = stringResource(id = legend),
+            fontSize = 18.sp,
+            modifier = Modifier
+                .weight(1F)
+                .padding(start = 10.dp),
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -107,6 +213,16 @@ fun AlbumsScreenPreview() {
                     )
                 )
             )
+        )
+    }
+}
+
+@Preview
+@Composable
+fun IconsLegendDialogPreview() {
+    MyStickerAlbumTheme {
+        IconsLegendDialog(
+            state = AlbumsListUIState()
         )
     }
 }

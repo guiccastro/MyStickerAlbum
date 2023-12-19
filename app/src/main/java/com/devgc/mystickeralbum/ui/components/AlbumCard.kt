@@ -170,7 +170,6 @@ fun AlbumProgress(album: Album, isTablet: Boolean) {
             )
         }
     }
-
 }
 
 @Composable

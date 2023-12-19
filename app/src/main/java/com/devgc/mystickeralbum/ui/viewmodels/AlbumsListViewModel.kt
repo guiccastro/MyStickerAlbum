@@ -25,7 +25,8 @@ class AlbumsListViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 onAlbumClick = ::onAlbumClick,
-                updateAlbumsList = ::updateAlbumsList
+                updateAlbumsList = ::updateAlbumsList,
+                changeIconsLegendDialogState = ::changeIconsLegendDialogState
             )
         }
     }
@@ -55,6 +56,14 @@ class AlbumsListViewModel : ViewModel() {
             UpdateAlbumScreen.apply {
                 navigateToItself(albumName = album.name)
             }
+        }
+    }
+
+    fun changeIconsLegendDialogState() {
+        _uiState.update {
+            it.copy(
+                showIconsLegendDialog = !_uiState.value.showIconsLegendDialog
+            )
         }
     }
 }
