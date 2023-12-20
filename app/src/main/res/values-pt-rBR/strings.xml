@@ -53,6 +53,8 @@
     <string name="message_missing_stickers_copied">Figurinhas faltantes copiadas!</string>
     <string name="message_repeated_stickers_copied">Figurinhas repetidas copiadas!</string>
     <string name="sticker_grid_title">Figurinhas</string>
+    <string name="search_sticker_placeholder">Encontrar figurinha</string>
+    <string name="search_sticker_not_found">Figurinha não encontrada!</string>
 
     <!-- Drawer Menu -->
     <string name="drawer_item_settings_title">Configurações</string>

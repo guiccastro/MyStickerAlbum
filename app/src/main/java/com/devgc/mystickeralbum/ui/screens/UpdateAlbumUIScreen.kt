@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -30,12 +32,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +51,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.devgc.mystickeralbum.MyStickerAlbumApplication
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.extensions.toGrid
 import com.devgc.mystickeralbum.model.Album
@@ -57,10 +62,12 @@ import com.devgc.mystickeralbum.ui.components.AlbumCard
 import com.devgc.mystickeralbum.ui.components.AlbumStickerInfo
 import com.devgc.mystickeralbum.ui.components.IconsLegendDialog
 import com.devgc.mystickeralbum.ui.components.SimpleDialog
+import com.devgc.mystickeralbum.ui.components.TextField
 import com.devgc.mystickeralbum.ui.components.TitleSection
 import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import com.devgc.mystickeralbum.ui.theme.BorderColor
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
+import com.devgc.mystickeralbum.ui.theme.Poppins
 import com.devgc.mystickeralbum.ui.viewmodels.UpdateAlbumViewModel
 
 @Composable
@@ -95,10 +102,14 @@ fun DeleteAlbumDialog(state: UpdateAlbumUIState) {
 
 @Composable
 fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
+    val isTablet = booleanResource(id = R.bool.isTablet)
+    val lazyListState = rememberLazyListState()
+
     LazyColumn(
         modifier = Modifier,
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        state = lazyListState
     ) {
         item {
             AlbumView(state.album)
@@ -109,17 +120,69 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
         }
 
         item {
+            SearchSticker(state, lazyListState)
+        }
+
+        item {
             TitleSection(
                 title = stringResource(id = R.string.sticker_grid_title),
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
 
-        stickersGrid(state)
+        stickersGrid(state, isTablet)
     }
 
     if (state.showStickerDialog) {
         StickerOptionsDialog(state)
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun SearchSticker(state: UpdateAlbumUIState, lazyListState: LazyListState) {
+    val scope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    Row(
+        modifier = Modifier
+            .height(50.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .weight(1F)
+                .fillMaxHeight()
+        ) {
+            TextField(
+                text = state.searchStickerTextField.text,
+                onValueChange = state.searchStickerTextField.onTextChange,
+                modifier = Modifier
+                    .fillMaxHeight(),
+                placeholderText = stringResource(id = R.string.search_sticker_placeholder),
+                textSize = 14.sp,
+                textStyle = Poppins
+            )
+        }
+
+        Button(
+            onClick = {
+                keyboardController?.hide()
+                state.onSearchStickerClick(lazyListState, scope)
+            },
+            modifier = Modifier
+                .fillMaxHeight(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxHeight(),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
+            )
+        }
     }
 }
 
@@ -132,9 +195,8 @@ fun AlbumView(album: Album) {
     }
 }
 
-fun LazyListScope.stickersGrid(state: UpdateAlbumUIState) {
-    val columns =
-        if (MyStickerAlbumApplication.getInstance().resources.getBoolean(R.bool.isTablet)) 10 else 6
+fun LazyListScope.stickersGrid(state: UpdateAlbumUIState, isTablet: Boolean) {
+    val columns = if (isTablet) 10 else 5
     val grid = state.album.stickersList.stickers.toGrid(columns)
 
     items(grid) { row ->
@@ -533,7 +595,8 @@ fun StickersListPreview() {
                     ),
                     status = AlbumStatus.Completing,
                     albumImage = ""
-                )
+                ),
+                showSearchStickerTextField = true
             )
         )
     }

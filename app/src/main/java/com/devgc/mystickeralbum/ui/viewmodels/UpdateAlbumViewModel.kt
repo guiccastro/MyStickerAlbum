@@ -4,13 +4,16 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devgc.mystickeralbum.AlbumsRepository
+import com.devgc.mystickeralbum.MyStickerAlbumApplication
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
+import com.devgc.mystickeralbum.model.TextFieldValues
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.albumNameArgument
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.navController
 import com.devgc.mystickeralbum.navigation.screens.EditAlbumScreen
@@ -46,7 +49,9 @@ class UpdateAlbumViewModel @Inject constructor(
                 onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog,
                 onCopyMissingStickersClick = ::onCopyMissingStickersClick,
                 onCopyRepeatedStickersClick = ::onCopyRepeatedStickersClick,
-                changeIconsLegendDialogState = ::changeIconsLegendDialogState
+                changeIconsLegendDialogState = ::changeIconsLegendDialogState,
+                searchStickerTextField = TextFieldValues(onTextChange = ::onSearchStickerChange),
+                onSearchStickerClick = ::onSearchStickerClick
             )
         }
 
@@ -200,6 +205,42 @@ class UpdateAlbumViewModel @Inject constructor(
             it.copy(
                 showIconsLegendDialog = !_uiState.value.showIconsLegendDialog
             )
+        }
+    }
+
+    private fun onSearchStickerChange(text: String) {
+        _uiState.update {
+            it.copy(
+                searchStickerTextField = it.searchStickerTextField.copy(
+                    text = text
+                )
+            )
+        }
+    }
+
+    private fun onSearchStickerClick(lazyListState: LazyListState, scope: CoroutineScope) {
+        val stickerText = _uiState.value.searchStickerTextField.text
+        val stickerIndex =
+            _uiState.value.album.stickersList.stickers.indexOfFirst { it.identifier == stickerText }
+        val stickerRowIndex = if (stickerIndex == -1) -1 else stickerIndex / 5
+        val index = if (stickerRowIndex == -1) 0 else stickerRowIndex + 4
+
+        scope.launch {
+            lazyListState.animateScrollToItem(index)
+        }
+
+        onSearchStickerChange("")
+
+        if (stickerIndex != -1) {
+            val sticker = _uiState.value.album.stickersList.stickers[stickerIndex]
+            onStickerClick(sticker)
+        } else {
+            val context = MyStickerAlbumApplication.getInstance()
+            Toast.makeText(
+                context,
+                context.resources.getString(R.string.search_sticker_not_found),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }

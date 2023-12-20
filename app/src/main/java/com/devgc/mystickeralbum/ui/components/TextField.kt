@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +40,7 @@ fun TextField(
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     shape: Shape = RoundedCornerShape(4.dp),
     borderWidth: Dp = 1.dp,
     borderColor: Color = Color.Black,
@@ -46,7 +48,7 @@ fun TextField(
     error: Boolean = false,
     errorBorderColor: Color = Color.Red,
     errorMessage: String = "",
-    errorModifier: Modifier = Modifier
+    errorModifier: Modifier = Modifier,
 ) {
     Column(
         modifier = Modifier
@@ -84,7 +86,8 @@ fun TextField(
                         }
                         if (trailingIcon != null) trailingIcon()
                     }
-                }
+                },
+                keyboardActions = keyboardActions
             )
         }
 
