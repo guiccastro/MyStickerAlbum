@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">MyStickerAlbum</string>
+    <string name="linkedin_url" translatable="false">https://www.linkedin.com/in/guilhermescastro/</string>
+    <string name="privacy_policy_url" translatable="false">https://www.termsfeed.com/live/66b04a28-3b62-4551-a4e1-a1096757850a</string>
 
     <!-- Albums List Screen -->
     <string name="album_item_total">Total</string>
@@ -76,5 +78,8 @@
     <string name="about_app_message">This app was made by a collector for collectors. I hope you enjoy the app and it be of great help to make it easier to everyone to complete their sticker albums.</string>
     <string name="about_app_feedback">Feel free to give me some feedback and ideas about the app.</string>
     <string name="about_app_contact_title">Contact</string>
-    <string name="about_app_contact">You can contact me through my Linkedin.</string>
+    <string name="about_app_contact">You can contact me through my LinkedIn.</string>
+    <string name="legal_title">Legal</string>
+    <string name="privacy_policy_desc">By using MyStickerAlbum, you confirm that you have read the Privacy Policy. You can read the Privacy Policy by tapping below.</string>
+    <string name="privacy_policy_button">Privacy Policy</string>
 </resources>

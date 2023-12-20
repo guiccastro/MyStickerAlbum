@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.devgc.mystickeralbum.ui.theme.Poppins
 
 @Composable
 fun TitleSection(
@@ -40,7 +41,8 @@ fun TitleSection(
             fontSize = fontSize,
             textAlign = textAlign,
             fontWeight = fontWeight,
-            maxLines = maxLines
+            maxLines = maxLines,
+            style = Poppins
         )
 
         Divider(

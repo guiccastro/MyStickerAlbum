@@ -76,5 +76,8 @@
     <string name="about_app_message">Esse aplicativo foi feito por um colecionador para colecionadores. Espero que você goste do aplicativo e que ele seja de grande ajuda para facilitar todo mundo a completar o seu álbum de figurinahs.</string>
     <string name="about_app_feedback">Sinta-se livre para me dar opiniões e ideias sobre o aplicativo.</string>
     <string name="about_app_contact_title">Contato</string>
-    <string name="about_app_contact">Você pode me contatar através do meu Linkedin.</string>
+    <string name="about_app_contact">Você pode me contatar através do meu LinkedIn.</string>
+    <string name="legal_title">Legal</string>
+    <string name="privacy_policy_desc">Ao utilizar MyStickerAlbum, você confirma que leu a Política de Privacidade. Você pode ler a Política de Privacidade clicando abaixo.</string>
+    <string name="privacy_policy_button">Política de Privacidade</string>
 </resources>
