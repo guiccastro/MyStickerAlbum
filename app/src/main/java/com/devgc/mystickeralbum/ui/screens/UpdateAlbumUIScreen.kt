@@ -1,5 +1,8 @@
 package com.devgc.mystickeralbum.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,13 +35,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.booleanResource
@@ -82,6 +90,10 @@ fun UpdateAlbumUIScreen(viewModel: UpdateAlbumViewModel) {
     if (state.showIconsLegendDialog) {
         IconsLegendDialog(state.changeIconsLegendDialogState)
     }
+
+    if (state.showStickerDialog) {
+        StickerOptionsDialog(state)
+    }
 }
 
 @Composable
@@ -104,12 +116,25 @@ fun DeleteAlbumDialog(state: UpdateAlbumUIState) {
 fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
     val isTablet = booleanResource(id = R.bool.isTablet)
     val lazyListState = rememberLazyListState()
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                state.onScroll(lazyListState.firstVisibleItemIndex)
+                return super.onPostScroll(consumed, available, source)
+            }
+        }
+    }
 
     LazyColumn(
-        modifier = Modifier,
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        state = lazyListState
+        state = lazyListState,
+        modifier = Modifier
+            .nestedScroll(nestedScrollConnection)
     ) {
         item {
             AlbumView(state.album)
@@ -133,9 +158,7 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
         stickersGrid(state, isTablet)
     }
 
-    if (state.showStickerDialog) {
-        StickerOptionsDialog(state)
-    }
+    ReturnToTopButton(state, lazyListState)
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -196,7 +219,8 @@ fun AlbumView(album: Album) {
 }
 
 fun LazyListScope.stickersGrid(state: UpdateAlbumUIState, isTablet: Boolean) {
-    val columns = if (isTablet) 10 else 5
+    val columns =
+        if (isTablet) UpdateAlbumViewModel.tabletColumnsGrid else UpdateAlbumViewModel.normalColumnsGrid
     val grid = state.album.stickersList.stickers.toGrid(columns)
 
     items(grid) { row ->
@@ -505,6 +529,38 @@ fun CopyStickersButtons(state: UpdateAlbumUIState) {
     }
 }
 
+@Composable
+fun ReturnToTopButton(state: UpdateAlbumUIState, lazyListState: LazyListState) {
+    val scope = rememberCoroutineScope()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AnimatedVisibility(
+            visible = state.showReturnToTopButton,
+            enter = scaleIn(),
+            exit = scaleOut()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_return_top),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(top = 6.dp)
+                    .size(40.dp)
+                    .background(MaterialTheme.colorScheme.tertiary, CircleShape)
+                    .clip(CircleShape)
+                    .clickable {
+                        state.onReturnToTopButtonClick(lazyListState, scope)
+                    }
+                    .padding(6.dp),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiary)
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun StickerOptionsDialogPreview() {
@@ -596,7 +652,8 @@ fun StickersListPreview() {
                     status = AlbumStatus.Completing,
                     albumImage = ""
                 ),
-                showSearchStickerTextField = true
+                showSearchStickerTextField = true,
+                showReturnToTopButton = true
             )
         )
     }

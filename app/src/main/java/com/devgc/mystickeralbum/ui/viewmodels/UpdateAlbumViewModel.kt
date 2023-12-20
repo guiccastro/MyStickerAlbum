@@ -34,9 +34,16 @@ class UpdateAlbumViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    companion object {
+        private const val topUIItems = 4
+        const val normalColumnsGrid = 5
+        const val tabletColumnsGrid = 10
+    }
+
     private val _uiState: MutableStateFlow<UpdateAlbumUIState> =
         MutableStateFlow(UpdateAlbumUIState())
     val uiState get() = _uiState.asStateFlow()
+
 
     init {
         _uiState.update {
@@ -51,7 +58,9 @@ class UpdateAlbumViewModel @Inject constructor(
                 onCopyRepeatedStickersClick = ::onCopyRepeatedStickersClick,
                 changeIconsLegendDialogState = ::changeIconsLegendDialogState,
                 searchStickerTextField = TextFieldValues(onTextChange = ::onSearchStickerChange),
-                onSearchStickerClick = ::onSearchStickerClick
+                onSearchStickerClick = ::onSearchStickerClick,
+                onScroll = ::onScroll,
+                onReturnToTopButtonClick = ::onReturnToTopButtonClick
             )
         }
 
@@ -219,14 +228,17 @@ class UpdateAlbumViewModel @Inject constructor(
     }
 
     private fun onSearchStickerClick(lazyListState: LazyListState, scope: CoroutineScope) {
-        val stickerText = _uiState.value.searchStickerTextField.text
+        val stickerText = _uiState.value.searchStickerTextField.text.uppercase()
         val stickerIndex =
             _uiState.value.album.stickersList.stickers.indexOfFirst { it.identifier == stickerText }
-        val stickerRowIndex = if (stickerIndex == -1) -1 else stickerIndex / 5
-        val index = if (stickerRowIndex == -1) 0 else stickerRowIndex + 4
+        val isTablet = MyStickerAlbumApplication.getInstance().resources.getBoolean(R.bool.isTablet)
+        val columns = if (isTablet) tabletColumnsGrid else normalColumnsGrid
+        val stickerRowIndex = if (stickerIndex == -1) -1 else stickerIndex / columns
+        val index = if (stickerRowIndex == -1) 0 else stickerRowIndex + topUIItems
 
         scope.launch {
             lazyListState.animateScrollToItem(index)
+            onScroll(index)
         }
 
         onSearchStickerChange("")
@@ -241,6 +253,26 @@ class UpdateAlbumViewModel @Inject constructor(
                 context.resources.getString(R.string.search_sticker_not_found),
                 Toast.LENGTH_SHORT
             ).show()
+        }
+    }
+
+    private fun onScroll(index: Int) {
+        _uiState.update {
+            it.copy(
+                showReturnToTopButton = index >= topUIItems
+            )
+        }
+    }
+
+    private fun onReturnToTopButtonClick(lazyListState: LazyListState, scope: CoroutineScope) {
+        scope.launch {
+            lazyListState.animateScrollToItem(0)
+        }
+
+        _uiState.update {
+            it.copy(
+                showReturnToTopButton = false
+            )
         }
     }
 }

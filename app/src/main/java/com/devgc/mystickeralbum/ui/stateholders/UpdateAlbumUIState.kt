@@ -26,5 +26,8 @@ data class UpdateAlbumUIState(
     val showIconsLegendDialog: Boolean = false,
     val showSearchStickerTextField: Boolean = false,
     val searchStickerTextField: TextFieldValues = TextFieldValues(),
-    val onSearchStickerClick: (LazyListState, CoroutineScope) -> Unit = { _, _ -> }
+    val onSearchStickerClick: (LazyListState, CoroutineScope) -> Unit = { _, _ -> },
+    val onScroll: (Int) -> Unit = {},
+    val showReturnToTopButton: Boolean = false,
+    val onReturnToTopButtonClick: (LazyListState, CoroutineScope) -> Unit = { _, _ -> }
 )
