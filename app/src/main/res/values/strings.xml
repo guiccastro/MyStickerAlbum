@@ -30,7 +30,7 @@
     </string>
     <string name="stickers_to_be_added">Stickers to be edited</string>
     <string name="stickers_to_be_removed">Stickers to be edited</string>
-    <string name="current_stickers_label">Current stickers</string>
+    <string name="current_stickers_label">Album stickers</string>
     <string name="text_label">Text</string>
     <string name="number_label">Number</string>
     <string name="letter_number">LetterNumber</string>

@@ -498,10 +498,9 @@ fun StickersPreview(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = title.uppercase(),
+        TitleSection(
+            title = title.uppercase(),
             fontSize = 14.sp,
-            overflow = TextOverflow.Ellipsis,
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold
         )
@@ -542,61 +541,6 @@ fun StickersPreview(
 
                         repeat(columnsGrid - row.size) {
                             Spacer(modifier = Modifier.weight(1F))
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CurrentStickersPreview(stickersList: List<Sticker>) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(id = R.string.current_stickers_label).uppercase(),
-            fontSize = 14.sp,
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.SemiBold
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            if (stickersList.isEmpty()) {
-                Text(
-                    text = stringResource(id = R.string.current_stickers_empty),
-                    fontSize = 10.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Medium
-                )
-            } else {
-                val grid = stickersList.toGrid(10)
-                grid.forEach { row ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        row.forEach {
-                            Text(
-                                text = it.identifier,
-                                fontSize = 10.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontWeight = FontWeight.Medium,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .weight(1F)
-                                    .border((0.1).dp, MaterialTheme.colorScheme.secondary)
-                            )
                         }
                     }
                 }

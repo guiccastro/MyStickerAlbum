@@ -115,26 +115,26 @@ class CreateEditAlbumViewModel @Inject constructor(
         }
     }
 
-    private fun onNumberStickerFromChange(text: String) {
+    private fun onNumberStickerFromChange(text: String, verifyError: Boolean = true) {
         if (text.toIntOrNull() != null || text.isEmpty()) {
             _uiState.update {
                 it.copy(
                     numberStickerFromTextField = it.numberStickerFromTextField.copy(text = text)
                 )
             }
-            verifyNumberStickerInputError()
+            if (verifyError) verifyNumberStickerInputError()
             updateEditStickersPreview()
         }
     }
 
-    private fun onNumberStickerToChange(text: String) {
+    private fun onNumberStickerToChange(text: String, verifyError: Boolean = true) {
         if (text.toIntOrNull() != null || text.isEmpty()) {
             _uiState.update {
                 it.copy(
                     numberStickerToTextField = it.numberStickerToTextField.copy(text = text)
                 )
             }
-            verifyNumberStickerInputError()
+            if (verifyError) verifyNumberStickerInputError()
             updateEditStickersPreview()
         }
     }
@@ -149,23 +149,23 @@ class CreateEditAlbumViewModel @Inject constructor(
         updateEditStickersPreview()
     }
 
-    private fun onTextStickerFromChange(text: String) {
+    private fun onTextStickerFromChange(text: String, verifyError: Boolean = true) {
         _uiState.update {
             it.copy(
                 textStickerFromTextField = it.textStickerFromTextField.copy(text = text)
             )
         }
-        verifyTextStickerInputError()
+        if (verifyError) verifyTextStickerInputError()
         updateEditStickersPreview()
     }
 
-    private fun onTextStickerToChange(text: String) {
+    private fun onTextStickerToChange(text: String, verifyError: Boolean = true) {
         _uiState.update {
             it.copy(
                 textStickerToTextField = it.textStickerToTextField.copy(text = text)
             )
         }
-        verifyTextStickerInputError()
+        if (verifyError) verifyTextStickerInputError()
         updateEditStickersPreview()
     }
 
@@ -548,10 +548,12 @@ class CreateEditAlbumViewModel @Inject constructor(
                     album = currentAlbum.copy(stickersList = StickersList(updatedStickers)),
                 )
             }
-            onNumberStickerFromChange("")
-            onNumberStickerToChange("")
-            onTextStickerFromChange("")
-            onTextStickerToChange("")
+            onNumberStickerFromChange("", false)
+            onNumberStickerToChange("", false)
+            onTextStickerFromChange("", false)
+            onTextStickerToChange("", false)
+            onNumberCheckboxChange(false)
+            onTextCheckboxChange(false)
         }
     }
 
@@ -573,10 +575,12 @@ class CreateEditAlbumViewModel @Inject constructor(
                     album = currentAlbum.copy(stickersList = StickersList(updatedStickers)),
                 )
             }
-            onNumberStickerFromChange("")
-            onNumberStickerToChange("")
-            onTextStickerFromChange("")
-            onTextStickerToChange("")
+            onNumberStickerFromChange("", false)
+            onNumberStickerToChange("", false)
+            onTextStickerFromChange("", false)
+            onTextStickerToChange("", false)
+            onNumberCheckboxChange(false)
+            onTextCheckboxChange(false)
         }
     }
 
