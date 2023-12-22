@@ -50,7 +50,6 @@ import com.devgc.mystickeralbum.extensions.toGrid
 import com.devgc.mystickeralbum.model.Album
 import com.devgc.mystickeralbum.model.ButtonItem
 import com.devgc.mystickeralbum.model.CheckboxValues
-import com.devgc.mystickeralbum.model.SpecialStickerType
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.TextFieldValues
 import com.devgc.mystickeralbum.ui.components.AlbumCard
@@ -378,13 +377,7 @@ fun CompoundStickerTypeSelect(state: CreateEditAlbumUIState) {
                 )
             }
 
-            ToggleGroup(
-                options = SpecialStickerType.values().map { stringResource(id = it.getTitle()) },
-                onOptionClick = {
-                    state.onSpecialStickerTypeChange(SpecialStickerType.values()[it])
-                },
-                selectedIndex = SpecialStickerType.values().indexOf(state.specialStickerType)
-            )
+            ToggleGroup(toggleGroupValues = state.compoundTypeToggle)
         }
     }
 }

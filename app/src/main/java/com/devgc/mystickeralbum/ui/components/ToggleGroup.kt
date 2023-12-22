@@ -15,14 +15,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.devgc.mystickeralbum.model.ToggleGroupValues
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.theme.Poppins
 
 @Composable
 fun ToggleGroup(
-    options: List<String>,
-    onOptionClick: (Int) -> Unit,
-    selectedIndex: Int,
+    toggleGroupValues: ToggleGroupValues,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontWeight: FontWeight = FontWeight.Normal,
     selectedFontWeight: FontWeight = FontWeight.Medium,
@@ -36,9 +35,9 @@ fun ToggleGroup(
     selectedContentColor: Color = MaterialTheme.colorScheme.onPrimary
 ) {
     Row {
-        options.forEachIndexed { index, option ->
+        toggleGroupValues.options.forEachIndexed { index, option ->
             OutlinedButton(
-                onClick = { onOptionClick(index) },
+                onClick = { toggleGroupValues.onOptionClick(index) },
                 shape = when (index) {
                     // left outer button
                     0 -> RoundedCornerShape(
@@ -48,7 +47,7 @@ fun ToggleGroup(
                         bottomEnd = 0.dp
                     )
                     // right outer button
-                    options.size - 1 -> RoundedCornerShape(
+                    toggleGroupValues.options.size - 1 -> RoundedCornerShape(
                         topStart = 0.dp,
                         topEnd = cornerRadius,
                         bottomStart = 0.dp,
@@ -63,13 +62,13 @@ fun ToggleGroup(
                     )
                 },
                 border = BorderStroke(
-                    borderWidth, if (selectedIndex == index) {
+                    borderWidth, if (toggleGroupValues.selectedIndex == index) {
                         selectedColorBorder
                     } else {
                         borderColor
                     }
                 ),
-                colors = if (selectedIndex == index) {
+                colors = if (toggleGroupValues.selectedIndex == index) {
                     // selected colors
                     ButtonDefaults.outlinedButtonColors(
                         containerColor = selectedBackground,
@@ -85,14 +84,14 @@ fun ToggleGroup(
             ) {
                 Text(
                     text = option,
-                    color = if (selectedIndex == index) {
+                    color = if (toggleGroupValues.selectedIndex == index) {
                         selectedContentColor
                     } else {
                         contentColor
                     },
                     style = Poppins,
                     fontSize = fontSize,
-                    fontWeight = if (selectedIndex == index) selectedFontWeight else fontWeight
+                    fontWeight = if (toggleGroupValues.selectedIndex == index) selectedFontWeight else fontWeight
                 )
             }
         }
@@ -106,19 +105,25 @@ fun ToggleGroupPreview() {
 
         Column {
             ToggleGroup(
-                options = listOf("Option1", "Option2", "Option3"),
-                onOptionClick = {},
-                selectedIndex = 0
+                toggleGroupValues = ToggleGroupValues(
+                    options = listOf("Option1", "Option2", "Option3"),
+                    onOptionClick = {},
+                    selectedIndex = 0
+                )
             )
             ToggleGroup(
-                options = listOf("Option1", "Option2", "Option3"),
-                onOptionClick = {},
-                selectedIndex = 1
+                toggleGroupValues = ToggleGroupValues(
+                    options = listOf("Option1", "Option2", "Option3"),
+                    onOptionClick = {},
+                    selectedIndex = 1
+                )
             )
             ToggleGroup(
-                options = listOf("Option1", "Option2", "Option3"),
-                onOptionClick = {},
-                selectedIndex = 2
+                toggleGroupValues = ToggleGroupValues(
+                    options = listOf("Option1", "Option2", "Option3"),
+                    onOptionClick = {},
+                    selectedIndex = 2
+                )
             )
         }
     }

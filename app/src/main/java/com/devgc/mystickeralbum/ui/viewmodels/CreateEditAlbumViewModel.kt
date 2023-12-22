@@ -6,10 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.devgc.mystickeralbum.AlbumsRepository
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.model.CheckboxValues
-import com.devgc.mystickeralbum.model.SpecialStickerType
+import com.devgc.mystickeralbum.model.CompoundStickerType
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
 import com.devgc.mystickeralbum.model.TextFieldValues
+import com.devgc.mystickeralbum.model.ToggleGroupValues
 import com.devgc.mystickeralbum.navigation.MainNavComponent
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.getSingleTopWithPopUpTo
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.navController
@@ -48,7 +49,10 @@ class CreateEditAlbumViewModel @Inject constructor(
                 textStickerFromTextField = TextFieldValues(onTextChange = ::onTextStickerFromChange),
                 textStickerToTextField = TextFieldValues(onTextChange = ::onTextStickerToChange),
                 textCheckbox = CheckboxValues(onCheckedChange = ::onTextCheckboxChange),
-                onSpecialStickerTypeChange = ::onSpecialStickerTypeChange,
+                compoundTypeToggle = ToggleGroupValues(
+                    options = CompoundStickerType.values().map { type -> type.getTitle() },
+                    onOptionClick = ::onCompoundTypeChange
+                ),
                 onCreateEditClick = ::onCreateEditClick,
                 onCancelClick = ::onCancelClick,
                 changeCompoundStickerTypeDialogState = ::changeCompoundStickerTypeDialogState,
@@ -164,10 +168,10 @@ class CreateEditAlbumViewModel @Inject constructor(
         updateToBeAddStickersPreview()
     }
 
-    private fun onSpecialStickerTypeChange(specialStickerType: SpecialStickerType) {
+    private fun onCompoundTypeChange(index: Int) {
         _uiState.update {
             it.copy(
-                specialStickerType = specialStickerType
+                compoundTypeToggle = it.compoundTypeToggle.copy(selectedIndex = index)
             )
         }
         updateToBeAddStickersPreview()
@@ -499,7 +503,9 @@ class CreateEditAlbumViewModel @Inject constructor(
     }
 
     private fun createCompoundIdentifier(numberValue: String, textValue: String): String {
-        return if (_uiState.value.specialStickerType == SpecialStickerType.LetterNumber) {
+        val compoundType =
+            CompoundStickerType.values()[_uiState.value.compoundTypeToggle.selectedIndex]
+        return if (compoundType == CompoundStickerType.LetterNumber) {
             "$textValue$numberValue"
         } else {
             "$numberValue$textValue"
