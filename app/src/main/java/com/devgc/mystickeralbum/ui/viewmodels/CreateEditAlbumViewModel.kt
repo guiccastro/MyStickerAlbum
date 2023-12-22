@@ -64,7 +64,14 @@ class CreateEditAlbumViewModel @Inject constructor(
                 editModeToggle = ToggleGroupValues(
                     options = EditStickerMode.getOptionsString(MyStickerAlbumApplication.getInstance()),
                     onOptionClick = ::onEditModeChange
-                )
+                ),
+                stickerDialog = DialogValues(
+                    changeDialogState = { changeStickerDialogState(null) },
+                    changeDialogStateValue = ::changeStickerDialogState
+                ),
+                stickerDialogIdTextField = TextFieldValues(onTextChange = ::onStickerIdChange),
+                saveIdSticker = ::saveIdSticker
+
             )
         }
 
@@ -657,5 +664,50 @@ class CreateEditAlbumViewModel @Inject constructor(
                 currentEditMode = EditStickerMode.getByIndex(index)
             )
         }
+    }
+
+    private fun changeStickerDialogState(any: Any?) {
+        _uiState.update {
+            it.copy(
+                stickerDialog = it.stickerDialog.copy(
+                    showDialog = !_uiState.value.stickerDialog.showDialog,
+                    value = any
+                )
+            )
+        }
+
+        (any as? Sticker)?.let { sticker ->
+            _uiState.update {
+                it.copy(
+                    stickerDialogIdTextField = it.stickerDialogIdTextField.copy(text = sticker.identifier)
+                )
+            }
+        }
+    }
+
+    private fun onStickerIdChange(text: String) {
+        _uiState.update {
+            it.copy(
+                stickerDialogIdTextField = it.stickerDialogIdTextField.copy(text = text)
+            )
+        }
+    }
+
+    private fun saveIdSticker() {
+        val newId = _uiState.value.stickerDialogIdTextField.text
+        val oldSticker = _uiState.value.stickerDialog.value as Sticker
+        val newSticker = oldSticker.copy(identifier = newId)
+
+        val oldStickersList = _uiState.value.album.stickersList.stickers
+        val newStickersList = ArrayList(oldStickersList)
+        newStickersList.replaceAll { if (it == oldSticker) newSticker else it }
+
+        _uiState.update {
+            it.copy(
+                album = it.album.copy(stickersList = StickersList(newStickersList))
+            )
+        }
+
+        changeStickerDialogState(null)
     }
 }

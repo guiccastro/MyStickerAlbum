@@ -41,12 +41,14 @@
     <string name="add_stickers">Adicionar Figurinhas</string>
     <string name="remove_stickers">Remover Figurinhas</string>
     <string name="edit_mode_title">Mode de Edição</string>
+    <string name="edit_sticker_identifier">Editar identificador</string>
 
     <!-- Buttons -->
     <string name="create_button">Criar</string>
     <string name="cancel_button">Cancelar</string>
     <string name="confirm_button">Confirmar</string>
     <string name="edit_button">Editar</string>
+    <string name="save_button">Salvar</string>
 
     <!-- Error Text Field -->
     <string name="error_empty_text_field">Campo não pode ser vazio.</string>

@@ -57,6 +57,7 @@ import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.TextFieldValues
 import com.devgc.mystickeralbum.model.ToggleGroupValues
 import com.devgc.mystickeralbum.ui.components.AlbumCard
+import com.devgc.mystickeralbum.ui.components.BaseDialog
 import com.devgc.mystickeralbum.ui.components.SimpleDialog
 import com.devgc.mystickeralbum.ui.components.TextField
 import com.devgc.mystickeralbum.ui.components.TitleSection
@@ -73,6 +74,15 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
 
     if (state.compoundStickerDialog.showDialog) {
         CompoundStickerTypeDialog(state.compoundStickerDialog.changeDialogState)
+    }
+
+    if (state.stickerDialog.showDialog) {
+        StickerDialog(
+            sticker = state.stickerDialog.value as Sticker,
+            identifierTextField = state.stickerDialogIdTextField,
+            onCancel = state.stickerDialog.changeDialogState,
+            onSave = state.saveIdSticker
+        )
     }
 }
 
@@ -250,7 +260,8 @@ fun EditStickers(state: CreateEditAlbumUIState) {
             columnsGrid = 10,
             hasError = state.currentStickersError.hasError,
             errorMessage = state.currentStickersError.errorMessage?.let { stringResource(id = it) }
-                ?: ""
+                ?: "",
+            onStickerClick = state.stickerDialog.changeDialogStateValue
         )
     }
 }
@@ -498,6 +509,7 @@ fun StickersPreview(
     columnsGrid: Int,
     hasError: Boolean = false,
     errorMessage: String = "",
+    onStickerClick: ((Sticker) -> Unit)? = null
 ) {
     Column(
         modifier = Modifier
@@ -543,6 +555,11 @@ fun StickersPreview(
                                 modifier = Modifier
                                     .weight(1F)
                                     .border((0.1).dp, MaterialTheme.colorScheme.secondary)
+                                    .clickable(
+                                        enabled = onStickerClick != null
+                                    ) {
+                                        onStickerClick?.invoke(it)
+                                    }
                             )
                         }
 
@@ -612,6 +629,72 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
     }
 }
 
+@Composable
+fun StickerDialog(
+    sticker: Sticker,
+    identifierTextField: TextFieldValues,
+    onCancel: () -> Unit,
+    onSave: () -> Unit
+) {
+    BaseDialog(
+        onDismissRequest = onCancel
+    ) {
+        Text(
+            text = (stringResource(id = R.string.sticker_title) + " " + sticker.identifier).uppercase(),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = R.string.edit_sticker_identifier),
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            TextField(
+                text = identifierTextField.text,
+                onValueChange = identifierTextField.onTextChange,
+                modifier = Modifier
+                    .width(80.dp)
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Button(
+                onClick = { onCancel() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.cancel_button),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+
+            Button(
+                onClick = { onSave() }
+            ) {
+                Text(
+                    text = stringResource(id = R.string.save_button),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun AddAlbumScreenPreview() {
@@ -627,6 +710,32 @@ fun AddAlbumScreenPreview() {
                     )
                 )
             )
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Composable
+fun StickersPreviewPreview() {
+    MyStickerAlbumTheme {
+        StickersPreview(
+            title = "Title",
+            stickersList = emptyList(),
+            emptyMessage = "Empty",
+            columnsGrid = 10
+        )
+    }
+}
+
+@Preview
+@Composable
+fun StickerDialogPreview() {
+    MyStickerAlbumTheme {
+        StickerDialog(
+            sticker = Sticker("20", false, 0),
+            identifierTextField = TextFieldValues(),
+            onCancel = {},
+            onSave = {}
         )
     }
 }

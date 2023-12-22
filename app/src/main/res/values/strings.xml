@@ -43,12 +43,14 @@
     <string name="add_stickers">Add Stickers</string>
     <string name="remove_stickers">Remove Stickers</string>
     <string name="edit_mode_title">Edit Mode</string>
+    <string name="edit_sticker_identifier">Edit identifier</string>
 
     <!-- Buttons -->
     <string name="create_button">Create</string>
     <string name="cancel_button">Cancel</string>
     <string name="confirm_button">Confirm</string>
     <string name="edit_button">Edit</string>
+    <string name="save_button">Save</string>
 
     <!-- Error Text Field -->
     <string name="error_empty_text_field">Field must not be empty.</string>

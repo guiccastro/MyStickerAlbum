@@ -31,5 +31,8 @@ data class CreateEditAlbumUIState(
     val onRemoveStickersClick: () -> Unit = {},
     val editModeToggle: ToggleGroupValues = ToggleGroupValues(),
     val currentEditMode: EditStickerMode = EditStickerMode.values().first(),
-    val currentStickersError: ErrorValues = ErrorValues()
+    val currentStickersError: ErrorValues = ErrorValues(),
+    val stickerDialog: DialogValues = DialogValues(),
+    val stickerDialogIdTextField: TextFieldValues = TextFieldValues(),
+    val saveIdSticker: () -> Unit = {}
 )
