@@ -56,6 +56,7 @@
     <string name="error_grater_text_field">Value must be greater than value \'from\'.</string>
     <string name="error_album_name_exists">Album name already exists.</string>
     <string name="error_char_text_field">Value must not have more than one char.</string>
+    <string name="error_current_stickers_empty">Album stickers must not be empty.</string>
 
     <!-- Update Album Screen -->
     <string name="update_album_title">Update Album</string>

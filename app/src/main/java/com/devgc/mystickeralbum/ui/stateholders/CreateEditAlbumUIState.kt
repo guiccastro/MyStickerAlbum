@@ -5,6 +5,7 @@ import com.devgc.mystickeralbum.model.AlbumStatus
 import com.devgc.mystickeralbum.model.CheckboxValues
 import com.devgc.mystickeralbum.model.DialogValues
 import com.devgc.mystickeralbum.model.EditStickerMode
+import com.devgc.mystickeralbum.model.ErrorValues
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
 import com.devgc.mystickeralbum.model.TextFieldValues
@@ -29,5 +30,6 @@ data class CreateEditAlbumUIState(
     val onAddStickersClick: () -> Unit = {},
     val onRemoveStickersClick: () -> Unit = {},
     val editModeToggle: ToggleGroupValues = ToggleGroupValues(),
-    val currentEditMode: EditStickerMode = EditStickerMode.values().first()
+    val currentEditMode: EditStickerMode = EditStickerMode.values().first(),
+    val currentStickersError: ErrorValues = ErrorValues()
 )

@@ -62,6 +62,7 @@ import com.devgc.mystickeralbum.ui.components.TextField
 import com.devgc.mystickeralbum.ui.components.TitleSection
 import com.devgc.mystickeralbum.ui.components.ToggleGroup
 import com.devgc.mystickeralbum.ui.stateholders.CreateEditAlbumUIState
+import com.devgc.mystickeralbum.ui.theme.ErrorColor
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.viewmodels.CreateEditAlbumViewModel
 
@@ -246,7 +247,10 @@ fun EditStickers(state: CreateEditAlbumUIState) {
             title = stringResource(id = R.string.current_stickers_label),
             stickersList = state.album.stickersList.stickers,
             emptyMessage = stringResource(id = R.string.current_stickers_empty),
-            columnsGrid = 10
+            columnsGrid = 10,
+            hasError = state.currentStickersError.hasError,
+            errorMessage = state.currentStickersError.errorMessage?.let { stringResource(id = it) }
+                ?: ""
         )
     }
 }
@@ -491,7 +495,9 @@ fun StickersPreview(
     title: String,
     stickersList: List<Sticker>,
     emptyMessage: String,
-    columnsGrid: Int
+    columnsGrid: Int,
+    hasError: Boolean = false,
+    errorMessage: String = "",
 ) {
     Column(
         modifier = Modifier
@@ -501,7 +507,7 @@ fun StickersPreview(
         TitleSection(
             title = title.uppercase(),
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = if (hasError) ErrorColor else MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -545,6 +551,16 @@ fun StickersPreview(
                         }
                     }
                 }
+            }
+
+            if (hasError) {
+                Text(
+                    text = errorMessage,
+                    fontSize = 10.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = ErrorColor,
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
     }

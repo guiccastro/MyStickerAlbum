@@ -19,3 +19,5 @@ val LightContainer = Color(0xFFCCCCCC)
 val NormalContainer = Color(0xFF888888)
 val DarkContainer = Color(0xFF444444)
 val BorderColor = Color(0xFF000000)
+
+val ErrorColor = Color(0xFFFF0000)

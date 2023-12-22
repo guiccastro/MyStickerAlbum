@@ -554,6 +554,7 @@ class CreateEditAlbumViewModel @Inject constructor(
             onTextStickerToChange("", false)
             onNumberCheckboxChange(false)
             onTextCheckboxChange(false)
+            verifyCurrentStickersError()
         }
     }
 
@@ -585,11 +586,33 @@ class CreateEditAlbumViewModel @Inject constructor(
     }
 
     private suspend fun hasError(): Boolean {
-        return verifyAlbumNameInputError() || hasEditStickersError()
+        var hasError = false
+
+        if (verifyAlbumNameInputError()) hasError = true
+        if (hasCurrentStickersError()) hasError = true
+
+        return hasError
     }
 
     private fun hasEditStickersError(): Boolean {
         return verifyNumberStickerInputError() || verifyTextStickerInputError()
+    }
+
+    private fun hasCurrentStickersError(): Boolean {
+        return verifyCurrentStickersError()
+    }
+
+    private fun verifyCurrentStickersError(): Boolean {
+        val hasError = _uiState.value.album.stickersList.stickers.isEmpty()
+        _uiState.update {
+            it.copy(
+                currentStickersError = it.currentStickersError.copy(
+                    hasError = hasError,
+                    errorMessage = R.string.error_current_stickers_empty
+                )
+            )
+        }
+        return hasError
     }
 
     private fun onReceivedAlbumName(albumName: String) {

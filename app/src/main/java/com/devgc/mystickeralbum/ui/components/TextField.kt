@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.devgc.mystickeralbum.ui.theme.ErrorColor
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @Composable
@@ -95,7 +96,7 @@ fun TextField(
             Text(
                 text = errorMessage,
                 fontSize = (textSize.value - 4.sp.value).sp,
-                color = Color.Red,
+                color = ErrorColor,
                 modifier = errorModifier,
                 lineHeight = (textSize.value - 4.sp.value).sp
             )
