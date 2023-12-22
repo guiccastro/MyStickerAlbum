@@ -5,9 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devgc.mystickeralbum.AlbumsRepository
 import com.devgc.mystickeralbum.R
-import com.devgc.mystickeralbum.extensions.onlyLetters
-import com.devgc.mystickeralbum.model.Album
-import com.devgc.mystickeralbum.model.AlbumStatus
+import com.devgc.mystickeralbum.model.CheckboxValues
 import com.devgc.mystickeralbum.model.SpecialStickerType
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
@@ -44,16 +42,18 @@ class CreateEditAlbumViewModel @Inject constructor(
             it.copy(
                 albumNameTextField = TextFieldValues(onTextChange = ::onAlbumNameChange),
                 albumImageUrlTextField = TextFieldValues(onTextChange = ::onAlbumImageUrlChange),
-                normalStickersFromTextField = TextFieldValues(onTextChange = ::onNormalStickersFromChange),
-                normalStickersToTextField = TextFieldValues(onTextChange = ::onNormalStickersToChange),
-                onHasSpecialStickersChange = ::onHasSpecialStickersChange,
+                numberStickerFromTextField = TextFieldValues(onTextChange = ::onNumberStickerFromChange),
+                numberStickerToTextField = TextFieldValues(onTextChange = ::onNumberStickerToChange),
+                numberCheckbox = CheckboxValues(onCheckedChange = ::onNumberCheckboxChange),
+                textStickerFromTextField = TextFieldValues(onTextChange = ::onTextStickerFromChange),
+                textStickerToTextField = TextFieldValues(onTextChange = ::onTextStickerToChange),
+                textCheckbox = CheckboxValues(onCheckedChange = ::onTextCheckboxChange),
                 onSpecialStickerTypeChange = ::onSpecialStickerTypeChange,
-                specialStickersLetterFromTextField = TextFieldValues(onTextChange = ::onSpecialStickersLetterFromChange),
-                specialStickersLetterToTextField = TextFieldValues(onTextChange = ::onSpecialStickersLetterToChange),
-                specialStickersNumberFromTextField = TextFieldValues(onTextChange = ::onSpecialStickersNumberFromChange),
-                specialStickersNumberToTextField = TextFieldValues(onTextChange = ::onSpecialStickersNumberToChange),
                 onCreateEditClick = ::onCreateEditClick,
-                onCancelClick = ::onCancelClick
+                onCancelClick = ::onCancelClick,
+                changeCompoundStickerTypeDialogState = ::changeCompoundStickerTypeDialogState,
+                onAddStickersClick = ::onAddStickersClick,
+                onRemoveStickersClick = ::onRemoveStickersClick
             )
         }
 
@@ -104,70 +104,64 @@ class CreateEditAlbumViewModel @Inject constructor(
         }
     }
 
-    private fun onNormalStickersFromChange(fromValue: String) {
-        if (fromValue.toIntOrNull() != null || fromValue.isEmpty()) {
+    private fun onNumberStickerFromChange(text: String) {
+        if (text.toIntOrNull() != null || text.isEmpty()) {
             _uiState.update {
                 it.copy(
-                    normalStickersFromTextField = it.normalStickersFromTextField.copy(
-                        text = fromValue
-                    )
+                    numberStickerFromTextField = it.numberStickerFromTextField.copy(text = text)
                 )
             }
-            verifyNormalStickerInputError()
+            updateToBeAddStickersPreview()
         }
     }
 
-    private fun onNormalStickersToChange(toValue: String) {
-        if (toValue.toIntOrNull() != null || toValue.isEmpty()) {
+    private fun onNumberStickerToChange(text: String) {
+        if (text.toIntOrNull() != null || text.isEmpty()) {
             _uiState.update {
                 it.copy(
-                    normalStickersToTextField = it.normalStickersToTextField.copy(text = toValue)
+                    numberStickerToTextField = it.numberStickerToTextField.copy(text = text)
                 )
             }
-            verifyNormalStickerInputError()
+            updateToBeAddStickersPreview()
         }
     }
 
-    private fun verifyNormalStickerInputError(): Boolean {
-        val (errorFrom, errorMessageFrom) = verifyInputNumber(
-            _uiState.value.normalStickersFromTextField.text,
-            _uiState.value.normalStickersToTextField.text,
-            false
-        )
+    private fun onNumberCheckboxChange(checked: Boolean) {
         _uiState.update {
             it.copy(
-                normalStickersFromTextField = it.normalStickersFromTextField.copy(
-                    error = errorFrom,
-                    errorMessage = errorMessageFrom
-                )
+                numberCheckbox = it.numberCheckbox.copy(checked = checked),
+                numberStickerToTextField = it.numberStickerToTextField.copy(text = "")
             )
         }
-
-        val (errorTo, errorMessageTo) = verifyInputNumber(
-            _uiState.value.normalStickersToTextField.text,
-            _uiState.value.normalStickersFromTextField.text,
-            true
-        )
-        _uiState.update {
-            it.copy(
-                normalStickersToTextField = it.normalStickersToTextField.copy(
-                    error = errorTo,
-                    errorMessage = errorMessageTo
-                )
-            )
-        }
-
-        updateTotalStickers()
-
-        return errorFrom || errorTo
+        updateToBeAddStickersPreview()
     }
 
-    private fun onHasSpecialStickersChange(hasSpecialStickers: Boolean) {
+    private fun onTextStickerFromChange(text: String) {
         _uiState.update {
             it.copy(
-                hasSpecialStickers = hasSpecialStickers
+                textStickerFromTextField = it.textStickerFromTextField.copy(text = text)
             )
         }
+        updateToBeAddStickersPreview()
+    }
+
+    private fun onTextStickerToChange(text: String) {
+        _uiState.update {
+            it.copy(
+                textStickerToTextField = it.textStickerToTextField.copy(text = text)
+            )
+        }
+        updateToBeAddStickersPreview()
+    }
+
+    private fun onTextCheckboxChange(checked: Boolean) {
+        _uiState.update {
+            it.copy(
+                textCheckbox = it.textCheckbox.copy(checked = checked),
+                textStickerToTextField = it.textStickerToTextField.copy(text = "")
+            )
+        }
+        updateToBeAddStickersPreview()
     }
 
     private fun onSpecialStickerTypeChange(specialStickerType: SpecialStickerType) {
@@ -176,101 +170,19 @@ class CreateEditAlbumViewModel @Inject constructor(
                 specialStickerType = specialStickerType
             )
         }
+        updateToBeAddStickersPreview()
     }
 
-    private fun onSpecialStickersLetterFromChange(letterFrom: String) {
-        val from = letterFrom.lastOrNull()?.uppercase() ?: ""
-        if (from.onlyLetters()) {
-            _uiState.update {
-                it.copy(
-                    specialStickersLetterFromTextField = it.specialStickersLetterFromTextField.copy(
-                        text = from
-                    )
-                )
-            }
-            verifySpecialStickerLetterInputError()
-        }
-    }
-
-    private fun onSpecialStickersLetterToChange(letterTo: String) {
-        val to = letterTo.lastOrNull()?.uppercase() ?: ""
-        if (to.onlyLetters()) {
-            _uiState.update {
-                it.copy(
-                    specialStickersLetterToTextField = it.specialStickersLetterToTextField.copy(text = to)
-                )
-            }
-            verifySpecialStickerLetterInputError()
-        }
-    }
-
-    private fun verifySpecialStickerLetterInputError(): Boolean {
-        val (errorFrom, errorMessageFrom) = verifyInputLetter(
-            _uiState.value.specialStickersLetterFromTextField.text,
-            _uiState.value.specialStickersLetterToTextField.text,
-            false
-        )
-        _uiState.update {
-            it.copy(
-                specialStickersLetterFromTextField = it.specialStickersLetterFromTextField.copy(
-                    error = errorFrom,
-                    errorMessage = errorMessageFrom
-                )
-            )
-        }
-
-        val (errorTo, errorMessageTo) = verifyInputLetter(
-            _uiState.value.specialStickersLetterToTextField.text,
-            _uiState.value.specialStickersLetterFromTextField.text,
-            true
-        )
-        _uiState.update {
-            it.copy(
-                specialStickersLetterToTextField = it.specialStickersLetterToTextField.copy(
-                    error = errorTo,
-                    errorMessage = errorMessageTo
-                )
-            )
-        }
-
-        updateTotalStickers()
-
-        return errorFrom || errorTo
-    }
-
-    private fun onSpecialStickersNumberFromChange(numberFrom: String) {
-        if (numberFrom.toIntOrNull() != null || numberFrom.isEmpty()) {
-            _uiState.update {
-                it.copy(
-                    specialStickersNumberFromTextField = it.specialStickersNumberFromTextField.copy(
-                        text = numberFrom
-                    )
-                )
-            }
-            verifySpecialStickerNumberInputError()
-        }
-    }
-
-    private fun onSpecialStickersNumberToChange(numberTo: String) {
-        if (numberTo.toIntOrNull() != null || numberTo.isEmpty()) {
-            _uiState.update {
-                it.copy(
-                    specialStickersNumberToTextField = it.specialStickersNumberToTextField.copy(text = numberTo)
-                )
-            }
-            verifySpecialStickerNumberInputError()
-        }
-    }
-
-    private fun verifySpecialStickerNumberInputError(): Boolean {
+    private fun verifyNumberStickerInputError(): Boolean {
         val (errorFrom, errorMessageFrom) = verifyInputNumber(
-            _uiState.value.specialStickersNumberFromTextField.text,
-            _uiState.value.specialStickersNumberToTextField.text,
-            false
+            _uiState.value.numberStickerFromTextField.text,
+            _uiState.value.numberStickerToTextField.text,
+            false,
+            _uiState.value.numberCheckbox.checked
         )
         _uiState.update {
             it.copy(
-                specialStickersNumberFromTextField = it.specialStickersNumberFromTextField.copy(
+                numberStickerFromTextField = it.numberStickerFromTextField.copy(
                     error = errorFrom,
                     errorMessage = errorMessageFrom
                 )
@@ -278,159 +190,103 @@ class CreateEditAlbumViewModel @Inject constructor(
         }
 
         val (errorTo, errorMessageTo) = verifyInputNumber(
-            _uiState.value.specialStickersNumberToTextField.text,
-            _uiState.value.specialStickersNumberFromTextField.text,
-            true
+            _uiState.value.numberStickerToTextField.text,
+            _uiState.value.numberStickerFromTextField.text,
+            true,
+            _uiState.value.numberCheckbox.checked
         )
         _uiState.update {
             it.copy(
-                specialStickersNumberToTextField = it.specialStickersNumberToTextField.copy(
+                numberStickerToTextField = it.numberStickerToTextField.copy(
                     error = errorTo,
                     errorMessage = errorMessageTo
                 )
             )
         }
 
-        updateTotalStickers()
+        return errorFrom || errorTo
+    }
+
+    private fun verifyTextStickerInputError(): Boolean {
+        val (errorFrom, errorMessageFrom) = verifyInputText(
+            _uiState.value.textStickerFromTextField.text,
+            _uiState.value.textStickerToTextField.text,
+            false,
+            _uiState.value.textCheckbox.checked
+        )
+        _uiState.update {
+            it.copy(
+                textStickerFromTextField = it.textStickerFromTextField.copy(
+                    error = errorFrom,
+                    errorMessage = errorMessageFrom
+                )
+            )
+        }
+
+        val (errorTo, errorMessageTo) = verifyInputText(
+            _uiState.value.textStickerToTextField.text,
+            _uiState.value.textStickerFromTextField.text,
+            true,
+            _uiState.value.textCheckbox.checked
+        )
+        _uiState.update {
+            it.copy(
+                textStickerToTextField = it.textStickerToTextField.copy(
+                    error = errorTo,
+                    errorMessage = errorMessageTo
+                )
+            )
+        }
 
         return errorFrom || errorTo
     }
 
     private fun onCreateEditClick() {
         viewModelScope.launch {
-            if (!hasError()) {
-                val album = if (_uiState.value.isCreateAlbum) {
-                    Album(
-                        name = _uiState.value.albumNameTextField.text,
-                        stickersList = createStickersList(),
-                        status = AlbumStatus.Completing,
-                        albumImage = _uiState.value.albumImageUrlTextField.text
-                    )
-                } else {
-                    val newStickersList = createStickersList().stickers
-                    val oldStickerList = _uiState.value.album.stickersList.stickers
+            val album = if (_uiState.value.isCreateAlbum) {
+                _uiState.value.album
+            } else {
+                val newStickersList = _uiState.value.album.stickersList.stickers
+                val oldStickerList = oldAlbum.stickersList.stickers
 
-                    val newNormalStickersList =
-                        newStickersList.filter { it.identifier.toIntOrNull() != null }
-                    val oldNormalStickerList =
-                        oldStickerList.filter { it.identifier.toIntOrNull() != null }
-
-                    val resultSticker = ArrayList<Sticker>()
-
-                    newNormalStickersList.forEach { newSticker ->
-                        val oldSticker =
-                            oldNormalStickerList.find { it.identifier == newSticker.identifier }
-                        if (oldSticker == null) {
-                            newSticker.let {
-                                resultSticker.add(it)
-                            }
-                        } else {
-                            resultSticker.add(oldSticker)
+                val resultSticker = ArrayList<Sticker>()
+                newStickersList.forEach { newSticker ->
+                    val oldSticker = oldStickerList.find { it.identifier == newSticker.identifier }
+                    if (oldSticker == null) {
+                        newSticker.let {
+                            resultSticker.add(it)
                         }
-                    }
-
-                    val newSpecialStickersList =
-                        newStickersList.filter { it.identifier.toIntOrNull() == null }
-                    val oldSpecialStickerList =
-                        oldStickerList.filter { it.identifier.toIntOrNull() == null }
-
-                    if (_uiState.value.specialStickerType != _uiState.value.album.getSpecialStickerType() || !_uiState.value.hasSpecialStickers) {
-                        resultSticker.addAll(newSpecialStickersList)
                     } else {
-                        newSpecialStickersList.forEach { newSticker ->
-                            val oldSticker =
-                                oldSpecialStickerList.find { it.identifier == newSticker.identifier }
-
-                            if (oldSticker == null) {
-                                newSticker.let {
-                                    resultSticker.add(it)
-                                }
-                            } else {
-                                resultSticker.add(oldSticker)
-                            }
-                        }
+                        resultSticker.add(oldSticker)
                     }
-
-                    Album(
-                        name = _uiState.value.albumNameTextField.text,
-                        stickersList = StickersList(resultSticker),
-                        status = AlbumStatus.Completing,
-                        albumImage = _uiState.value.albumImageUrlTextField.text
-                    )
                 }
 
-                viewModelScope.launch {
-                    withContext(IO) {
-                        AlbumsRepository.updateAlbum(album, oldAlbum)
-                    }
+                _uiState.value.album.copy(stickersList = StickersList(resultSticker))
+            }
 
-                    if (_uiState.value.isCreateAlbum) {
-                        navController.popBackStack()
-                    } else {
-                        navController.apply {
-                            UpdateAlbumScreen.apply {
-                                navigateToItself(
-                                    albumName = album.name,
-                                    navOptions = getSingleTopWithPopUpTo(routeScreen, true)
-                                )
-                            }
+            viewModelScope.launch {
+                withContext(IO) {
+                    AlbumsRepository.updateAlbum(album, oldAlbum)
+                }
+
+                if (_uiState.value.isCreateAlbum) {
+                    navController.popBackStack()
+                } else {
+                    navController.apply {
+                        UpdateAlbumScreen.apply {
+                            navigateToItself(
+                                albumName = album.name,
+                                navOptions = getSingleTopWithPopUpTo(routeScreen, true)
+                            )
                         }
                     }
                 }
             }
-
         }
     }
 
     private fun onCancelClick() {
         navController.popBackStack()
-    }
-
-    private fun createStickersList(): StickersList {
-        val stickers = ArrayList<Sticker>()
-        stickers.addAll(createNormalStickersList())
-        stickers.addAll(createSpecialStickersList())
-        return StickersList(stickers)
-    }
-
-    private fun createNormalStickersList(): List<Sticker> {
-        return (_uiState.value.normalStickersFromTextField.text.toInt().._uiState.value.normalStickersToTextField.text.toInt())
-            .map {
-                Sticker(
-                    identifier = it.toString(),
-                    found = false,
-                    repeated = 0
-                )
-            }
-    }
-
-    private fun createSpecialStickersList(): List<Sticker> {
-        val stickers = ArrayList<Sticker>()
-        if (_uiState.value.hasSpecialStickers) {
-            (_uiState.value.specialStickersLetterFromTextField.text.uppercase()
-                .single().._uiState.value.specialStickersLetterToTextField.text.uppercase()
-                .single()).forEach { letter ->
-                stickers.addAll(
-                    (_uiState.value.specialStickersNumberFromTextField.text.toInt().._uiState.value.specialStickersNumberToTextField.text.toInt()).map { number ->
-                        if (_uiState.value.specialStickerType == SpecialStickerType.LetterNumber) {
-                            Sticker(
-                                identifier = "$letter$number",
-                                found = false,
-                                repeated = 0
-                            )
-                        } else {
-                            Sticker(
-                                identifier = "$number$letter",
-                                found = false,
-                                repeated = 0
-                            )
-                        }
-                    }
-                )
-            }
-        }
-
-        return stickers
     }
 
     private suspend fun verifyAlbumName(albumName: String): Pair<Boolean, Int> {
@@ -449,103 +305,263 @@ class CreateEditAlbumViewModel @Inject constructor(
     private fun verifyInputNumber(
         mainValue: String,
         comparisonValue: String,
-        greaterComparison: Boolean
+        greaterComparison: Boolean,
+        rangeValue: Boolean
     ): Pair<Boolean, Int> {
-        return if (mainValue.isEmpty()) {
-            Pair(true, R.string.error_empty_text_field)
-        } else if (mainValue.toInt() == 0) {
-            Pair(true, R.string.error_zero_text_field)
-        } else if (greaterComparison && comparisonValue.toIntOrNull() != null && mainValue.toInt() <= comparisonValue.toInt()) {
-            Pair(true, R.string.error_grater_text_field)
-        } else if (!greaterComparison && comparisonValue.toIntOrNull() != null && mainValue.toInt() >= comparisonValue.toInt()) {
-            Pair(true, R.string.error_smaller_text_field)
+        return if (rangeValue) {
+            if (mainValue.isEmpty()) {
+                Pair(true, R.string.error_empty_text_field)
+            } else if (greaterComparison && comparisonValue.toIntOrNull() != null && mainValue.toInt() <= comparisonValue.toInt()) {
+                Pair(true, R.string.error_grater_text_field)
+            } else if (!greaterComparison && comparisonValue.toIntOrNull() != null && mainValue.toInt() >= comparisonValue.toInt()) {
+                Pair(true, R.string.error_smaller_text_field)
+            } else {
+                Pair(false, R.string.error_empty_text_field)
+            }
         } else {
             Pair(false, R.string.error_empty_text_field)
         }
     }
 
-    private fun verifyInputLetter(
+    private fun verifyInputText(
         mainValue: String,
         comparisonValue: String,
-        greaterComparison: Boolean
+        greaterComparison: Boolean,
+        rangeValue: Boolean
     ): Pair<Boolean, Int> {
-        return if (mainValue.isEmpty()) {
-            Pair(true, R.string.error_empty_text_field)
-        } else if (greaterComparison && comparisonValue.isNotEmpty() && mainValue <= comparisonValue) {
-            Pair(true, R.string.error_grater_text_field)
-        } else if (!greaterComparison && comparisonValue.isNotEmpty() && mainValue >= comparisonValue) {
-            Pair(true, R.string.error_smaller_text_field)
+        return if (rangeValue) {
+            if (mainValue.isEmpty()) {
+                Pair(true, R.string.error_empty_text_field)
+            } else if (mainValue.length > 1) {
+                Pair(true, R.string.error_char_text_field)
+            } else if (greaterComparison && comparisonValue.isNotEmpty() && mainValue <= comparisonValue) {
+                Pair(true, R.string.error_grater_text_field)
+            } else if (!greaterComparison && comparisonValue.isNotEmpty() && mainValue >= comparisonValue) {
+                Pair(true, R.string.error_smaller_text_field)
+            } else {
+                Pair(false, R.string.error_empty_text_field)
+            }
         } else {
             Pair(false, R.string.error_empty_text_field)
         }
     }
 
-    private suspend fun hasError(): Boolean {
-        var error = false
-        if (verifyAlbumNameInputError()) error = true
-        if (verifyNormalStickerInputError()) error = true
-        if (_uiState.value.hasSpecialStickers) {
-            if (verifySpecialStickerLetterInputError()) error = true
-            if (verifySpecialStickerNumberInputError()) error = true
-        }
+    private fun updateToBeAddStickersPreview() {
+        val previewList = ArrayList<Sticker>()
+        if (!verifyNumberStickerInputError() && !verifyTextStickerInputError()) {
+            val numberFrom = _uiState.value.numberStickerFromTextField.text
+            val textFrom = _uiState.value.textStickerFromTextField.text
 
-        return error
-    }
-
-    private fun updateTotalStickers() {
-        var total = 0
-        _uiState.value.apply {
-            val (errorFrom, _) = verifyInputNumber(
-                normalStickersFromTextField.text,
-                normalStickersToTextField.text,
-                false
-            )
-
-            val (errorTo, _) = verifyInputNumber(
-                normalStickersToTextField.text,
-                normalStickersFromTextField.text,
-                true
-            )
-
-            val (errorLetterFrom, _) = verifyInputLetter(
-                specialStickersLetterFromTextField.text,
-                specialStickersLetterToTextField.text,
-                false
-            )
-
-            val (errorLetterTo, _) = verifyInputLetter(
-                specialStickersLetterToTextField.text,
-                specialStickersLetterFromTextField.text,
-                true
-            )
-
-            val (errorNumberFrom, _) = verifyInputNumber(
-                specialStickersNumberFromTextField.text,
-                specialStickersNumberToTextField.text,
-                false
-            )
-
-            val (errorNumberTo, _) = verifyInputNumber(
-                specialStickersNumberToTextField.text,
-                specialStickersNumberFromTextField.text,
-                true
-            )
-
-
-            if (!errorFrom && !errorTo) {
-                total += createNormalStickersList().size
-            }
-
-            if (!errorLetterFrom && !errorLetterTo && !errorNumberFrom && !errorNumberTo) {
-                total += createSpecialStickersList().size
+            if (numberFrom.isEmpty() && textFrom.isNotEmpty()) {
+                previewList.addAll(
+                    createTextStickers()
+                )
+            } else if (textFrom.isEmpty() && numberFrom.isNotEmpty()) {
+                previewList.addAll(
+                    createNumberStickers()
+                )
+            } else if (numberFrom.isNotEmpty() && textFrom.isNotEmpty()) {
+                previewList.addAll(
+                    createCompoundStickers()
+                )
             }
         }
 
         _uiState.update {
             it.copy(
-                totalStickers = total
+                toBeAddStickersList = previewList
             )
         }
+    }
+
+    private fun createNumberStickers(): List<Sticker> {
+        val list = ArrayList<Sticker>()
+
+        val fromValue = _uiState.value.numberStickerFromTextField.text.toIntOrNull()
+        val toValue = _uiState.value.numberStickerToTextField.text.toIntOrNull()
+
+        if (fromValue != null) {
+            if (toValue == null) {
+                list.add(
+                    Sticker(
+                        identifier = fromValue.toString(),
+                        found = false,
+                        repeated = 0
+                    )
+                )
+            } else {
+                list.addAll(
+                    (fromValue..toValue).map {
+                        Sticker(
+                            identifier = it.toString(),
+                            found = false,
+                            repeated = 0
+                        )
+                    }
+                )
+            }
+        }
+
+        return list
+    }
+
+    private fun createTextStickers(): List<Sticker> {
+        val list = ArrayList<Sticker>()
+
+        val fromValue = _uiState.value.textStickerFromTextField.text
+        val toValue = _uiState.value.textStickerToTextField.text
+
+        if (fromValue.isNotEmpty()) {
+            if (toValue.isEmpty()) {
+                list.add(
+                    Sticker(
+                        identifier = fromValue,
+                        found = false,
+                        repeated = 0
+                    )
+                )
+            } else {
+                if (fromValue.length == 1 && toValue.length == 1) {
+                    list.addAll(
+                        (fromValue.single()..toValue.single()).map {
+                            Sticker(
+                                identifier = it.toString(),
+                                found = false,
+                                repeated = 0
+                            )
+                        }
+                    )
+                }
+            }
+        }
+
+        return list
+    }
+
+    private fun createCompoundStickers(): List<Sticker> {
+        val list = ArrayList<Sticker>()
+
+        val numberFrom = _uiState.value.numberStickerFromTextField.text
+        val numberTo = _uiState.value.numberStickerToTextField.text
+        val textFrom = _uiState.value.textStickerFromTextField.text
+        val textTo = _uiState.value.textStickerToTextField.text
+
+        if (numberTo.isEmpty() && textTo.isEmpty()) {
+            list.add(
+                Sticker(
+                    identifier = createCompoundIdentifier(numberFrom, textFrom),
+                    found = false,
+                    repeated = 0
+                )
+            )
+        } else if (numberTo.isNotEmpty() && textTo.isEmpty()) {
+            val numberFromInt = numberFrom.toInt()
+            val numberToInt = numberTo.toInt()
+            list.addAll(
+                (numberFromInt..numberToInt).map {
+                    Sticker(
+                        identifier = createCompoundIdentifier(it.toString(), textFrom),
+                        found = false,
+                        repeated = 0
+                    )
+                }
+            )
+        } else if (numberTo.isEmpty() && textTo.isNotEmpty()) {
+            if (textFrom.length == 1 && textTo.length == 1) {
+                list.addAll(
+                    (textFrom.single()..textTo.single()).map {
+                        Sticker(
+                            identifier = createCompoundIdentifier(numberFrom, it.toString()),
+                            found = false,
+                            repeated = 0
+                        )
+                    }
+                )
+            }
+        } else if (numberTo.isNotEmpty() && textTo.isNotEmpty()) {
+            (textFrom.single()..textTo.single()).forEach { text ->
+                list.addAll(
+                    (numberFrom.toInt()..numberTo.toInt()).map { number ->
+                        Sticker(
+                            identifier = createCompoundIdentifier(
+                                number.toString(),
+                                text.toString()
+                            ),
+                            found = false,
+                            repeated = 0
+                        )
+                    }
+                )
+            }
+        }
+
+        return list
+    }
+
+    private fun createCompoundIdentifier(numberValue: String, textValue: String): String {
+        return if (_uiState.value.specialStickerType == SpecialStickerType.LetterNumber) {
+            "$textValue$numberValue"
+        } else {
+            "$numberValue$textValue"
+        }
+    }
+
+    private fun onAddStickersClick() {
+        viewModelScope.launch {
+            if (!hasError()) {
+                _uiState.update {
+                    val currentAlbum = it.album
+                    val newStickers = it.toBeAddStickersList
+                    val updatedStickers = ArrayList(it.album.stickersList.stickers)
+                    newStickers.forEach { newSticker ->
+                        val contains = updatedStickers.find { updatedSticker ->
+                            newSticker.identifier == updatedSticker.identifier
+                        } != null
+                        if (!contains) {
+                            updatedStickers.add(newSticker)
+                        }
+                    }
+                    it.copy(
+                        album = currentAlbum.copy(stickersList = StickersList(updatedStickers)),
+                    )
+                }
+                onNumberStickerFromChange("")
+                onNumberStickerToChange("")
+                onTextStickerFromChange("")
+                onTextStickerToChange("")
+            }
+        }
+    }
+
+    private fun onRemoveStickersClick() {
+        viewModelScope.launch {
+            if (!hasError()) {
+                _uiState.update {
+                    val currentAlbum = it.album
+                    val removeStickers = it.toBeAddStickersList
+                    val updatedStickers = ArrayList(currentAlbum.stickersList.stickers)
+                    removeStickers.forEach { removeSticker ->
+                        val index = updatedStickers.indexOfFirst { updatedSticker ->
+                            removeSticker.identifier == updatedSticker.identifier
+                        }
+                        if (index != -1) {
+                            updatedStickers.removeAt(index)
+                        }
+                    }
+                    it.copy(
+                        album = currentAlbum.copy(stickersList = StickersList(updatedStickers)),
+                    )
+                }
+                onNumberStickerFromChange("")
+                onNumberStickerToChange("")
+                onTextStickerFromChange("")
+                onTextStickerToChange("")
+            }
+        }
+    }
+
+    private suspend fun hasError(): Boolean {
+        return verifyAlbumNameInputError() || verifyNumberStickerInputError() || verifyTextStickerInputError()
     }
 
     private fun onReceivedAlbumName(albumName: String) {
@@ -572,29 +588,14 @@ class CreateEditAlbumViewModel @Inject constructor(
 
             onAlbumNameChange(album.name)
             onAlbumImageUrlChange(album.albumImage)
-            onNormalStickersFromChange(album.getNormalStickers().first().identifier)
-            onNormalStickersToChange(album.getNormalStickers().last().identifier)
+        }
+    }
 
-            onHasSpecialStickersChange(album.getSpecialStickers().isNotEmpty())
-            onSpecialStickerTypeChange(
-                album.getSpecialStickerType() ?: SpecialStickerType.LetterNumber
+    private fun changeCompoundStickerTypeDialogState() {
+        _uiState.update {
+            it.copy(
+                showCompoundStickerTypeDialog = !_uiState.value.showCompoundStickerTypeDialog
             )
-
-            val lettersList =
-                album.getSpecialStickers().map { it.identifier.replace(Regex("[0-9 ]"), "") }
-                    .toSet()
-            if (lettersList.isNotEmpty()) {
-                onSpecialStickersLetterFromChange(lettersList.first())
-                onSpecialStickersLetterToChange(lettersList.last())
-            }
-
-            val numbersList =
-                album.getSpecialStickers().map { it.identifier.replace(Regex("[^0-9 ]"), "") }
-                    .toSet()
-            if (numbersList.isNotEmpty()) {
-                onSpecialStickersNumberFromChange(numbersList.first())
-                onSpecialStickersNumberToChange(numbersList.last())
-            }
         }
     }
 }

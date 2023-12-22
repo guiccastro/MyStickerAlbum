@@ -68,7 +68,7 @@ fun SimpleDialog(
         Row(
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            if (negativeButton != null) {
+            if (negativeButton?.text != null) {
                 Button(
                     onClick = { negativeButton.onClick() },
                     shape = RoundedCornerShape(4.dp),
@@ -80,7 +80,7 @@ fun SimpleDialog(
                 }
             }
 
-            if (positiveButton != null) {
+            if (positiveButton?.text != null) {
                 Button(
                     onClick = { positiveButton.onClick() },
                     shape = RoundedCornerShape(4.dp)

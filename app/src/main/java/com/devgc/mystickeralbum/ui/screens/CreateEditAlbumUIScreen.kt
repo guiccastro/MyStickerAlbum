@@ -1,48 +1,63 @@
 package com.devgc.mystickeralbum.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import com.devgc.mystickeralbum.R
+import com.devgc.mystickeralbum.extensions.toGrid
 import com.devgc.mystickeralbum.model.Album
+import com.devgc.mystickeralbum.model.ButtonItem
+import com.devgc.mystickeralbum.model.CheckboxValues
 import com.devgc.mystickeralbum.model.SpecialStickerType
+import com.devgc.mystickeralbum.model.Sticker
+import com.devgc.mystickeralbum.model.TextFieldValues
 import com.devgc.mystickeralbum.ui.components.AlbumCard
+import com.devgc.mystickeralbum.ui.components.SimpleDialog
 import com.devgc.mystickeralbum.ui.components.TextField
+import com.devgc.mystickeralbum.ui.components.TitleSection
+import com.devgc.mystickeralbum.ui.components.ToggleGroup
 import com.devgc.mystickeralbum.ui.stateholders.CreateEditAlbumUIState
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.viewmodels.CreateEditAlbumViewModel
@@ -51,6 +66,10 @@ import com.devgc.mystickeralbum.ui.viewmodels.CreateEditAlbumViewModel
 fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
     val state = viewModel.uiState.collectAsState().value
     CreateEditAlbumUIScreen(state)
+
+    if (state.showCompoundStickerTypeDialog) {
+        CompoundStickerTypeDialog(state.changeCompoundStickerTypeDialogState)
+    }
 }
 
 @Composable
@@ -69,7 +88,7 @@ fun CreateEditAlbumUIScreen(state: CreateEditAlbumUIState) {
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             BasicAlbumInfo(state)
-            StickersInfo(state)
+            EditStickers(state)
         }
 
         BottomButtons(state)
@@ -129,15 +148,12 @@ fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (0.1).sp
         )
-        PreviewAlbum(
-            album = state.album,
-            totalStickers = state.totalStickers
-        )
+        PreviewAlbum(album = state.album)
     }
 }
 
 @Composable
-fun PreviewAlbum(album: Album, totalStickers: Int) {
+fun PreviewAlbum(album: Album) {
     AlbumCard(
         album = album
     ) {
@@ -157,7 +173,7 @@ fun PreviewAlbum(album: Album, totalStickers: Int) {
             )
 
             Text(
-                text = totalStickers.toString(),
+                text = album.stickersList.stickers.size.toString(),
                 fontSize = 16.sp,
                 modifier = Modifier
                     .padding(horizontal = 10.dp),
@@ -169,407 +185,398 @@ fun PreviewAlbum(album: Album, totalStickers: Int) {
 }
 
 @Composable
-fun StickersInfo(state: CreateEditAlbumUIState) {
+fun EditStickers(state: CreateEditAlbumUIState) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        NormalStickerInfo(state)
-    }
-
-    Column(
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        SpecialStickerInfo(state)
-    }
-}
-
-@Composable
-fun NormalStickerInfo(state: CreateEditAlbumUIState) {
-    Text(
-        text = stringResource(id = R.string.normal_stickers_label).uppercase(),
-        fontSize = 16.sp,
-        overflow = TextOverflow.Ellipsis,
-        color = Color.Black,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = (0.1).sp
-    )
-
-    Row {
-        Box(
-            modifier = Modifier
-                .height(32.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.from_label),
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.Center),
-                overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
-            )
-        }
-        TextField(
-            text = state.normalStickersFromTextField.text,
-            onValueChange = {
-                state.normalStickersFromTextField.onTextChange(it)
-            },
-            modifier = Modifier
-                .height(32.dp)
-                .width(50.dp),
-            textSize = 14.sp,
-            paddingValues = PaddingValues(horizontal = 10.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            error = state.normalStickersFromTextField.error,
-            errorMessage = stringResource(id = state.normalStickersFromTextField.errorMessage),
-            errorModifier = Modifier
-                .width(50.dp)
+        TitleSection(
+            title = stringResource(id = R.string.edit_stickers_title),
+            color = MaterialTheme.colorScheme.onBackground
         )
 
-        Box(
-            modifier = Modifier
-                .height(32.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.to_label),
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.Center),
-                overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
-            )
-        }
-        TextField(
-            text = state.normalStickersToTextField.text,
-            onValueChange = {
-                state.normalStickersToTextField.onTextChange(it)
-            },
-            modifier = Modifier
-                .height(32.dp)
-                .width(50.dp),
-            textSize = 14.sp,
-            paddingValues = PaddingValues(horizontal = 10.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            error = state.normalStickersToTextField.error,
-            errorMessage = stringResource(id = state.normalStickersToTextField.errorMessage),
-            errorModifier = Modifier
-                .width(50.dp)
-        )
-    }
-}
-
-@Composable
-fun SpecialStickerInfo(state: CreateEditAlbumUIState) {
-    Row(
-        modifier = Modifier
-            .height(30.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-        ) {
-            Text(
-                text = stringResource(id = R.string.special_stickers_label).uppercase(),
-                fontSize = 16.sp,
-                overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .align(Alignment.Center),
-                letterSpacing = (0.1).sp
-            )
-        }
-
-        Switch(
-            checked = state.hasSpecialStickers,
-            onCheckedChange = {
-                state.onHasSpecialStickersChange(it)
-            },
-            modifier = Modifier
-                .scale(0.9F)
-        )
-    }
-
-
-    if (state.hasSpecialStickers) {
         Row(
             modifier = Modifier
-                .height(30.dp)
+                .fillMaxWidth()
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .weight(1F)
             ) {
-                Text(
-                    text = stringResource(id = R.string.type_label),
-                    fontSize = 14.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                        .align(Alignment.Center)
+                StickerInput(
+                    title = stringResource(id = R.string.number_label),
+                    textFieldFromValues = state.numberStickerFromTextField,
+                    textFieldToValues = state.numberStickerToTextField,
+                    keyboardTypeFrom = KeyboardType.Number,
+                    keyboardTypeTo = KeyboardType.Number,
+                    checkboxValues = state.numberCheckbox
                 )
             }
 
-            Row(
+            Box(
                 modifier = Modifier
-                    .padding(horizontal = 6.dp)
+                    .weight(1F)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .zIndex(if (state.specialStickerType == SpecialStickerType.LetterNumber) 1F else 0F)
-                        .then(
-                            if (state.specialStickerType == SpecialStickerType.LetterNumber) Modifier.background(
-                                MaterialTheme.colorScheme.primary,
-                                RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
-                            ) else Modifier.background(
-                                Color.Gray,
-                                RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
-                            )
-                        )
-                        .then(
-                            if (state.specialStickerType == SpecialStickerType.LetterNumber) Modifier.border(
-                                1.dp,
-                                Color.Black,
-                                RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
-                            ) else Modifier.border(
-                                1.dp,
-                                Color.DarkGray,
-                                RoundedCornerShape(4.dp, 0.dp, 0.dp, 4.dp)
-                            )
-                        )
-                        .clickable { state.onSpecialStickerTypeChange(SpecialStickerType.LetterNumber) }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.letter_number),
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 4.dp),
-                        overflow = TextOverflow.Ellipsis,
-                        color = if (state.specialStickerType == SpecialStickerType.LetterNumber) Color.White else Color.Black,
-                        fontWeight = if (state.specialStickerType == SpecialStickerType.LetterNumber) FontWeight.SemiBold else FontWeight.Normal
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .offset(x = (-1).dp)
-                        .zIndex(if (state.specialStickerType == SpecialStickerType.NumberLetter) 1F else 0F)
-                        .then(
-                            if (state.specialStickerType == SpecialStickerType.NumberLetter) Modifier.background(
-                                MaterialTheme.colorScheme.primary,
-                                RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
-                            ) else Modifier.background(
-                                Color.Gray,
-                                RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
-                            )
-                        )
-                        .then(
-                            if (state.specialStickerType == SpecialStickerType.NumberLetter) Modifier.border(
-                                1.dp,
-                                Color.Black,
-                                RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
-                            ) else Modifier.border(
-                                1.dp,
-                                Color.DarkGray,
-                                RoundedCornerShape(0.dp, 4.dp, 4.dp, 0.dp)
-                            )
-                        )
-                        .clickable { state.onSpecialStickerTypeChange(SpecialStickerType.NumberLetter) }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.number_letter),
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 4.dp),
-                        overflow = TextOverflow.Ellipsis,
-                        color = if (state.specialStickerType == SpecialStickerType.NumberLetter) Color.White else Color.Black,
-                        fontWeight = if (state.specialStickerType == SpecialStickerType.NumberLetter) FontWeight.SemiBold else FontWeight.Normal
-                    )
-                }
+                StickerInput(
+                    title = stringResource(id = R.string.text_label),
+                    textFieldFromValues = state.textStickerFromTextField,
+                    textFieldToValues = state.textStickerToTextField,
+                    checkboxValues = state.textCheckbox
+                )
             }
         }
 
-        LetterInputSpecialSticker(state)
-        NumberInputSpecialSticker(state)
-    }
-}
+        CompoundStickerTypeSelect(state = state)
 
-@Composable
-fun LetterInputSpecialSticker(state: CreateEditAlbumUIState) {
-    Row {
-        Box(
-            modifier = Modifier
-                .height(32.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.letter_label),
-                fontSize = 14.sp,
-                overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(end = 6.dp)
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .height(32.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.from_label),
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.Center),
-                overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
-            )
-        }
-        TextField(
-            text = state.specialStickersLetterFromTextField.text,
-            onValueChange = {
-                state.specialStickersLetterFromTextField.onTextChange(it)
-            },
-            modifier = Modifier
-                .height(32.dp)
-                .width(50.dp),
-            textSize = 14.sp,
-            paddingValues = PaddingValues(horizontal = 10.dp),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Characters
-            ),
-            error = state.specialStickersLetterFromTextField.error,
-            errorMessage = stringResource(id = state.specialStickersLetterFromTextField.errorMessage),
-            errorModifier = Modifier
-                .width(50.dp)
+        StickersToBeAddedPreview(
+            stickersList = state.toBeAddStickersList,
+            onAddStickerClick = state.onAddStickersClick,
+            onRemoveStickerClick = state.onRemoveStickersClick
         )
 
-        Box(
-            modifier = Modifier
-                .height(32.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.to_label),
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.Center),
-                overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
-            )
-        }
-        TextField(
-            text = state.specialStickersLetterToTextField.text,
-            onValueChange = {
-                state.specialStickersLetterToTextField.onTextChange(it)
-            },
-            modifier = Modifier
-                .height(32.dp)
-                .width(50.dp),
-            textSize = 14.sp,
-            paddingValues = PaddingValues(horizontal = 10.dp),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Characters
-            ),
-            error = state.specialStickersLetterToTextField.error,
-            errorMessage = stringResource(id = state.specialStickersLetterToTextField.errorMessage),
-            errorModifier = Modifier
-                .width(50.dp)
+        StickersPreview(
+            title = stringResource(id = R.string.current_stickers_label),
+            stickersList = state.album.stickersList.stickers,
+            emptyMessage = stringResource(id = R.string.current_stickers_empty),
+            columnsGrid = 10
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NumberInputSpecialSticker(state: CreateEditAlbumUIState) {
-    Row {
-        Box(
+fun StickerInput(
+    title: String,
+    textFieldFromValues: TextFieldValues,
+    textFieldToValues: TextFieldValues,
+    keyboardTypeFrom: KeyboardType = KeyboardType.Text,
+    keyboardTypeTo: KeyboardType = KeyboardType.Text,
+    checkboxValues: CheckboxValues
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title.uppercase(),
+            fontSize = 14.sp,
+            overflow = TextOverflow.Ellipsis,
+            color = Color.Black,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Row {
+            TextField(
+                text = textFieldFromValues.text,
+                onValueChange = {
+                    textFieldFromValues.onTextChange(it)
+                },
+                modifier = Modifier
+                    .height(32.dp)
+                    .width(50.dp),
+                textSize = 14.sp,
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardTypeFrom),
+                error = textFieldFromValues.error,
+                errorMessage = stringResource(id = textFieldFromValues.errorMessage),
+                errorModifier = Modifier
+                    .width(50.dp)
+            )
+
+            if (checkboxValues.checked) {
+                Box(
+                    modifier = Modifier
+                        .height(32.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_long_arrow_right),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                    )
+                }
+
+                TextField(
+                    text = textFieldToValues.text,
+                    onValueChange = {
+                        textFieldToValues.onTextChange(it)
+                    },
+                    modifier = Modifier
+                        .height(32.dp)
+                        .width(50.dp),
+                    textSize = 14.sp,
+                    keyboardOptions = KeyboardOptions(keyboardType = keyboardTypeTo),
+                    error = textFieldToValues.error,
+                    errorMessage = stringResource(id = textFieldToValues.errorMessage),
+                    errorModifier = Modifier
+                        .width(50.dp)
+                )
+            }
+        }
+
+        Row(
             modifier = Modifier
                 .height(32.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .clickable {
+                    checkboxValues.onCheckedChange(!checkboxValues.checked)
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
+            CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+                Checkbox(
+                    checked = checkboxValues.checked,
+                    onCheckedChange = checkboxValues.onCheckedChange,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                )
+            }
+
             Text(
-                text = stringResource(id = R.string.number_label),
-                fontSize = 14.sp,
+                text = stringResource(id = R.string.range_checkbox_desc),
+                fontSize = 10.sp,
                 overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+fun CompoundStickerTypeSelect(state: CreateEditAlbumUIState) {
+    if (state.numberStickerFromTextField.text.isNotEmpty() && state.textStickerFromTextField.text.isNotEmpty()) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier
+                    .height(30.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(id = R.string.compound_sticker_type_label).uppercase(),
+                    fontSize = 14.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.ic_about_app),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            state.changeCompoundStickerTypeDialogState()
+                        }
+                )
+            }
+
+            ToggleGroup(
+                options = SpecialStickerType.values().map { stringResource(id = it.getTitle()) },
+                onOptionClick = {
+                    state.onSpecialStickerTypeChange(SpecialStickerType.values()[it])
+                },
+                selectedIndex = SpecialStickerType.values().indexOf(state.specialStickerType)
+            )
+        }
+    }
+}
+
+@Composable
+fun CompoundStickerTypeDialog(onClose: () -> Unit) {
+    SimpleDialog(
+        title = stringResource(id = R.string.compound_sticker_type_title),
+        description = stringResource(id = R.string.compound_sticker_type_desc),
+        negativeButton = ButtonItem(text = null, onClick = onClose)
+    )
+}
+
+@Composable
+fun StickersToBeAddedPreview(
+    stickersList: List<Sticker>,
+    onAddStickerClick: () -> Unit,
+    onRemoveStickerClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        StickersPreview(
+            title = stringResource(id = R.string.stickers_to_be_edited_label),
+            stickersList = stickersList,
+            emptyMessage = stringResource(id = R.string.stickers_to_be_edited_empty),
+            columnsGrid = 10
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .padding(top = 10.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Text(
+                text = stringResource(id = R.string.add_stickers),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSecondary,
                 fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(end = 6.dp)
+                    .shadow(4.dp, RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable {
+                        onAddStickerClick()
+                    }
+                    .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(10.dp))
+                    .padding(vertical = 2.dp, horizontal = 6.dp)
             )
-        }
 
-        Box(
-            modifier = Modifier
-                .height(32.dp)
-        ) {
             Text(
-                text = stringResource(id = R.string.from_label),
+                text = stringResource(id = R.string.remove_stickers),
                 fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.Center),
                 overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .shadow(4.dp, RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable {
+                        onRemoveStickerClick()
+                    }
+                    .background(
+                        MaterialTheme.colorScheme.secondaryContainer,
+                        RoundedCornerShape(10.dp)
+                    )
+                    .padding(vertical = 2.dp, horizontal = 6.dp)
             )
         }
-        TextField(
-            text = state.specialStickersNumberFromTextField.text,
-            onValueChange = {
-                state.specialStickersNumberFromTextField.onTextChange(it)
-            },
-            modifier = Modifier
-                .height(32.dp)
-                .width(50.dp),
-            textSize = 14.sp,
-            paddingValues = PaddingValues(horizontal = 10.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            error = state.specialStickersNumberFromTextField.error,
-            errorMessage = stringResource(id = state.specialStickersNumberFromTextField.errorMessage),
-            errorModifier = Modifier
-                .width(50.dp)
+    }
+}
+
+@Composable
+fun StickersPreview(
+    title: String,
+    stickersList: List<Sticker>,
+    emptyMessage: String,
+    columnsGrid: Int
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title.uppercase(),
+            fontSize = 14.sp,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.SemiBold
         )
 
-        Box(
+        Column(
             modifier = Modifier
-                .height(32.dp)
+                .fillMaxWidth()
         ) {
-            Text(
-                text = stringResource(id = R.string.to_label),
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.Center),
-                overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
-            )
+            if (stickersList.isEmpty()) {
+                Text(
+                    text = emptyMessage,
+                    fontSize = 10.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Medium
+                )
+            } else {
+                val grid = stickersList.toGrid(columnsGrid)
+                grid.forEach { row ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        row.forEach {
+                            Text(
+                                text = it.identifier,
+                                fontSize = 10.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .weight(1F)
+                                    .border((0.1).dp, MaterialTheme.colorScheme.secondary)
+                            )
+                        }
+
+                        repeat(columnsGrid - row.size) {
+                            Spacer(modifier = Modifier.weight(1F))
+                        }
+                    }
+                }
+            }
         }
-        TextField(
-            text = state.specialStickersNumberToTextField.text,
-            onValueChange = {
-                state.specialStickersNumberToTextField.onTextChange(it)
-            },
-            modifier = Modifier
-                .height(32.dp)
-                .width(50.dp),
-            textSize = 14.sp,
-            paddingValues = PaddingValues(horizontal = 10.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            error = state.specialStickersNumberToTextField.error,
-            errorMessage = stringResource(id = state.specialStickersNumberToTextField.errorMessage),
-            errorModifier = Modifier
-                .width(50.dp)
+    }
+}
+
+@Composable
+fun CurrentStickersPreview(stickersList: List<Sticker>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(id = R.string.current_stickers_label).uppercase(),
+            fontSize = 14.sp,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.SemiBold
         )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            if (stickersList.isEmpty()) {
+                Text(
+                    text = stringResource(id = R.string.current_stickers_empty),
+                    fontSize = 10.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Medium
+                )
+            } else {
+                val grid = stickersList.toGrid(10)
+                grid.forEach { row ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        row.forEach {
+                            Text(
+                                text = it.identifier,
+                                fontSize = 10.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .weight(1F)
+                                    .border((0.1).dp, MaterialTheme.colorScheme.secondary)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -623,6 +630,11 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
 @Composable
 fun AddAlbumScreenPreview() {
     MyStickerAlbumTheme {
-        CreateEditAlbumUIScreen(CreateEditAlbumUIState(hasSpecialStickers = true))
+        CreateEditAlbumUIScreen(
+            CreateEditAlbumUIState(
+                numberStickerFromTextField = TextFieldValues(text = "1"),
+                textStickerFromTextField = TextFieldValues(text = "A")
+            )
+        )
     }
 }
