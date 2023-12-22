@@ -261,7 +261,8 @@ fun RowScope.StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
                 .align(Alignment.Center),
             textDecoration = if (sticker.found) TextDecoration.LineThrough else null,
             fontWeight = if (sticker.found) FontWeight.Normal else FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            textAlign = TextAlign.Center
         )
 
         if (sticker.found) {

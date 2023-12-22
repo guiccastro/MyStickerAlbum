@@ -533,6 +533,7 @@ fun StickersPreview(
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontWeight = FontWeight.Medium,
                                 textAlign = TextAlign.Center,
+                                maxLines = 1,
                                 modifier = Modifier
                                     .weight(1F)
                                     .border((0.1).dp, MaterialTheme.colorScheme.secondary)
