@@ -3,12 +3,14 @@ package com.devgc.mystickeralbum.ui.stateholders
 import com.devgc.mystickeralbum.model.Album
 import com.devgc.mystickeralbum.model.AlbumStatus
 import com.devgc.mystickeralbum.model.CheckboxValues
+import com.devgc.mystickeralbum.model.DialogValues
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
 import com.devgc.mystickeralbum.model.TextFieldValues
 import com.devgc.mystickeralbum.model.ToggleGroupValues
 
 data class CreateEditAlbumUIState(
+    val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, ""),
     val albumNameTextField: TextFieldValues = TextFieldValues(),
     val albumImageUrlTextField: TextFieldValues = TextFieldValues(),
     val numberStickerFromTextField: TextFieldValues = TextFieldValues(),
@@ -20,10 +22,8 @@ data class CreateEditAlbumUIState(
     val compoundTypeToggle: ToggleGroupValues = ToggleGroupValues(),
     val onCreateEditClick: () -> Unit = { },
     val onCancelClick: () -> Unit = { },
-    val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, ""),
     val isCreateAlbum: Boolean = true,
-    val showCompoundStickerTypeDialog: Boolean = false,
-    val changeCompoundStickerTypeDialogState: () -> Unit = {},
+    val compoundStickerDialog: DialogValues = DialogValues(),
     val toBeAddStickersList: List<Sticker> = emptyList(),
     val onAddStickersClick: () -> Unit = {},
     val onRemoveStickersClick: () -> Unit = {}

@@ -7,6 +7,7 @@ import com.devgc.mystickeralbum.AlbumsRepository
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.model.CheckboxValues
 import com.devgc.mystickeralbum.model.CompoundStickerType
+import com.devgc.mystickeralbum.model.DialogValues
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
 import com.devgc.mystickeralbum.model.TextFieldValues
@@ -55,7 +56,7 @@ class CreateEditAlbumViewModel @Inject constructor(
                 ),
                 onCreateEditClick = ::onCreateEditClick,
                 onCancelClick = ::onCancelClick,
-                changeCompoundStickerTypeDialogState = ::changeCompoundStickerTypeDialogState,
+                compoundStickerDialog = DialogValues(changeDialogState = ::changeCompoundStickerTypeDialogState),
                 onAddStickersClick = ::onAddStickersClick,
                 onRemoveStickersClick = ::onRemoveStickersClick
             )
@@ -600,7 +601,7 @@ class CreateEditAlbumViewModel @Inject constructor(
     private fun changeCompoundStickerTypeDialogState() {
         _uiState.update {
             it.copy(
-                showCompoundStickerTypeDialog = !_uiState.value.showCompoundStickerTypeDialog
+                compoundStickerDialog = it.compoundStickerDialog.copy(showDialog = !_uiState.value.compoundStickerDialog.showDialog)
             )
         }
     }

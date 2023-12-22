@@ -66,8 +66,8 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
     val state = viewModel.uiState.collectAsState().value
     CreateEditAlbumUIScreen(state)
 
-    if (state.showCompoundStickerTypeDialog) {
-        CompoundStickerTypeDialog(state.changeCompoundStickerTypeDialogState)
+    if (state.compoundStickerDialog.showDialog) {
+        CompoundStickerTypeDialog(state.compoundStickerDialog.changeDialogState)
     }
 }
 
@@ -372,7 +372,7 @@ fun CompoundStickerTypeSelect(state: CreateEditAlbumUIState) {
                         .size(20.dp)
                         .clip(CircleShape)
                         .clickable {
-                            state.changeCompoundStickerTypeDialogState()
+                            state.compoundStickerDialog.changeDialogState()
                         }
                 )
             }
