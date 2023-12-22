@@ -122,7 +122,8 @@ class CreateEditAlbumViewModel @Inject constructor(
                     numberStickerFromTextField = it.numberStickerFromTextField.copy(text = text)
                 )
             }
-            updateToBeAddStickersPreview()
+            verifyNumberStickerInputError()
+            updateEditStickersPreview()
         }
     }
 
@@ -133,7 +134,8 @@ class CreateEditAlbumViewModel @Inject constructor(
                     numberStickerToTextField = it.numberStickerToTextField.copy(text = text)
                 )
             }
-            updateToBeAddStickersPreview()
+            verifyNumberStickerInputError()
+            updateEditStickersPreview()
         }
     }
 
@@ -144,7 +146,7 @@ class CreateEditAlbumViewModel @Inject constructor(
                 numberStickerToTextField = it.numberStickerToTextField.copy(text = "")
             )
         }
-        updateToBeAddStickersPreview()
+        updateEditStickersPreview()
     }
 
     private fun onTextStickerFromChange(text: String) {
@@ -153,7 +155,8 @@ class CreateEditAlbumViewModel @Inject constructor(
                 textStickerFromTextField = it.textStickerFromTextField.copy(text = text)
             )
         }
-        updateToBeAddStickersPreview()
+        verifyTextStickerInputError()
+        updateEditStickersPreview()
     }
 
     private fun onTextStickerToChange(text: String) {
@@ -162,7 +165,8 @@ class CreateEditAlbumViewModel @Inject constructor(
                 textStickerToTextField = it.textStickerToTextField.copy(text = text)
             )
         }
-        updateToBeAddStickersPreview()
+        verifyTextStickerInputError()
+        updateEditStickersPreview()
     }
 
     private fun onTextCheckboxChange(checked: Boolean) {
@@ -172,7 +176,7 @@ class CreateEditAlbumViewModel @Inject constructor(
                 textStickerToTextField = it.textStickerToTextField.copy(text = "")
             )
         }
-        updateToBeAddStickersPreview()
+        updateEditStickersPreview()
     }
 
     private fun onCompoundTypeChange(index: Int) {
@@ -181,7 +185,7 @@ class CreateEditAlbumViewModel @Inject constructor(
                 compoundTypeToggle = it.compoundTypeToggle.copy(selectedIndex = index)
             )
         }
-        updateToBeAddStickersPreview()
+        updateEditStickersPreview()
     }
 
     private fun verifyNumberStickerInputError(): Boolean {
@@ -254,41 +258,44 @@ class CreateEditAlbumViewModel @Inject constructor(
 
     private fun onCreateEditClick() {
         viewModelScope.launch {
-            val album = if (_uiState.value.isCreateAlbum) {
-                _uiState.value.album
-            } else {
-                val newStickersList = _uiState.value.album.stickersList.stickers
-                val oldStickerList = oldAlbum.stickersList.stickers
-
-                val resultSticker = ArrayList<Sticker>()
-                newStickersList.forEach { newSticker ->
-                    val oldSticker = oldStickerList.find { it.identifier == newSticker.identifier }
-                    if (oldSticker == null) {
-                        newSticker.let {
-                            resultSticker.add(it)
-                        }
-                    } else {
-                        resultSticker.add(oldSticker)
-                    }
-                }
-
-                _uiState.value.album.copy(stickersList = StickersList(resultSticker))
-            }
-
-            viewModelScope.launch {
-                withContext(IO) {
-                    AlbumsRepository.updateAlbum(album, oldAlbum)
-                }
-
-                if (_uiState.value.isCreateAlbum) {
-                    navController.popBackStack()
+            if (!hasError()) {
+                val album = if (_uiState.value.isCreateAlbum) {
+                    _uiState.value.album
                 } else {
-                    navController.apply {
-                        UpdateAlbumScreen.apply {
-                            navigateToItself(
-                                albumName = album.name,
-                                navOptions = getSingleTopWithPopUpTo(routeScreen, true)
-                            )
+                    val newStickersList = _uiState.value.album.stickersList.stickers
+                    val oldStickerList = oldAlbum.stickersList.stickers
+
+                    val resultSticker = ArrayList<Sticker>()
+                    newStickersList.forEach { newSticker ->
+                        val oldSticker =
+                            oldStickerList.find { it.identifier == newSticker.identifier }
+                        if (oldSticker == null) {
+                            newSticker.let {
+                                resultSticker.add(it)
+                            }
+                        } else {
+                            resultSticker.add(oldSticker)
+                        }
+                    }
+
+                    _uiState.value.album.copy(stickersList = StickersList(resultSticker))
+                }
+
+                viewModelScope.launch {
+                    withContext(IO) {
+                        AlbumsRepository.updateAlbum(album, oldAlbum)
+                    }
+
+                    if (_uiState.value.isCreateAlbum) {
+                        navController.popBackStack()
+                    } else {
+                        navController.apply {
+                            UpdateAlbumScreen.apply {
+                                navigateToItself(
+                                    albumName = album.name,
+                                    navOptions = getSingleTopWithPopUpTo(routeScreen, true)
+                                )
+                            }
                         }
                     }
                 }
@@ -357,9 +364,13 @@ class CreateEditAlbumViewModel @Inject constructor(
         }
     }
 
-    private fun updateToBeAddStickersPreview() {
+    private fun updateEditStickersPreview() {
         val previewList = ArrayList<Sticker>()
-        if (!verifyNumberStickerInputError() && !verifyTextStickerInputError()) {
+        val numberInputError =
+            _uiState.value.numberStickerFromTextField.error || _uiState.value.numberStickerToTextField.error
+        val textInputError =
+            _uiState.value.textStickerFromTextField.error || _uiState.value.textStickerToTextField.error
+        if (!numberInputError && !textInputError) {
             val numberFrom = _uiState.value.numberStickerFromTextField.text
             val textFrom = _uiState.value.textStickerFromTextField.text
 
@@ -520,61 +531,61 @@ class CreateEditAlbumViewModel @Inject constructor(
     }
 
     private fun onAddStickersClick() {
-        viewModelScope.launch {
-            if (!hasError()) {
-                _uiState.update {
-                    val currentAlbum = it.album
-                    val newStickers = it.toBeAddStickersList
-                    val updatedStickers = ArrayList(it.album.stickersList.stickers)
-                    newStickers.forEach { newSticker ->
-                        val contains = updatedStickers.find { updatedSticker ->
-                            newSticker.identifier == updatedSticker.identifier
-                        } != null
-                        if (!contains) {
-                            updatedStickers.add(newSticker)
-                        }
+        if (!hasEditStickersError()) {
+            _uiState.update {
+                val currentAlbum = it.album
+                val newStickers = it.toBeAddStickersList
+                val updatedStickers = ArrayList(it.album.stickersList.stickers)
+                newStickers.forEach { newSticker ->
+                    val contains = updatedStickers.find { updatedSticker ->
+                        newSticker.identifier == updatedSticker.identifier
+                    } != null
+                    if (!contains) {
+                        updatedStickers.add(newSticker)
                     }
-                    it.copy(
-                        album = currentAlbum.copy(stickersList = StickersList(updatedStickers)),
-                    )
                 }
-                onNumberStickerFromChange("")
-                onNumberStickerToChange("")
-                onTextStickerFromChange("")
-                onTextStickerToChange("")
+                it.copy(
+                    album = currentAlbum.copy(stickersList = StickersList(updatedStickers)),
+                )
             }
+            onNumberStickerFromChange("")
+            onNumberStickerToChange("")
+            onTextStickerFromChange("")
+            onTextStickerToChange("")
         }
     }
 
     private fun onRemoveStickersClick() {
-        viewModelScope.launch {
-            if (!hasError()) {
-                _uiState.update {
-                    val currentAlbum = it.album
-                    val removeStickers = it.toBeAddStickersList
-                    val updatedStickers = ArrayList(currentAlbum.stickersList.stickers)
-                    removeStickers.forEach { removeSticker ->
-                        val index = updatedStickers.indexOfFirst { updatedSticker ->
-                            removeSticker.identifier == updatedSticker.identifier
-                        }
-                        if (index != -1) {
-                            updatedStickers.removeAt(index)
-                        }
+        if (!hasEditStickersError()) {
+            _uiState.update {
+                val currentAlbum = it.album
+                val removeStickers = it.toBeAddStickersList
+                val updatedStickers = ArrayList(currentAlbum.stickersList.stickers)
+                removeStickers.forEach { removeSticker ->
+                    val index = updatedStickers.indexOfFirst { updatedSticker ->
+                        removeSticker.identifier == updatedSticker.identifier
                     }
-                    it.copy(
-                        album = currentAlbum.copy(stickersList = StickersList(updatedStickers)),
-                    )
+                    if (index != -1) {
+                        updatedStickers.removeAt(index)
+                    }
                 }
-                onNumberStickerFromChange("")
-                onNumberStickerToChange("")
-                onTextStickerFromChange("")
-                onTextStickerToChange("")
+                it.copy(
+                    album = currentAlbum.copy(stickersList = StickersList(updatedStickers)),
+                )
             }
+            onNumberStickerFromChange("")
+            onNumberStickerToChange("")
+            onTextStickerFromChange("")
+            onTextStickerToChange("")
         }
     }
 
     private suspend fun hasError(): Boolean {
-        return verifyAlbumNameInputError() || verifyNumberStickerInputError() || verifyTextStickerInputError()
+        return verifyAlbumNameInputError() || hasEditStickersError()
+    }
+
+    private fun hasEditStickersError(): Boolean {
+        return verifyNumberStickerInputError() || verifyTextStickerInputError()
     }
 
     private fun onReceivedAlbumName(albumName: String) {
