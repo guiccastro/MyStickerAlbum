@@ -81,10 +81,14 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
     if (state.stickerDialog.showDialog) {
         StickerDialog(
             sticker = state.stickerDialog.value as Sticker,
+            isFirst = state.album.stickersList.stickers.firstOrNull() == state.stickerDialog.value,
+            isLast = state.album.stickersList.stickers.lastOrNull() == state.stickerDialog.value,
             identifierTextField = state.stickerDialogIdTextField,
             onCancel = state.stickerDialog.changeDialogState,
             onSave = state.saveIdSticker,
-            onDelete = state.deleteSticker
+            onDelete = state.deleteSticker,
+            onPrevious = state.onPrevious,
+            onNext = state.onNext
         )
     }
 }
@@ -635,10 +639,14 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
 @Composable
 fun StickerDialog(
     sticker: Sticker,
+    isFirst: Boolean,
+    isLast: Boolean,
     identifierTextField: TextFieldValues,
     onCancel: () -> Unit,
     onSave: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit
 ) {
     BaseDialog(
         onDismissRequest = onCancel,
@@ -656,8 +664,29 @@ fun StickerDialog(
 
             Row(
                 modifier = Modifier
-                    .height(30.dp)
+                    .height(30.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                if (!isFirst) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_short_arrow_left_filled),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiaryContainer),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .aspectRatio(1F)
+                            .shadow(4.dp, CircleShape)
+                            .clip(CircleShape)
+                            .clickable {
+                                onPrevious()
+                            }
+                            .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
+                            .padding(2.dp),
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(30.dp))
+                }
+
                 Image(
                     painter = painterResource(id = R.drawable.ic_delete),
                     contentDescription = null,
@@ -673,6 +702,26 @@ fun StickerDialog(
                         .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
                         .padding(6.dp),
                 )
+
+                if (!isLast) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_short_arrow_right_filled),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiaryContainer),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .aspectRatio(1F)
+                            .shadow(4.dp, CircleShape)
+                            .clip(CircleShape)
+                            .clickable {
+                                onNext()
+                            }
+                            .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
+                            .padding(2.dp),
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(30.dp))
+                }
             }
         }
 
@@ -763,10 +812,14 @@ fun StickerDialogPreview() {
     MyStickerAlbumTheme {
         StickerDialog(
             sticker = Sticker("20", false, 0),
+            isFirst = false,
+            isLast = false,
             identifierTextField = TextFieldValues(),
             onCancel = {},
             onSave = {},
-            onDelete = {}
+            onDelete = {},
+            onPrevious = {},
+            onNext = {}
         )
     }
 }

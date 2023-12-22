@@ -71,7 +71,9 @@ class CreateEditAlbumViewModel @Inject constructor(
                 ),
                 stickerDialogIdTextField = TextFieldValues(onTextChange = ::onStickerIdChange),
                 saveIdSticker = ::saveIdSticker,
-                deleteSticker = ::deleteSticker
+                deleteSticker = ::deleteSticker,
+                onPrevious = ::onPrevious,
+                onNext = ::onNext
             )
         }
 
@@ -670,18 +672,24 @@ class CreateEditAlbumViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 stickerDialog = it.stickerDialog.copy(
-                    showDialog = !_uiState.value.stickerDialog.showDialog,
-                    value = any
+                    showDialog = !_uiState.value.stickerDialog.showDialog
                 )
             )
         }
 
         (any as? Sticker)?.let { sticker ->
-            _uiState.update {
-                it.copy(
-                    stickerDialogIdTextField = it.stickerDialogIdTextField.copy(text = sticker.identifier)
-                )
-            }
+            changeStickerDialog(sticker)
+        }
+    }
+
+    private fun changeStickerDialog(sticker: Sticker) {
+        _uiState.update {
+            it.copy(
+                stickerDialog = it.stickerDialog.copy(
+                    value = sticker
+                ),
+                stickerDialogIdTextField = it.stickerDialogIdTextField.copy(text = sticker.identifier)
+            )
         }
     }
 
@@ -725,5 +733,27 @@ class CreateEditAlbumViewModel @Inject constructor(
         }
 
         changeStickerDialogState(null)
+    }
+
+    private fun onPrevious() {
+        val currentSticker = _uiState.value.stickerDialog.value as Sticker
+        val stickersList = _uiState.value.album.stickersList.stickers
+        val currentIndex = stickersList.indexOf(currentSticker)
+        val previousIndex = currentIndex - 1
+
+        stickersList.getOrNull(previousIndex)?.let { sticker ->
+            changeStickerDialog(sticker)
+        }
+    }
+
+    private fun onNext() {
+        val currentSticker = _uiState.value.stickerDialog.value as Sticker
+        val stickersList = _uiState.value.album.stickersList.stickers
+        val currentIndex = stickersList.indexOf(currentSticker)
+        val nextIndex = currentIndex + 1
+
+        stickersList.getOrNull(nextIndex)?.let { sticker ->
+            changeStickerDialog(sticker)
+        }
     }
 }

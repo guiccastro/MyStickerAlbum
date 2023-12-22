@@ -35,5 +35,7 @@ data class CreateEditAlbumUIState(
     val stickerDialog: DialogValues = DialogValues(),
     val stickerDialogIdTextField: TextFieldValues = TextFieldValues(),
     val saveIdSticker: () -> Unit = {},
-    val deleteSticker: () -> Unit = {}
+    val deleteSticker: () -> Unit = {},
+    val onPrevious: () -> Unit = {},
+    val onNext: () -> Unit = {}
 )
