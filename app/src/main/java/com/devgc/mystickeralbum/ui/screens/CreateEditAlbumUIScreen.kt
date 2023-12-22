@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -81,7 +83,8 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
             sticker = state.stickerDialog.value as Sticker,
             identifierTextField = state.stickerDialogIdTextField,
             onCancel = state.stickerDialog.changeDialogState,
-            onSave = state.saveIdSticker
+            onSave = state.saveIdSticker,
+            onDelete = state.deleteSticker
         )
     }
 }
@@ -619,7 +622,7 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(
-                text = stringResource(id = if (state.isCreateAlbum) R.string.create_button else R.string.edit_button),
+                text = stringResource(id = if (state.isCreateAlbum) R.string.create_button else R.string.save_button),
                 fontSize = 16.sp,
                 overflow = TextOverflow.Ellipsis,
                 color = Color.White,
@@ -634,17 +637,44 @@ fun StickerDialog(
     sticker: Sticker,
     identifierTextField: TextFieldValues,
     onCancel: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    onDelete: () -> Unit
 ) {
     BaseDialog(
-        onDismissRequest = onCancel
+        onDismissRequest = onCancel,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Text(
-            text = (stringResource(id = R.string.sticker_title) + " " + sticker.identifier).uppercase(),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = (stringResource(id = R.string.sticker_title) + " " + sticker.identifier).uppercase(),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            Row(
+                modifier = Modifier
+                    .height(30.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_delete),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiaryContainer),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1F)
+                        .shadow(4.dp, CircleShape)
+                        .clip(CircleShape)
+                        .clickable {
+                            onDelete()
+                        }
+                        .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
+                        .padding(6.dp),
+                )
+            }
+        }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -735,7 +765,8 @@ fun StickerDialogPreview() {
             sticker = Sticker("20", false, 0),
             identifierTextField = TextFieldValues(),
             onCancel = {},
-            onSave = {}
+            onSave = {},
+            onDelete = {}
         )
     }
 }

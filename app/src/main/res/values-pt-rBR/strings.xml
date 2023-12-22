@@ -47,7 +47,6 @@
     <string name="create_button">Criar</string>
     <string name="cancel_button">Cancelar</string>
     <string name="confirm_button">Confirmar</string>
-    <string name="edit_button">Editar</string>
     <string name="save_button">Salvar</string>
 
     <!-- Error Text Field -->

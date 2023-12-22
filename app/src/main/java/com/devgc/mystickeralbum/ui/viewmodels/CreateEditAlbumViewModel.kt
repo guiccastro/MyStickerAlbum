@@ -70,8 +70,8 @@ class CreateEditAlbumViewModel @Inject constructor(
                     changeDialogStateValue = ::changeStickerDialogState
                 ),
                 stickerDialogIdTextField = TextFieldValues(onTextChange = ::onStickerIdChange),
-                saveIdSticker = ::saveIdSticker
-
+                saveIdSticker = ::saveIdSticker,
+                deleteSticker = ::deleteSticker
             )
         }
 
@@ -701,6 +701,22 @@ class CreateEditAlbumViewModel @Inject constructor(
         val oldStickersList = _uiState.value.album.stickersList.stickers
         val newStickersList = ArrayList(oldStickersList)
         newStickersList.replaceAll { if (it == oldSticker) newSticker else it }
+
+        _uiState.update {
+            it.copy(
+                album = it.album.copy(stickersList = StickersList(newStickersList))
+            )
+        }
+
+        changeStickerDialogState(null)
+    }
+
+    private fun deleteSticker() {
+        val currentSticker = _uiState.value.stickerDialog.value as Sticker
+
+        val oldStickersList = _uiState.value.album.stickersList.stickers
+        val newStickersList = ArrayList(oldStickersList)
+        newStickersList.remove(currentSticker)
 
         _uiState.update {
             it.copy(
