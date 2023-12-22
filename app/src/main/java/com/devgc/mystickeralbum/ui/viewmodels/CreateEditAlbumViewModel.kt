@@ -4,10 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devgc.mystickeralbum.AlbumsRepository
+import com.devgc.mystickeralbum.MyStickerAlbumApplication
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.model.CheckboxValues
 import com.devgc.mystickeralbum.model.CompoundStickerType
 import com.devgc.mystickeralbum.model.DialogValues
+import com.devgc.mystickeralbum.model.EditStickerMode
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
 import com.devgc.mystickeralbum.model.TextFieldValues
@@ -51,14 +53,18 @@ class CreateEditAlbumViewModel @Inject constructor(
                 textStickerToTextField = TextFieldValues(onTextChange = ::onTextStickerToChange),
                 textCheckbox = CheckboxValues(onCheckedChange = ::onTextCheckboxChange),
                 compoundTypeToggle = ToggleGroupValues(
-                    options = CompoundStickerType.values().map { type -> type.getTitle() },
+                    options = CompoundStickerType.getOptionsString(MyStickerAlbumApplication.getInstance()),
                     onOptionClick = ::onCompoundTypeChange
                 ),
                 onCreateEditClick = ::onCreateEditClick,
                 onCancelClick = ::onCancelClick,
                 compoundStickerDialog = DialogValues(changeDialogState = ::changeCompoundStickerTypeDialogState),
                 onAddStickersClick = ::onAddStickersClick,
-                onRemoveStickersClick = ::onRemoveStickersClick
+                onRemoveStickersClick = ::onRemoveStickersClick,
+                editModeToggle = ToggleGroupValues(
+                    options = EditStickerMode.getOptionsString(MyStickerAlbumApplication.getInstance()),
+                    onOptionClick = ::onEditModeChange
+                )
             )
         }
 
@@ -602,6 +608,15 @@ class CreateEditAlbumViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 compoundStickerDialog = it.compoundStickerDialog.copy(showDialog = !_uiState.value.compoundStickerDialog.showDialog)
+            )
+        }
+    }
+
+    private fun onEditModeChange(index: Int) {
+        _uiState.update {
+            it.copy(
+                editModeToggle = it.editModeToggle.copy(selectedIndex = index),
+                currentEditMode = EditStickerMode.getByIndex(index)
             )
         }
     }

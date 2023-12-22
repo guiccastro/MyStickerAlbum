@@ -18,20 +18,29 @@
     <string name="preview_label">Pré-Visualização</string>
     <string name="compound_sticker_type_label">Tipo da Figurinha Composta</string>
     <string name="compound_sticker_type_title">Tipo da Figurinha Composta</string>
-    <string name="compound_sticker_type_desc">Você pode usar números e textos para identificar uma figurinha. Essa representação pode acontecer das seguintes maneiras: com o número na frente ou com o texto na frente. Você deve escolher qual representação será usada. Ela será acionada automaticamente quando ambas entradas de número e texto estiverem com valores.</string>
-    <string name="stickers_to_be_edited_label">Figurinhas a serem editadas</string>
+    <string name="compound_sticker_type_desc">
+        Você pode usar números e textos para identificar uma figurinha.
+        Essa representação pode acontecer das seguintes maneiras:
+        com o número na frente ou com o texto na frente.
+        Você deve escolher qual representação será usada.
+        Ela será acionada automaticamente quando ambas entradas
+        de número e texto estiverem com valores.
+    </string>
+    <string name="stickers_to_be_added">Figurinhas a serem adicionadas</string>
+    <string name="stickers_to_be_removed">Figurinhas a serem removidas</string>
     <string name="current_stickers_label">Figurinhas atuais</string>
     <string name="text_label">Texto</string>
     <string name="number_label">Número</string>
     <string name="letter_number">LetraNúmero</string>
     <string name="number_letter">NúmeroLetra</string>
     <string name="total_stickers_label">Figurinhas Totais</string>
-    <string name="edit_stickers_title">Editar Figurinhas</string>
     <string name="range_checkbox_desc">Múltiplos valores</string>
-    <string name="stickers_to_be_edited_empty">Nenhuma figurinha está sendo editada.</string>
+    <string name="stickers_to_be_add_empty">Nenhuma figurinha está sendo adicionada.</string>
+    <string name="stickers_to_be_removed_empty">Nenhuma figurinha está sendo removida.</string>
     <string name="current_stickers_empty">Nenhuma figurinha foi criada.</string>
-    <string name="add_stickers">Adicionar\nFigurinhas</string>
-    <string name="remove_stickers">Remover\nFigurinhas</string>
+    <string name="add_stickers">Adicionar Figurinhas</string>
+    <string name="remove_stickers">Remover Figurinhas</string>
+    <string name="edit_mode_title">Mode de Edição</string>
 
     <!-- Buttons -->
     <string name="create_button">Criar</string>

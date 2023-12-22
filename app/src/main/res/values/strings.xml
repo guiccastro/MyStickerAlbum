@@ -28,19 +28,21 @@
         It will be triggered automatically when both number
         and text inputs have values.
     </string>
-    <string name="stickers_to_be_edited_label">Stickers to be edited</string>
+    <string name="stickers_to_be_added">Stickers to be edited</string>
+    <string name="stickers_to_be_removed">Stickers to be edited</string>
     <string name="current_stickers_label">Current stickers</string>
     <string name="text_label">Text</string>
     <string name="number_label">Number</string>
     <string name="letter_number">LetterNumber</string>
     <string name="number_letter">NumberLetter</string>
     <string name="total_stickers_label">Total Stickers</string>
-    <string name="edit_stickers_title">Edit Stickers</string>
     <string name="range_checkbox_desc">Multiple values</string>
-    <string name="stickers_to_be_edited_empty">None stickers are being edited.</string>
+    <string name="stickers_to_be_add_empty">None stickers are being added.</string>
+    <string name="stickers_to_be_removed_empty">None stickers are being removed.</string>
     <string name="current_stickers_empty">None stickers were created.</string>
-    <string name="add_stickers">Add\nStickers</string>
-    <string name="remove_stickers">Remove\nStickers</string>
+    <string name="add_stickers">Add Stickers</string>
+    <string name="remove_stickers">Remove Stickers</string>
+    <string name="edit_mode_title">Edit Mode</string>
 
     <!-- Buttons -->
     <string name="create_button">Create</string>

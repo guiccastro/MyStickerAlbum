@@ -9,8 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -81,6 +83,8 @@ fun ToggleGroup(
                         contentColor = contentColor
                     )
                 },
+                modifier = Modifier
+                    .weight(1F, false)
             ) {
                 Text(
                     text = option,
@@ -91,7 +95,8 @@ fun ToggleGroup(
                     },
                     style = Poppins,
                     fontSize = fontSize,
-                    fontWeight = if (toggleGroupValues.selectedIndex == index) selectedFontWeight else fontWeight
+                    fontWeight = if (toggleGroupValues.selectedIndex == index) selectedFontWeight else fontWeight,
+                    textAlign = TextAlign.Center
                 )
             }
         }

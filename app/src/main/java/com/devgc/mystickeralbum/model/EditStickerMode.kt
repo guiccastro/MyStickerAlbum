@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.devgc.mystickeralbum.R
 
-enum class CompoundStickerType {
-    LetterNumber,
-    NumberLetter;
+enum class EditStickerMode {
+    AddStickers,
+    RemoveStickers;
 
     @StringRes
     fun getTitle(): Int {
         return when (this) {
-            LetterNumber -> R.string.letter_number
-            NumberLetter -> R.string.number_letter
+            AddStickers -> R.string.add_stickers
+            RemoveStickers -> R.string.remove_stickers
         }
     }
 
@@ -22,7 +22,7 @@ enum class CompoundStickerType {
             return values().map { resources.getString(it.getTitle()) }
         }
 
-        fun getByIndex(index: Int): CompoundStickerType {
+        fun getByIndex(index: Int): EditStickerMode {
             return values()[index]
         }
     }

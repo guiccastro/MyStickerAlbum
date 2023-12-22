@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,8 +51,11 @@ import com.devgc.mystickeralbum.extensions.toGrid
 import com.devgc.mystickeralbum.model.Album
 import com.devgc.mystickeralbum.model.ButtonItem
 import com.devgc.mystickeralbum.model.CheckboxValues
+import com.devgc.mystickeralbum.model.CompoundStickerType
+import com.devgc.mystickeralbum.model.EditStickerMode
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.TextFieldValues
+import com.devgc.mystickeralbum.model.ToggleGroupValues
 import com.devgc.mystickeralbum.ui.components.AlbumCard
 import com.devgc.mystickeralbum.ui.components.SimpleDialog
 import com.devgc.mystickeralbum.ui.components.TextField
@@ -190,9 +194,13 @@ fun EditStickers(state: CreateEditAlbumUIState) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TitleSection(
-            title = stringResource(id = R.string.edit_stickers_title),
+            title = stringResource(
+                id = EditStickerMode.getByIndex(state.editModeToggle.selectedIndex).getTitle()
+            ),
             color = MaterialTheme.colorScheme.onBackground
         )
+
+        EditModeSelect(editModeToggle = state.editModeToggle)
 
         Row(
             modifier = Modifier
@@ -227,7 +235,8 @@ fun EditStickers(state: CreateEditAlbumUIState) {
 
         CompoundStickerTypeSelect(state = state)
 
-        StickersToBeAddedPreview(
+        StickersToBeEditedPreview(
+            editStickerMode = state.currentEditMode,
             stickersList = state.toBeAddStickersList,
             onAddStickerClick = state.onAddStickersClick,
             onRemoveStickerClick = state.onRemoveStickersClick
@@ -239,6 +248,22 @@ fun EditStickers(state: CreateEditAlbumUIState) {
             emptyMessage = stringResource(id = R.string.current_stickers_empty),
             columnsGrid = 10
         )
+    }
+}
+
+@Composable
+fun EditModeSelect(editModeToggle: ToggleGroupValues) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(id = R.string.edit_mode_title),
+            fontSize = 14.sp,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.SemiBold
+        )
+        ToggleGroup(toggleGroupValues = editModeToggle)
     }
 }
 
@@ -392,7 +417,8 @@ fun CompoundStickerTypeDialog(onClose: () -> Unit) {
 }
 
 @Composable
-fun StickersToBeAddedPreview(
+fun StickersToBeEditedPreview(
+    editStickerMode: EditStickerMode,
     stickersList: List<Sticker>,
     onAddStickerClick: () -> Unit,
     onRemoveStickerClick: () -> Unit
@@ -401,9 +427,13 @@ fun StickersToBeAddedPreview(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         StickersPreview(
-            title = stringResource(id = R.string.stickers_to_be_edited_label),
+            title = if (editStickerMode == EditStickerMode.AddStickers) stringResource(id = R.string.stickers_to_be_added) else stringResource(
+                id = R.string.stickers_to_be_removed
+            ),
             stickersList = stickersList,
-            emptyMessage = stringResource(id = R.string.stickers_to_be_edited_empty),
+            emptyMessage = if (editStickerMode == EditStickerMode.AddStickers) stringResource(id = R.string.stickers_to_be_add_empty) else stringResource(
+                id = R.string.stickers_to_be_removed_empty
+            ),
             columnsGrid = 10
         )
 
@@ -414,42 +444,44 @@ fun StickersToBeAddedPreview(
                 .padding(top = 10.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(
-                text = stringResource(id = R.string.add_stickers),
-                fontSize = 14.sp,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSecondary,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .shadow(4.dp, RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-                        onAddStickerClick()
-                    }
-                    .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(10.dp))
-                    .padding(vertical = 2.dp, horizontal = 6.dp)
-            )
-
-            Text(
-                text = stringResource(id = R.string.remove_stickers),
-                fontSize = 14.sp,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .shadow(4.dp, RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-                        onRemoveStickerClick()
-                    }
-                    .background(
-                        MaterialTheme.colorScheme.secondaryContainer,
-                        RoundedCornerShape(10.dp)
-                    )
-                    .padding(vertical = 2.dp, horizontal = 6.dp)
-            )
+            if (editStickerMode == EditStickerMode.AddStickers) {
+                Text(
+                    text = stringResource(id = R.string.add_stickers),
+                    fontSize = 14.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .shadow(4.dp, RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable {
+                            onAddStickerClick()
+                        }
+                        .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(10.dp))
+                        .padding(vertical = 2.dp, horizontal = 6.dp)
+                )
+            } else {
+                Text(
+                    text = stringResource(id = R.string.remove_stickers),
+                    fontSize = 14.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .shadow(4.dp, RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable {
+                            onRemoveStickerClick()
+                        }
+                        .background(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            RoundedCornerShape(10.dp)
+                        )
+                        .padding(vertical = 2.dp, horizontal = 6.dp)
+                )
+            }
         }
     }
 }
@@ -619,14 +651,20 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun AddAlbumScreenPreview() {
     MyStickerAlbumTheme {
         CreateEditAlbumUIScreen(
             CreateEditAlbumUIState(
                 numberStickerFromTextField = TextFieldValues(text = "1"),
-                textStickerFromTextField = TextFieldValues(text = "A")
+                textStickerFromTextField = TextFieldValues(text = "A"),
+                editModeToggle = ToggleGroupValues(EditStickerMode.getOptionsString(LocalContext.current)),
+                compoundTypeToggle = ToggleGroupValues(
+                    CompoundStickerType.getOptionsString(
+                        LocalContext.current
+                    )
+                )
             )
         )
     }
