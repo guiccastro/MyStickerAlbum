@@ -73,7 +73,9 @@ class CreateEditAlbumViewModel @Inject constructor(
                 saveIdSticker = ::saveIdSticker,
                 deleteSticker = ::deleteSticker,
                 onPrevious = ::onPrevious,
-                onNext = ::onNext
+                onNext = ::onNext,
+                deleteAllStickersDialog = DialogValues(changeDialogState = ::changeDeleteAllStickersDialogState),
+                onDeleteAllStickersClick = ::onDeleteAllStickersClick
             )
         }
 
@@ -774,6 +776,23 @@ class CreateEditAlbumViewModel @Inject constructor(
 
         stickersList.getOrNull(nextIndex)?.let { sticker ->
             changeStickerDialog(sticker)
+        }
+    }
+
+    private fun changeDeleteAllStickersDialogState() {
+        _uiState.update {
+            it.copy(
+                deleteAllStickersDialog = it.deleteAllStickersDialog.copy(showDialog = !it.deleteAllStickersDialog.showDialog)
+            )
+        }
+    }
+
+    private fun onDeleteAllStickersClick() {
+        _uiState.update {
+            it.copy(
+                album = it.album.copy(stickersList = StickersList(emptyList())),
+                deleteAllStickersDialog = it.deleteAllStickersDialog.copy(showDialog = false)
+            )
         }
     }
 }

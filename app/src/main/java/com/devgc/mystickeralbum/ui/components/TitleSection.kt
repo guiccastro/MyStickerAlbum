@@ -1,22 +1,29 @@
 package com.devgc.mystickeralbum.ui.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +35,9 @@ import com.devgc.mystickeralbum.ui.theme.Poppins
 fun TitleSection(
     title: String,
     @DrawableRes icon: Int? = null,
+    iconSize: Dp = 24.dp,
+    iconBorderStroke: BorderStroke? = null,
+    iconBorderPadding: Dp = 0.dp,
     onIconClick: () -> Unit = {},
     color: Color = Color.White,
     fontSize: TextUnit = 20.sp,
@@ -47,26 +57,39 @@ fun TitleSection(
                 .weight(1F)
         )
 
-        Text(
-            text = title.uppercase(),
-            color = color,
-            fontSize = fontSize,
-            textAlign = textAlign,
-            fontWeight = fontWeight,
-            maxLines = maxLines,
-            style = Poppins
-        )
-
-        if (icon != null) {
-            Image(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(color),
-                modifier = Modifier
-                    .clickable {
-                        onIconClick()
-                    }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = title.uppercase(),
+                color = color,
+                fontSize = fontSize,
+                textAlign = textAlign,
+                fontWeight = fontWeight,
+                maxLines = maxLines,
+                style = Poppins
             )
+
+            if (icon != null) {
+                val borderModifier = if (iconBorderStroke != null) Modifier.border(
+                    iconBorderStroke,
+                    CircleShape
+                ) else Modifier
+                Image(
+                    painter = painterResource(id = icon),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color),
+                    modifier = Modifier
+                        .size(iconSize)
+                        .clip(CircleShape)
+                        .clickable {
+                            onIconClick()
+                        }
+                        .then(borderModifier)
+                        .padding(iconBorderPadding)
+                )
+            }
         }
 
         Divider(
@@ -86,6 +109,19 @@ fun TitleSectionPreview() {
         TitleSection(
             title = "Title",
             icon = R.drawable.ic_about_app
+        )
+    }
+}
+
+@Preview
+@Composable
+fun TitleSectionPreview2() {
+    MyStickerAlbumTheme {
+        TitleSection(
+            title = "Title",
+            icon = R.drawable.ic_delete,
+            iconBorderStroke = BorderStroke(1.dp, Color.White),
+            iconBorderPadding = 2.dp
         )
     }
 }

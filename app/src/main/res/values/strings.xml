@@ -44,6 +44,8 @@
     <string name="remove_stickers">Remove Stickers</string>
     <string name="edit_mode_title">Edit Mode</string>
     <string name="edit_sticker_identifier">Edit identifier</string>
+    <string name="delete_all_stickers_title">Delete stickers</string>
+    <string name="delete_all_stickers_desc">Do you want to delete all the stickers from album?</string>
 
     <!-- Buttons -->
     <string name="create_button">Create</string>

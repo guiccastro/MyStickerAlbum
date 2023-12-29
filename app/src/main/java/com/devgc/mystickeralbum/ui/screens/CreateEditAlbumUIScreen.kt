@@ -1,5 +1,7 @@
 package com.devgc.mystickeralbum.ui.screens
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devgc.mystickeralbum.R
@@ -89,6 +92,13 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
             onDelete = state.deleteSticker,
             onPrevious = state.onPrevious,
             onNext = state.onNext
+        )
+    }
+
+    if (state.deleteAllStickersDialog.showDialog) {
+        DeleteAllStickersDialog(
+            changeDeleteAllStickersDialogState = state.deleteAllStickersDialog.changeDialogState,
+            onDeleteAllStickersClick = state.onDeleteAllStickersClick
         )
     }
 }
@@ -262,6 +272,11 @@ fun EditStickers(state: CreateEditAlbumUIState) {
 
         StickersPreview(
             title = stringResource(id = R.string.current_stickers_label),
+            titleIcon = R.drawable.ic_delete,
+            iconSize = 20.dp,
+            iconBorderStroke = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+            iconBorderPadding = 2.dp,
+            onIconClick = state.deleteAllStickersDialog.changeDialogState,
             stickersList = state.album.stickersList.stickers,
             emptyMessage = stringResource(id = R.string.current_stickers_empty),
             columnsGrid = 10,
@@ -511,6 +526,11 @@ fun StickersToBeEditedPreview(
 @Composable
 fun StickersPreview(
     title: String,
+    @DrawableRes titleIcon: Int? = null,
+    iconSize: Dp = 20.dp,
+    iconBorderStroke: BorderStroke? = null,
+    iconBorderPadding: Dp = 0.dp,
+    onIconClick: () -> Unit = {},
     stickersList: List<Sticker>,
     emptyMessage: String,
     columnsGrid: Int,
@@ -527,7 +547,12 @@ fun StickersPreview(
             title = title.uppercase(),
             fontSize = 14.sp,
             color = if (hasError) ErrorColor else MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            icon = titleIcon,
+            iconSize = iconSize,
+            iconBorderStroke = iconBorderStroke,
+            onIconClick = onIconClick,
+            iconBorderPadding = iconBorderPadding
         )
 
         Column(
@@ -783,6 +808,25 @@ fun StickerDialog(
     }
 }
 
+@Composable
+fun DeleteAllStickersDialog(
+    changeDeleteAllStickersDialogState: () -> Unit,
+    onDeleteAllStickersClick: () -> Unit
+) {
+    SimpleDialog(
+        title = stringResource(id = R.string.delete_all_stickers_title),
+        description = stringResource(id = R.string.delete_all_stickers_desc),
+        negativeButton = ButtonItem(
+            text = stringResource(id = R.string.cancel_button),
+            onClick = changeDeleteAllStickersDialogState
+        ),
+        positiveButton = ButtonItem(
+            text = stringResource(id = R.string.confirm_button),
+            onClick = onDeleteAllStickersClick
+        )
+    )
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun AddAlbumScreenPreview() {
@@ -829,6 +873,17 @@ fun StickerDialogPreview() {
             onDelete = {},
             onPrevious = {},
             onNext = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DeleteAllStickersDialogPreview() {
+    MyStickerAlbumTheme {
+        DeleteAllStickersDialog(
+            changeDeleteAllStickersDialogState = {},
+            onDeleteAllStickersClick = {}
         )
     }
 }
