@@ -735,12 +735,21 @@ fun StickerDialog(
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
-            TextField(
-                text = identifierTextField.text,
-                onValueChange = identifierTextField.onTextChange,
+            Box(
                 modifier = Modifier
                     .width(80.dp)
-            )
+            ) {
+                TextField(
+                    text = identifierTextField.text,
+                    onValueChange = identifierTextField.onTextChange,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    error = identifierTextField.error,
+                    errorMessage = stringResource(id = identifierTextField.errorMessage),
+                    errorModifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
         }
 
         Row(
