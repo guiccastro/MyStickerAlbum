@@ -44,6 +44,8 @@
     <string name="edit_sticker_identifier">Editar identificador</string>
     <string name="delete_all_stickers_title">Deletar figurinhas</string>
     <string name="delete_all_stickers_desc">Você quer deletar todas as figurinhas deste álbum?</string>
+    <string name="delete_sticker_title">Deletar figurinha</string>
+    <string name="delete_sticker_desc">Você quer deletar a figurinha \'%1$s\'?</string>
 
     <!-- Buttons -->
     <string name="create_button">Criar</string>

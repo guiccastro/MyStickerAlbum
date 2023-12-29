@@ -89,7 +89,7 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
             identifierTextField = state.stickerDialogIdTextField,
             onCancel = state.stickerDialog.changeDialogState,
             onSave = state.saveIdSticker,
-            onDelete = state.deleteSticker,
+            onDelete = state.deleteStickerDialog.changeDialogState,
             onPrevious = state.onPrevious,
             onNext = state.onNext
         )
@@ -99,6 +99,14 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
         DeleteAllStickersDialog(
             changeDeleteAllStickersDialogState = state.deleteAllStickersDialog.changeDialogState,
             onDeleteAllStickersClick = state.onDeleteAllStickersClick
+        )
+    }
+
+    if (state.deleteStickerDialog.showDialog) {
+        DeleteStickerDialog(
+            stickerId = (state.stickerDialog.value as Sticker).identifier,
+            changeDeleteStickerDialogState = state.deleteStickerDialog.changeDialogState,
+            onDeleteStickerClick = state.deleteSticker
         )
     }
 }
@@ -827,6 +835,26 @@ fun DeleteAllStickersDialog(
     )
 }
 
+@Composable
+fun DeleteStickerDialog(
+    stickerId: String,
+    changeDeleteStickerDialogState: () -> Unit,
+    onDeleteStickerClick: () -> Unit
+) {
+    SimpleDialog(
+        title = stringResource(id = R.string.delete_sticker_title),
+        description = stringResource(id = R.string.delete_sticker_desc, stickerId),
+        negativeButton = ButtonItem(
+            text = stringResource(id = R.string.cancel_button),
+            onClick = changeDeleteStickerDialogState
+        ),
+        positiveButton = ButtonItem(
+            text = stringResource(id = R.string.confirm_button),
+            onClick = onDeleteStickerClick
+        )
+    )
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun AddAlbumScreenPreview() {
@@ -884,6 +912,18 @@ fun DeleteAllStickersDialogPreview() {
         DeleteAllStickersDialog(
             changeDeleteAllStickersDialogState = {},
             onDeleteAllStickersClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DeleteStickerDialogPreview() {
+    MyStickerAlbumTheme {
+        DeleteStickerDialog(
+            stickerId = "123",
+            changeDeleteStickerDialogState = {},
+            onDeleteStickerClick = {}
         )
     }
 }
