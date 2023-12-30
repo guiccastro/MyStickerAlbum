@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -43,6 +44,7 @@ import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 fun SimpleDialog(
     title: String? = null,
     description: String? = null,
+    descriptionLineHeight: TextUnit = TextUnit.Unspecified,
     negativeButton: ButtonItem? = null,
     positiveButton: ButtonItem? = null
 ) {
@@ -61,7 +63,8 @@ fun SimpleDialog(
             Text(
                 text = description,
                 fontSize = 12.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                lineHeight = descriptionLineHeight
             )
         }
 

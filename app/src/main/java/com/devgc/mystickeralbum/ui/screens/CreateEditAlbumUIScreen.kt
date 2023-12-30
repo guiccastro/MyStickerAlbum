@@ -109,6 +109,12 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
             onDeleteStickerClick = state.deleteSticker
         )
     }
+
+    if (state.editStickerDialog.showDialog) {
+        EditStickerDialog(
+            changeDialogState = state.editStickerDialog.changeDialogState
+        )
+    }
 }
 
 @Composable
@@ -233,7 +239,9 @@ fun EditStickers(state: CreateEditAlbumUIState) {
             title = stringResource(
                 id = EditStickerMode.getByIndex(state.editModeToggle.selectedIndex).getTitle()
             ),
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            icon = R.drawable.ic_about_app,
+            onIconClick = state.editStickerDialog.changeDialogState
         )
 
         EditModeSelect(editModeToggle = state.editModeToggle)
@@ -855,6 +863,21 @@ fun DeleteStickerDialog(
     )
 }
 
+@Composable
+fun EditStickerDialog(
+    changeDialogState: () -> Unit
+) {
+    SimpleDialog(
+        title = stringResource(id = R.string.edit_stickers_title),
+        description = stringResource(id = R.string.edit_stickers_desc),
+        descriptionLineHeight = 16.sp,
+        negativeButton = ButtonItem(
+            text = null,
+            onClick = changeDialogState
+        )
+    )
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun AddAlbumScreenPreview() {
@@ -924,6 +947,16 @@ fun DeleteStickerDialogPreview() {
             stickerId = "123",
             changeDeleteStickerDialogState = {},
             onDeleteStickerClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EditStickerDialogPreview() {
+    MyStickerAlbumTheme {
+        EditStickerDialog(
+            changeDialogState = {}
         )
     }
 }

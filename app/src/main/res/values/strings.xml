@@ -48,6 +48,14 @@
     <string name="delete_all_stickers_desc">Do you want to delete all the stickers from album?</string>
     <string name="delete_sticker_title">Delete sticker</string>
     <string name="delete_sticker_desc">Do you want to delete the sticker \'%1$s\'?</string>
+    <string name="edit_stickers_title">Creating stickers</string>
+    <string name="edit_stickers_desc">
+        You have to create stickers to add or remove them from your current album.\n\n
+        To create stickers, you must add their identifier using only numbers or text directly.\n\n
+        You can create compound stickers of numbers and letters using the two specific entries for each.\n\n
+        You can add a specific sticker to the album or add several at the same time using the \'Multiple values\' option, so you can create up to several compound stickers at the same time.\n\n
+        Once you have created the identifiers you want to edit, you can add or remove the stickers in question from your current album, depending on the editing mode selected.
+    </string>
 
     <!-- Buttons -->
     <string name="create_button">Create</string>

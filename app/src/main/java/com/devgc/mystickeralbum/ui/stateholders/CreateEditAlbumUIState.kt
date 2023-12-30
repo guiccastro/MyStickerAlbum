@@ -40,5 +40,6 @@ data class CreateEditAlbumUIState(
     val onNext: () -> Unit = {},
     val deleteAllStickersDialog: DialogValues = DialogValues(),
     val onDeleteAllStickersClick: () -> Unit = {},
-    val deleteStickerDialog: DialogValues = DialogValues()
+    val deleteStickerDialog: DialogValues = DialogValues(),
+    val editStickerDialog: DialogValues = DialogValues()
 )

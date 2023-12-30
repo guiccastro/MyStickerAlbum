@@ -46,6 +46,14 @@
     <string name="delete_all_stickers_desc">Você quer deletar todas as figurinhas deste álbum?</string>
     <string name="delete_sticker_title">Deletar figurinha</string>
     <string name="delete_sticker_desc">Você quer deletar a figurinha \'%1$s\'?</string>
+    <string name="edit_stickers_title">Criando figurinhas</string>
+    <string name="edit_stickers_desc">
+        Você deve criar figurinhas para adicioná-las ou remove-las do seu ábum atual.
+        Para criar figurinhas, você deve adicionar o identificador dela usando o apenas números ou texto diretamente.
+        Você pode criar figurinhas compostas por números e letras usando as duas entradas específicas para cada.
+        Você pode adicionar uma figurinha específica no álbum ou adicionar várias ao mesmo tempo usando a opção \'Múltiplos valores\', podendo criar até várias figurinhas compostas ao mesmo tempo.
+        Após criar os identificadores que deseja editar, você pode adicionar ou remover as figurinhas em questão do seu ábum atual, dependendo do modo de edição selecionado.
+    </string>
 
     <!-- Buttons -->
     <string name="create_button">Criar</string>
