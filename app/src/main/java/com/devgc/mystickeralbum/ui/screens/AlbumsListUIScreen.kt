@@ -79,7 +79,7 @@ fun AlbumItem(album: Album, state: AlbumsListUIState) {
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showSystemUi = true, showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun AlbumsScreenPreview() {
     MyStickerAlbumTheme {
