@@ -69,6 +69,7 @@
     <string name="error_char_text_field">Valor não pode ter mais de um caractere.</string>
     <string name="error_current_stickers_empty">Figurinhas do álbum não pode ser vázio.</string>
     <string name="error_sticker_id_exists">Identificador da figurinha já existe.</string>
+    <string name="error_case_text_field">Ambos valores de texto devem estar em maiúsculo ou minúsculo.</string>
 
     <!-- Update Album Screen -->
     <string name="update_album_title">Atualizar Álbum</string>

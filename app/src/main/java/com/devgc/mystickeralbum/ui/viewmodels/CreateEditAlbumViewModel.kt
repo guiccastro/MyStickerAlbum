@@ -159,6 +159,7 @@ class CreateEditAlbumViewModel @Inject constructor(
                 numberStickerToTextField = it.numberStickerToTextField.copy(text = "")
             )
         }
+        if (!checked) verifyNumberStickerInputError()
         updateEditStickersPreview()
     }
 
@@ -189,6 +190,7 @@ class CreateEditAlbumViewModel @Inject constructor(
                 textStickerToTextField = it.textStickerToTextField.copy(text = "")
             )
         }
+        if (!checked) verifyTextStickerInputError()
         updateEditStickersPreview()
     }
 
@@ -365,6 +367,14 @@ class CreateEditAlbumViewModel @Inject constructor(
                 Pair(true, R.string.error_empty_text_field)
             } else if (mainValue.length > 1) {
                 Pair(true, R.string.error_char_text_field)
+            } else if (comparisonValue.isNotEmpty() && mainValue.first()
+                    .isUpperCase() && !comparisonValue.first().isUpperCase()
+            ) {
+                Pair(true, R.string.error_case_text_field)
+            } else if (comparisonValue.isNotEmpty() && mainValue.first()
+                    .isLowerCase() && !comparisonValue.first().isLowerCase()
+            ) {
+                Pair(true, R.string.error_case_text_field)
             } else if (greaterComparison && comparisonValue.isNotEmpty() && mainValue <= comparisonValue) {
                 Pair(true, R.string.error_grater_text_field)
             } else if (!greaterComparison && comparisonValue.isNotEmpty() && mainValue >= comparisonValue) {
