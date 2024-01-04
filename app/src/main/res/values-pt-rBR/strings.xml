@@ -54,6 +54,12 @@
         Você pode adicionar uma figurinha específica no álbum ou adicionar várias ao mesmo tempo usando a opção \'Múltiplos valores\', podendo criar até várias figurinhas compostas ao mesmo tempo.
         Após criar os identificadores que deseja editar, você pode adicionar ou remover as figurinhas em questão do seu ábum atual, dependendo do modo de edição selecionado.
     </string>
+    <string name="edit_current_stickers_title">Editar Figurinhas do Álbum</string>
+    <string name="edit_current_stickers_desc">
+        Você pode editar as figurinhas atuais já criadas clicando na figurinha que deseja
+        alterar, ou você pode excluir todos os adesivos atuais
+        clicando no ícone da lixeira.
+    </string>
 
     <!-- Buttons -->
     <string name="create_button">Criar</string>

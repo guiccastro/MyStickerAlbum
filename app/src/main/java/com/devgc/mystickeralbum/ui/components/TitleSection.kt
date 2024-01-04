@@ -31,14 +31,18 @@ import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.theme.Poppins
 
+data class TitleSectionIcon(
+    @DrawableRes val icon: Int,
+    val iconSize: Dp = 24.dp,
+    val iconBorderStroke: BorderStroke? = null,
+    val iconBorderPadding: Dp = 0.dp,
+    val onIconClick: () -> Unit = {},
+)
+
 @Composable
 fun TitleSection(
     title: String,
-    @DrawableRes icon: Int? = null,
-    iconSize: Dp = 24.dp,
-    iconBorderStroke: BorderStroke? = null,
-    iconBorderPadding: Dp = 0.dp,
-    onIconClick: () -> Unit = {},
+    icons: List<TitleSectionIcon> = emptyList(),
     color: Color = Color.White,
     fontSize: TextUnit = 20.sp,
     textAlign: TextAlign = TextAlign.Center,
@@ -71,23 +75,23 @@ fun TitleSection(
                 style = Poppins
             )
 
-            if (icon != null) {
-                val borderModifier = if (iconBorderStroke != null) Modifier.border(
-                    iconBorderStroke,
+            icons.forEach { icon ->
+                val borderModifier = if (icon.iconBorderStroke != null) Modifier.border(
+                    icon.iconBorderStroke,
                     CircleShape
                 ) else Modifier
                 Image(
-                    painter = painterResource(id = icon),
+                    painter = painterResource(id = icon.icon),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color),
                     modifier = Modifier
-                        .size(iconSize)
+                        .size(icon.iconSize)
                         .clip(CircleShape)
                         .clickable {
-                            onIconClick()
+                            icon.onIconClick()
                         }
                         .then(borderModifier)
-                        .padding(iconBorderPadding)
+                        .padding(icon.iconBorderPadding)
                 )
             }
         }
@@ -108,7 +112,11 @@ fun TitleSectionPreview() {
     MyStickerAlbumTheme {
         TitleSection(
             title = "Title",
-            icon = R.drawable.ic_about_app
+            icons = listOf(
+                TitleSectionIcon(
+                    icon = R.drawable.ic_about_app
+                )
+            )
         )
     }
 }
@@ -119,9 +127,17 @@ fun TitleSectionPreview2() {
     MyStickerAlbumTheme {
         TitleSection(
             title = "Title",
-            icon = R.drawable.ic_delete,
-            iconBorderStroke = BorderStroke(1.dp, Color.White),
-            iconBorderPadding = 2.dp
+            icons = listOf(
+                TitleSectionIcon(
+                    icon = R.drawable.ic_delete,
+                    iconSize = 21.dp,
+                    iconBorderStroke = BorderStroke(2.dp, Color.White),
+                    iconBorderPadding = 3.dp
+                ),
+                TitleSectionIcon(
+                    icon = R.drawable.ic_about_app
+                )
+            )
         )
     }
 }

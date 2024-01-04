@@ -1,6 +1,5 @@
 package com.devgc.mystickeralbum.ui.screens
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,7 +47,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devgc.mystickeralbum.R
@@ -66,6 +64,7 @@ import com.devgc.mystickeralbum.ui.components.BaseDialog
 import com.devgc.mystickeralbum.ui.components.SimpleDialog
 import com.devgc.mystickeralbum.ui.components.TextField
 import com.devgc.mystickeralbum.ui.components.TitleSection
+import com.devgc.mystickeralbum.ui.components.TitleSectionIcon
 import com.devgc.mystickeralbum.ui.components.ToggleGroup
 import com.devgc.mystickeralbum.ui.stateholders.CreateEditAlbumUIState
 import com.devgc.mystickeralbum.ui.theme.ErrorColor
@@ -113,6 +112,12 @@ fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
     if (state.editStickerDialog.showDialog) {
         EditStickerDialog(
             changeDialogState = state.editStickerDialog.changeDialogState
+        )
+    }
+
+    if (state.currentStickersDialog.showDialog) {
+        CurrentStickersDialog(
+            changeDialogState = state.currentStickersDialog.changeDialogState
         )
     }
 }
@@ -240,8 +245,12 @@ fun EditStickers(state: CreateEditAlbumUIState) {
                 id = EditStickerMode.getByIndex(state.editModeToggle.selectedIndex).getTitle()
             ),
             color = MaterialTheme.colorScheme.onBackground,
-            icon = R.drawable.ic_about_app,
-            onIconClick = state.editStickerDialog.changeDialogState
+            icons = listOf(
+                TitleSectionIcon(
+                    icon = R.drawable.ic_about_app,
+                    onIconClick = state.editStickerDialog.changeDialogState
+                )
+            )
         )
 
         EditModeSelect(editModeToggle = state.editModeToggle)
@@ -288,11 +297,19 @@ fun EditStickers(state: CreateEditAlbumUIState) {
 
         StickersPreview(
             title = stringResource(id = R.string.current_stickers_label),
-            titleIcon = R.drawable.ic_delete,
-            iconSize = 20.dp,
-            iconBorderStroke = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-            iconBorderPadding = 2.dp,
-            onIconClick = state.deleteAllStickersDialog.changeDialogState,
+            icons = listOf(
+                TitleSectionIcon(
+                    icon = R.drawable.ic_about_app,
+                    onIconClick = state.currentStickersDialog.changeDialogState
+                ),
+                TitleSectionIcon(
+                    icon = R.drawable.ic_delete,
+                    iconSize = 21.dp,
+                    iconBorderStroke = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
+                    iconBorderPadding = 3.dp,
+                    onIconClick = state.deleteAllStickersDialog.changeDialogState,
+                )
+            ),
             stickersList = state.album.stickersList.stickers,
             emptyMessage = stringResource(id = R.string.current_stickers_empty),
             columnsGrid = 10,
@@ -542,11 +559,7 @@ fun StickersToBeEditedPreview(
 @Composable
 fun StickersPreview(
     title: String,
-    @DrawableRes titleIcon: Int? = null,
-    iconSize: Dp = 20.dp,
-    iconBorderStroke: BorderStroke? = null,
-    iconBorderPadding: Dp = 0.dp,
-    onIconClick: () -> Unit = {},
+    icons: List<TitleSectionIcon> = emptyList(),
     stickersList: List<Sticker>,
     emptyMessage: String,
     columnsGrid: Int,
@@ -564,11 +577,7 @@ fun StickersPreview(
             fontSize = 14.sp,
             color = if (hasError) ErrorColor else MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold,
-            icon = titleIcon,
-            iconSize = iconSize,
-            iconBorderStroke = iconBorderStroke,
-            onIconClick = onIconClick,
-            iconBorderPadding = iconBorderPadding
+            icons = icons
         )
 
         Column(
@@ -870,6 +879,21 @@ fun EditStickerDialog(
     SimpleDialog(
         title = stringResource(id = R.string.edit_stickers_title),
         description = stringResource(id = R.string.edit_stickers_desc),
+        descriptionLineHeight = 16.sp,
+        negativeButton = ButtonItem(
+            text = null,
+            onClick = changeDialogState
+        )
+    )
+}
+
+@Composable
+fun CurrentStickersDialog(
+    changeDialogState: () -> Unit
+) {
+    SimpleDialog(
+        title = stringResource(id = R.string.edit_current_stickers_title),
+        description = stringResource(id = R.string.edit_current_stickers_desc),
         descriptionLineHeight = 16.sp,
         negativeButton = ButtonItem(
             text = null,

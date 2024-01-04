@@ -56,6 +56,12 @@
         You can add a specific sticker to the album or add several at the same time using the \'Multiple values\' option, so you can create up to several compound stickers at the same time.\n\n
         Once you have created the identifiers you want to edit, you can add or remove the stickers in question from your current album, depending on the editing mode selected.
     </string>
+    <string name="edit_current_stickers_title">Edit Album Stickers</string>
+    <string name="edit_current_stickers_desc">
+        You can edit de current stickers clicking in the sticker you want to
+        change, or you can delete all the current stickers
+        clicking in the trash icon.
+    </string>
 
     <!-- Buttons -->
     <string name="create_button">Create</string>
