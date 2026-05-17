@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
@@ -57,8 +58,10 @@ import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -131,7 +134,7 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp),
         state = lazyListState,
         modifier = Modifier
             .nestedScroll(nestedScrollConnection)
@@ -140,8 +143,48 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
             AlbumView(state.album)
         }
 
+//        item {
+//            CopyStickersButtons(state)
+//        }
+
         item {
-            CopyStickersButtons(state)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = {
+                        state.onViewAll()
+                    },
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier
+                        .weight(1F)
+                ) {
+                    Text("Todas")
+                }
+
+                Button(
+                    onClick = {
+                        state.onViewMissing()
+                    },
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier
+                        .weight(1F)
+                ) {
+                    Text("Faltantes")
+                }
+
+                Button(
+                    onClick = {
+                        state.onViewRepeated()
+                    },
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier
+                        .weight(1F)
+                ) {
+                    Text("Repetidas", overflow = TextOverflow.Ellipsis, maxLines = 1)
+                }
+            }
         }
 
         item {
@@ -200,45 +243,62 @@ fun SearchSticker(state: UpdateAlbumUIState, lazyListState: LazyListState) {
             )
         }
 
-        Button(
-            onClick = {
-                keyboardController?.hide()
-                state.onSearchStickerClick(lazyListState, scope)
-            },
+        Box(
             modifier = Modifier
-                .fillMaxHeight(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary
-            )
+                .fillMaxHeight()
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = null,
+            TextField(
+                text = state.columns?.toString() ?: "",
+                onValueChange = {
+                    state.onColumnsChanged(it.toIntOrNull())
+                },
+                placeholderText = "Colunas",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
-                    .fillMaxHeight(),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
+                    .fillMaxHeight()
+                    .width(60.dp)
             )
         }
 
-        Button(
-            onClick = {
-                keyboardController?.hide()
-                state.onFilterStickerClick()
-            },
-            modifier = Modifier
-            .fillMaxHeight(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary
-            )
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_filter),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxHeight(),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
-            )
-        }
+//        Button(
+//            onClick = {
+//                keyboardController?.hide()
+//                state.onSearchStickerClick(lazyListState, scope)
+//            },
+//            modifier = Modifier
+//                .fillMaxHeight(),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = MaterialTheme.colorScheme.secondary
+//            )
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.ic_search),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .fillMaxHeight(),
+//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
+//            )
+//        }
+//
+//        Button(
+//            onClick = {
+//                keyboardController?.hide()
+//                state.onFilterStickerClick()
+//            },
+//            modifier = Modifier
+//            .fillMaxHeight(),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = MaterialTheme.colorScheme.secondary
+//            )
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.ic_filter),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .fillMaxHeight(),
+//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
+//            )
+//        }
     }
 }
 
@@ -252,9 +312,9 @@ fun AlbumView(album: Album) {
 }
 
 fun LazyListScope.stickersGrid(state: UpdateAlbumUIState, isTablet: Boolean) {
-    val columns =
+    val columns = state.columns ?:
         if (isTablet) UpdateAlbumViewModel.tabletColumnsGrid else UpdateAlbumViewModel.normalColumnsGrid
-    val stickers = state.filteredAlbum?.stickersList?.stickers ?: state.album.stickersList.stickers
+    val stickers = state.stickers
     val grid = stickers.toGrid(columns)
 
     items(grid) { row ->
@@ -457,80 +517,84 @@ fun ReturnToTopButton(state: UpdateAlbumUIState, lazyListState: LazyListState) {
 @Preview(showSystemUi = true)
 @Composable
 fun StickersListPreview() {
+
+    val stickers = listOf(
+        Sticker(
+            "1",
+            false,
+            0
+        ),
+        Sticker(
+            "2",
+            true,
+            0
+        ),
+        Sticker(
+            "A1",
+            true,
+            14
+        ),
+        Sticker(
+            "1",
+            false,
+            0
+        ),
+        Sticker(
+            "2",
+            true,
+            0
+        ),
+        Sticker(
+            "A1",
+            true,
+            14
+        ),
+        Sticker(
+            "1",
+            false,
+            0
+        ),
+        Sticker(
+            "2",
+            true,
+            0
+        ),
+        Sticker(
+            "A1",
+            true,
+            14
+        ),
+        Sticker(
+            "1",
+            false,
+            0
+        ),
+        Sticker(
+            "2",
+            true,
+            0
+        ),
+        Sticker(
+            "A1",
+            true,
+            14
+        )
+    )
+
     MyStickerAlbumTheme {
         UpdateAlbumUIScreen(
             state = UpdateAlbumUIState(
                 album = Album(
                     name = "Album Name",
                     stickersList = StickersList(
-                        stickers = listOf(
-                            Sticker(
-                                "1",
-                                false,
-                                0
-                            ),
-                            Sticker(
-                                "2",
-                                true,
-                                0
-                            ),
-                            Sticker(
-                                "A1",
-                                true,
-                                14
-                            ),
-                            Sticker(
-                                "1",
-                                false,
-                                0
-                            ),
-                            Sticker(
-                                "2",
-                                true,
-                                0
-                            ),
-                            Sticker(
-                                "A1",
-                                true,
-                                14
-                            ),
-                            Sticker(
-                                "1",
-                                false,
-                                0
-                            ),
-                            Sticker(
-                                "2",
-                                true,
-                                0
-                            ),
-                            Sticker(
-                                "A1",
-                                true,
-                                14
-                            ),
-                            Sticker(
-                                "1",
-                                false,
-                                0
-                            ),
-                            Sticker(
-                                "2",
-                                true,
-                                0
-                            ),
-                            Sticker(
-                                "A1",
-                                true,
-                                14
-                            )
-                        )
+                        stickers = stickers
                     ),
                     status = AlbumStatus.Completing,
                     albumImage = ""
                 ),
                 showSearchStickerTextField = true,
-                showReturnToTopButton = true
+                showReturnToTopButton = true,
+                stickers = stickers
             )
         )
     }

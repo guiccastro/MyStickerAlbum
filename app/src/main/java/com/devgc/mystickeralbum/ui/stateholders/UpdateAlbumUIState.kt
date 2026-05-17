@@ -30,5 +30,11 @@ data class UpdateAlbumUIState(
     val onClearTextField: () -> Unit = {},
     val onScroll: (Int) -> Unit = {},
     val showReturnToTopButton: Boolean = false,
-    val onReturnToTopButtonClick: (LazyListState, CoroutineScope) -> Unit = { _, _ -> }
+    val onReturnToTopButtonClick: (LazyListState, CoroutineScope) -> Unit = { _, _ -> },
+    val columns: Int? = null,
+    val onColumnsChanged: (Int?) -> Unit = {},
+    val stickers: List<Sticker> = emptyList(),
+    val onViewAll: () -> Unit = {},
+    val onViewMissing: () -> Unit = {},
+    val onViewRepeated: () -> Unit = {},
 )

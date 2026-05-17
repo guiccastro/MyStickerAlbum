@@ -45,6 +45,8 @@ class UpdateAlbumViewModel @Inject constructor(
         MutableStateFlow(UpdateAlbumUIState())
     val uiState get() = _uiState.asStateFlow()
 
+    private var currentFilter: FilterType = FilterType.All
+
 
     init {
         _uiState.update {
@@ -61,7 +63,11 @@ class UpdateAlbumViewModel @Inject constructor(
                 onFilterStickerClick = ::onFilterStickerClick,
                 onClearTextField = ::onClearTextField,
                 onScroll = ::onScroll,
-                onReturnToTopButtonClick = ::onReturnToTopButtonClick
+                onReturnToTopButtonClick = ::onReturnToTopButtonClick,
+                onColumnsChanged = ::onColumnsChanged,
+                onViewAll = { filterStickers(FilterType.All) },
+                onViewMissing = { filterStickers(FilterType.Missing) },
+                onViewRepeated = { filterStickers(FilterType.Repeated) },
             )
         }
 
@@ -83,7 +89,8 @@ class UpdateAlbumViewModel @Inject constructor(
 
             _uiState.update {
                 it.copy(
-                    album = album
+                    album = album,
+                    stickers = album.stickersList.stickers
                 )
             }
         }
@@ -145,6 +152,8 @@ class UpdateAlbumViewModel @Inject constructor(
                 album = newAlbum,
             )
         }
+
+        filterStickers(currentFilter)
     }
 
     fun onDeleteAlbumClick() {
@@ -227,6 +236,7 @@ class UpdateAlbumViewModel @Inject constructor(
                 )
             )
         }
+        filterStickers(currentFilter, text)
     }
 
     private fun onSearchStickerClick(lazyListState: LazyListState, scope: CoroutineScope) {
@@ -298,5 +308,37 @@ class UpdateAlbumViewModel @Inject constructor(
                 showReturnToTopButton = false
             )
         }
+    }
+
+    private fun onColumnsChanged(columns: Int?) {
+        _uiState.update {
+            it.copy(
+                columns = columns
+            )
+        }
+    }
+
+    private fun filterStickers(filterType: FilterType, text: String = _uiState.value.searchStickerTextField.text) {
+        currentFilter = filterType
+        val stickers = _uiState.value.album.stickersList.stickers
+
+        val filteredStickers = when (filterType) {
+            FilterType.All -> stickers.filter { it.identifier.uppercase().contains(text.uppercase()) }
+            FilterType.Missing -> stickers.filter { !it.found && it.identifier.uppercase().contains(text.uppercase()) }
+            FilterType.Repeated -> stickers.filter { it.found && it.repeated > 0 && it.identifier.uppercase().contains(text.uppercase()) }
+        }
+
+        _uiState.update {
+            it.copy(
+                stickers = filteredStickers
+            )
+        }
+
+    }
+
+    enum class FilterType {
+        All,
+        Missing,
+        Repeated;
     }
 }
