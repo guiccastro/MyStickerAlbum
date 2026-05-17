@@ -32,4 +32,6 @@ data class UpdateAlbumUIState(
     val onViewAll: () -> Unit = {},
     val onViewMissing: () -> Unit = {},
     val onViewRepeated: () -> Unit = {},
+    val isHeaderVisible: Boolean = true,
+    val onToggleHeader: () -> Unit = {}
 )

@@ -1,11 +1,12 @@
 package com.devgc.mystickeralbum.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +19,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,8 +32,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -65,7 +66,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.extensions.toGrid
 import com.devgc.mystickeralbum.model.Album
@@ -79,8 +79,8 @@ import com.devgc.mystickeralbum.ui.components.IconsLegendDialog
 import com.devgc.mystickeralbum.ui.components.SimpleDialog
 import com.devgc.mystickeralbum.ui.components.TextField
 import com.devgc.mystickeralbum.ui.components.TitleSection
+import com.devgc.mystickeralbum.ui.components.TitleSectionIcon
 import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
-import com.devgc.mystickeralbum.ui.theme.BorderColor
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.theme.Poppins
 import com.devgc.mystickeralbum.ui.viewmodels.UpdateAlbumViewModel
@@ -140,61 +140,67 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
             .nestedScroll(nestedScrollConnection)
     ) {
         item {
-            AlbumView(state.album)
-        }
-
-//        item {
-//            CopyStickersButtons(state)
-//        }
-
-        item {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically
+            AnimatedVisibility(
+                visible = state.isHeaderVisible,
+                enter = expandVertically(),
+                exit = shrinkVertically()
             ) {
-                Button(
-                    onClick = {
-                        state.onViewAll()
-                    },
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier
-                        .weight(1F)
-                ) {
-                    Text("Todas")
-                }
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    AlbumView(state.album)
 
-                Button(
-                    onClick = {
-                        state.onViewMissing()
-                    },
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier
-                        .weight(1F)
-                ) {
-                    Text("Faltantes")
-                }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Button(
+                            onClick = {
+                                state.onViewAll()
+                            },
+                            contentPadding = PaddingValues(4.dp),
+                            modifier = Modifier
+                                .weight(1F)
+                        ) {
+                            Text("Todas")
+                        }
 
-                Button(
-                    onClick = {
-                        state.onViewRepeated()
-                    },
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier
-                        .weight(1F)
-                ) {
-                    Text("Repetidas", overflow = TextOverflow.Ellipsis, maxLines = 1)
+                        Button(
+                            onClick = {
+                                state.onViewMissing()
+                            },
+                            contentPadding = PaddingValues(4.dp),
+                            modifier = Modifier
+                                .weight(1F)
+                        ) {
+                            Text("Faltantes")
+                        }
+
+                        Button(
+                            onClick = {
+                                state.onViewRepeated()
+                            },
+                            contentPadding = PaddingValues(4.dp),
+                            modifier = Modifier
+                                .weight(1F)
+                        ) {
+                            Text("Repetidas", overflow = TextOverflow.Ellipsis, maxLines = 1)
+                        }
+                    }
+
+                    SearchSticker(state, lazyListState)
                 }
             }
         }
 
         item {
-            SearchSticker(state, lazyListState)
-        }
-
-        item {
             TitleSection(
                 title = stringResource(id = R.string.sticker_grid_title),
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                icons = listOf(
+                    TitleSectionIcon(
+                        imageVector = if (state.isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        onIconClick = state.onToggleHeader
+                    )
+                )
             )
         }
 
@@ -207,7 +213,6 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchSticker(state: UpdateAlbumUIState, lazyListState: LazyListState) {
-    val scope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(
         modifier = Modifier
@@ -259,46 +264,6 @@ fun SearchSticker(state: UpdateAlbumUIState, lazyListState: LazyListState) {
                     .width(60.dp)
             )
         }
-
-//        Button(
-//            onClick = {
-//                keyboardController?.hide()
-//                state.onSearchStickerClick(lazyListState, scope)
-//            },
-//            modifier = Modifier
-//                .fillMaxHeight(),
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = MaterialTheme.colorScheme.secondary
-//            )
-//        ) {
-//            Image(
-//                painter = painterResource(id = R.drawable.ic_search),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .fillMaxHeight(),
-//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
-//            )
-//        }
-//
-//        Button(
-//            onClick = {
-//                keyboardController?.hide()
-//                state.onFilterStickerClick()
-//            },
-//            modifier = Modifier
-//            .fillMaxHeight(),
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = MaterialTheme.colorScheme.secondary
-//            )
-//        ) {
-//            Image(
-//                painter = painterResource(id = R.drawable.ic_filter),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .fillMaxHeight(),
-//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
-//            )
-//        }
     }
 }
 

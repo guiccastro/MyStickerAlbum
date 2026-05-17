@@ -67,6 +67,7 @@ class UpdateAlbumViewModel @Inject constructor(
                 onViewAll = { filterStickers(FilterType.All) },
                 onViewMissing = { filterStickers(FilterType.Missing) },
                 onViewRepeated = { filterStickers(FilterType.Repeated) },
+                onToggleHeader = ::onToggleHeader
             )
         }
 
@@ -312,6 +313,12 @@ class UpdateAlbumViewModel @Inject constructor(
             )
         }
 
+    }
+
+    private fun onToggleHeader() {
+        _uiState.update {
+            it.copy(isHeaderVisible = !it.isHeaderVisible)
+        }
     }
 
     enum class FilterType {

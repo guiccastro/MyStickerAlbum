@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,7 +34,8 @@ import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.theme.Poppins
 
 data class TitleSectionIcon(
-    @DrawableRes val icon: Int,
+    @DrawableRes val icon: Int? = null,
+    val imageVector: ImageVector? = null,
     val iconSize: Dp = 24.dp,
     val iconBorderStroke: BorderStroke? = null,
     val iconBorderPadding: Dp = 0.dp,
@@ -80,19 +83,31 @@ fun TitleSection(
                     icon.iconBorderStroke,
                     CircleShape
                 ) else Modifier
-                Image(
-                    painter = painterResource(id = icon.icon),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(color),
-                    modifier = Modifier
-                        .size(icon.iconSize)
-                        .clip(CircleShape)
-                        .clickable {
-                            icon.onIconClick()
-                        }
-                        .then(borderModifier)
-                        .padding(icon.iconBorderPadding)
-                )
+                
+                val iconModifier = Modifier
+                    .size(icon.iconSize)
+                    .clip(CircleShape)
+                    .clickable {
+                        icon.onIconClick()
+                    }
+                    .then(borderModifier)
+                    .padding(icon.iconBorderPadding)
+
+                if (icon.imageVector != null) {
+                    Icon(
+                        imageVector = icon.imageVector,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = iconModifier
+                    )
+                } else if (icon.icon != null) {
+                    Image(
+                        painter = painterResource(id = icon.icon),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(color),
+                        modifier = iconModifier
+                    )
+                }
             }
         }
 
