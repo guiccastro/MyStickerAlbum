@@ -25,6 +25,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -117,102 +120,96 @@ fun DeleteAlbumDialog(state: UpdateAlbumUIState) {
 
 @Composable
 fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
-    val isTablet = booleanResource(id = R.bool.isTablet)
     val lazyListState = rememberLazyListState()
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
-                state.onScroll(lazyListState.firstVisibleItemIndex)
-                return super.onPostScroll(consumed, available, source)
-            }
-        }
-    }
 
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(5.dp),
-        state = lazyListState,
+    Column(
         modifier = Modifier
-            .nestedScroll(nestedScrollConnection)
+            .padding(10.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        item {
-            AnimatedVisibility(
-                visible = state.isHeaderVisible,
-                enter = expandVertically(),
-                exit = shrinkVertically()
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    AlbumView(state.album)
+        Header(state)
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Button(
-                            onClick = {
-                                state.onViewAll()
-                            },
-                            contentPadding = PaddingValues(4.dp),
-                            modifier = Modifier
-                                .weight(1F)
-                        ) {
-                            Text("Todas")
-                        }
-
-                        Button(
-                            onClick = {
-                                state.onViewMissing()
-                            },
-                            contentPadding = PaddingValues(4.dp),
-                            modifier = Modifier
-                                .weight(1F)
-                        ) {
-                            Text("Faltantes")
-                        }
-
-                        Button(
-                            onClick = {
-                                state.onViewRepeated()
-                            },
-                            contentPadding = PaddingValues(4.dp),
-                            modifier = Modifier
-                                .weight(1F)
-                        ) {
-                            Text("Repetidas", overflow = TextOverflow.Ellipsis, maxLines = 1)
-                        }
-                    }
-
-                    SearchSticker(state, lazyListState)
-                }
-            }
-        }
-
-        item {
-            TitleSection(
-                title = stringResource(id = R.string.sticker_grid_title),
-                color = MaterialTheme.colorScheme.onBackground,
-                icons = listOf(
-                    TitleSectionIcon(
-                        imageVector = if (state.isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        onIconClick = state.onToggleHeader
-                    )
+        TitleSection(
+            title = stringResource(id = R.string.sticker_grid_title),
+            color = MaterialTheme.colorScheme.onBackground,
+            icons = listOf(
+                TitleSectionIcon(
+                    imageVector = if (state.isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    onIconClick = state.onToggleHeader
                 )
             )
-        }
+        )
 
-        stickersGrid(state, isTablet)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(state.columns ?: 5),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            items(state.stickers) { sticker ->
+                StickerItem(sticker, state)
+            }
+        }
     }
 
     ReturnToTopButton(state, lazyListState)
 }
 
+@Composable
+fun Header(state: UpdateAlbumUIState) {
+    AnimatedVisibility(
+        visible = state.isHeaderVisible,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            AlbumView(state.album)
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = {
+                        state.onViewAll()
+                    },
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier
+                        .weight(1F)
+                ) {
+                    Text("Todas")
+                }
+
+                Button(
+                    onClick = {
+                        state.onViewMissing()
+                    },
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier
+                        .weight(1F)
+                ) {
+                    Text("Faltantes")
+                }
+
+                Button(
+                    onClick = {
+                        state.onViewRepeated()
+                    },
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier
+                        .weight(1F)
+                ) {
+                    Text("Repetidas", overflow = TextOverflow.Ellipsis, maxLines = 1)
+                }
+            }
+
+            SearchSticker(state)
+        }
+    }
+}
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchSticker(state: UpdateAlbumUIState, lazyListState: LazyListState) {
+fun SearchSticker(state: UpdateAlbumUIState) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(
         modifier = Modifier
@@ -276,34 +273,10 @@ fun AlbumView(album: Album) {
     }
 }
 
-fun LazyListScope.stickersGrid(state: UpdateAlbumUIState, isTablet: Boolean) {
-    val columns = state.columns ?:
-        if (isTablet) UpdateAlbumViewModel.tabletColumnsGrid else UpdateAlbumViewModel.normalColumnsGrid
-    val stickers = state.stickers
-    val grid = stickers.toGrid(columns)
-
-    items(grid) { row ->
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            row.forEach { sticker ->
-                StickerItem(sticker = sticker, state = state)
-            }
-
-            repeat(columns - row.size) {
-                Spacer(modifier = Modifier.weight(1F))
-            }
-        }
-    }
-}
-
 @Composable
-fun RowScope.StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
+fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
     Box(
         modifier = Modifier
-            .weight(1F)
             .aspectRatio(1F)
             .shadow(4.dp, RoundedCornerShape(8.dp), clip = false)
             .background(
