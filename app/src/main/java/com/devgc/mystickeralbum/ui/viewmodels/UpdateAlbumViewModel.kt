@@ -60,7 +60,6 @@ class UpdateAlbumViewModel @Inject constructor(
                 changeIconsLegendDialogState = ::changeIconsLegendDialogState,
                 searchStickerTextField = TextFieldValues(onTextChange = ::onSearchStickerChange),
                 onSearchStickerClick = ::onSearchStickerClick,
-                onFilterStickerClick = ::onFilterStickerClick,
                 onClearTextField = ::onClearTextField,
                 onScroll = ::onScroll,
                 onReturnToTopButtonClick = ::onReturnToTopButtonClick,
@@ -273,28 +272,7 @@ class UpdateAlbumViewModel @Inject constructor(
         }
     }
 
-    private fun onFilterStickerClick() {
-        val stickerText = _uiState.value.searchStickerTextField.text.uppercase()
-        val newStickers = ArrayList(_uiState.value.album.stickersList.stickers.filter { it.identifier.contains(stickerText) })
-
-        val newAlbum = _uiState.value.album.copy(
-            stickersList = StickersList(newStickers)
-        )
-
-        _uiState.update {
-            it.copy(
-                filteredAlbum = newAlbum,
-            )
-        }
-    }
-
     private fun onClearTextField() {
-        _uiState.update {
-            it.copy(
-                filteredAlbum = null,
-            )
-        }
-
         onSearchStickerChange("")
     }
 

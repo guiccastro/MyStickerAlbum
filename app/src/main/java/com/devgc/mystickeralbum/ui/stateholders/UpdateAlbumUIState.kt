@@ -11,11 +11,8 @@ import kotlinx.coroutines.CoroutineScope
 
 data class UpdateAlbumUIState(
     val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, ""),
-    val filteredAlbum: Album? = null,
     val onStickerClick: (Sticker) -> Unit = {},
     val onRemoveSticker: (Sticker) -> Unit = {},
-    val onCloseStickerDialog: () -> Unit = {},
-    val showStickerDialog: Boolean = false,
     val showDeleteAlbumDialog: Boolean = false,
     val onCloseDeleteAlbumDialog: () -> Unit = {},
     val onConfirmDeleteAlbumDialog: () -> Unit = {},
@@ -23,10 +20,8 @@ data class UpdateAlbumUIState(
     val onCopyRepeatedStickersClick: (Context) -> Unit = {},
     val changeIconsLegendDialogState: () -> Unit = {},
     val showIconsLegendDialog: Boolean = false,
-    val showSearchStickerTextField: Boolean = false,
     val searchStickerTextField: TextFieldValues = TextFieldValues(),
     val onSearchStickerClick: (LazyListState, CoroutineScope) -> Unit = { _, _ -> },
-    val onFilterStickerClick: () -> Unit = {},
     val onClearTextField: () -> Unit = {},
     val onScroll: (Int) -> Unit = {},
     val showReturnToTopButton: Boolean = false,

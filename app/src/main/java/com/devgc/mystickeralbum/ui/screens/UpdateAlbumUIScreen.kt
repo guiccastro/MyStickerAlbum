@@ -592,7 +592,6 @@ fun StickersListPreview() {
                     status = AlbumStatus.Completing,
                     albumImage = ""
                 ),
-                showSearchStickerTextField = true,
                 showReturnToTopButton = true,
                 stickers = stickers
             )
