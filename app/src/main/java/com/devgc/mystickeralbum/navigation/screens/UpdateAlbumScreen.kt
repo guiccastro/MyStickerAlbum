@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.albumNameArgument
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.navController
+import com.devgc.mystickeralbum.navigation.NavigationParameters
 import com.devgc.mystickeralbum.navigation.interfaces.Screen
 import com.devgc.mystickeralbum.scaffold.models.FABComponent
 import com.devgc.mystickeralbum.scaffold.models.TopAppBarActionItem
@@ -48,13 +49,16 @@ object UpdateAlbumScreen : Screen {
 
     override val routeScreen: String = "UpdateAlbumScreen"
 
-    override fun NavController.navigateToItself(albumName: String?, navOptions: NavOptions?) {
+    override fun NavController.navigateToItself(
+        parameters: NavigationParameters?,
+        navOptions: NavOptions?
+    ) {
         val screenId = currentBackStack.value.find {
             it.destination.route?.split("/")?.firstOrNull() == routeScreen
         }?.destination?.id
         if (screenId != null) {
             navController.popBackStack(screenId, true)
         }
-        navigate("$routeScreen/$albumName", navOptions)
+        navigate("$routeScreen/${parameters?.albumName}", navOptions)
     }
 }

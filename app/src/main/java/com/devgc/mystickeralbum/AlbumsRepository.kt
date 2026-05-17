@@ -1,6 +1,7 @@
 package com.devgc.mystickeralbum
 
 import com.devgc.mystickeralbum.model.Album
+import kotlinx.coroutines.flow.Flow
 
 object AlbumsRepository {
     private val albumDao = MyStickerAlbumApplication.getDatabase().albumDao()
@@ -9,11 +10,15 @@ object AlbumsRepository {
         return albumDao.getAll()
     }
 
-    fun addAlbum(album: Album) {
+    fun getAllAlbumsFlow(): Flow<List<Album>> {
+        return albumDao.getAllFlow()
+    }
+
+    fun insertAlbum(album: Album) {
         albumDao.insert(album)
     }
 
-    fun updateAlbum(newAlbum: Album, oldAlbum: Album) {
+    fun replaceAlbum(newAlbum: Album, oldAlbum: Album) {
         albumDao.delete(oldAlbum)
         albumDao.insert(newAlbum)
     }
@@ -28,5 +33,9 @@ object AlbumsRepository {
 
     fun getAlbumByName(albumName: String): Album? {
         return albumDao.getAlbumByName(albumName)
+    }
+
+    fun getAlbumByNameFlow(albumName: String): Flow<Album?> {
+        return albumDao.getAlbumByNameFlow(albumName)
     }
 }

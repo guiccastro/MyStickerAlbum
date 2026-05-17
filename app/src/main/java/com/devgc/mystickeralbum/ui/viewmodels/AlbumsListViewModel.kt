@@ -1,19 +1,19 @@
 package com.devgc.mystickeralbum.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.devgc.mystickeralbum.AlbumsRepository
 import com.devgc.mystickeralbum.model.Album
 import com.devgc.mystickeralbum.navigation.MainNavComponent
+import com.devgc.mystickeralbum.navigation.NavigationParameters
 import com.devgc.mystickeralbum.navigation.screens.CreateAlbumScreen
 import com.devgc.mystickeralbum.navigation.screens.UpdateAlbumScreen
 import com.devgc.mystickeralbum.ui.stateholders.AlbumsListUIState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AlbumsListViewModel : ViewModel() {
 
@@ -25,21 +25,22 @@ class AlbumsListViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 onAlbumClick = ::onAlbumClick,
-                updateAlbumsList = ::updateAlbumsList,
                 changeIconsLegendDialogState = ::changeIconsLegendDialogState
             )
         }
+
+        CoroutineScope(IO).launch {
+            AlbumsRepository.getAllAlbumsFlow().collect { albumsList ->
+                updateAlbumsList(albumsList)
+            }
+        }
     }
 
-    private fun updateAlbumsList() {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    albumsList = withContext(IO) {
-                        AlbumsRepository.getAllAlbums().reversed()
-                    }
-                )
-            }
+    private fun updateAlbumsList(albumsList: List<Album>) {
+        _uiState.update {
+            it.copy(
+                albumsList = albumsList
+            )
         }
     }
 
@@ -54,7 +55,11 @@ class AlbumsListViewModel : ViewModel() {
     private fun onAlbumClick(album: Album) {
         MainNavComponent.navController.apply {
             UpdateAlbumScreen.apply {
-                navigateToItself(albumName = album.name)
+                navigateToItself(
+                    parameters = NavigationParameters(
+                        albumName = album.name
+                    )
+                )
             }
         }
     }

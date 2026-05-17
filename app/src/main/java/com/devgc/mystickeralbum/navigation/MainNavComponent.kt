@@ -16,6 +16,7 @@ import com.devgc.mystickeralbum.navigation.interfaces.Screen
 import com.devgc.mystickeralbum.navigation.screens.AboutAppScreen
 import com.devgc.mystickeralbum.navigation.screens.AlbumsListScreen
 import com.devgc.mystickeralbum.navigation.screens.CreateAlbumScreen
+import com.devgc.mystickeralbum.navigation.screens.CropImageScreen
 import com.devgc.mystickeralbum.navigation.screens.EditAlbumScreen
 import com.devgc.mystickeralbum.navigation.screens.LanguageScreen
 import com.devgc.mystickeralbum.navigation.screens.SettingsScreen
@@ -49,12 +50,14 @@ class MainNavComponent private constructor() {
             UpdateAlbumScreen,
             SettingsScreen,
             LanguageScreen,
-            AboutAppScreen
+            AboutAppScreen,
+            CropImageScreen
         )
 
         val navController: NavHostController get() = getInstance()._navController
 
         const val albumNameArgument = "albumName"
+        const val aspectRatioArgument = "aspectRatio"
 
         @Composable
         fun AppNavHost() {

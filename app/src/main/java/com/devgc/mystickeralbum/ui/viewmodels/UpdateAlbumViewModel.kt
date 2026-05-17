@@ -16,6 +16,7 @@ import com.devgc.mystickeralbum.model.StickersList
 import com.devgc.mystickeralbum.model.TextFieldValues
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.albumNameArgument
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.navController
+import com.devgc.mystickeralbum.navigation.NavigationParameters
 import com.devgc.mystickeralbum.navigation.screens.EditAlbumScreen
 import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,9 +50,7 @@ class UpdateAlbumViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 onStickerClick = ::onStickerClick,
-                onCloseStickerDialog = ::onCloseDialog,
-                onFoundNotFoundClick = ::onFoundNotFoundClick,
-                onChangeRepeatedStickerClick = ::onChangeRepeatedStickerClick,
+                onRemoveSticker = ::onRemoveSticker,
                 onCloseDeleteAlbumDialog = ::onCloseDeleteAlbumDialog,
                 onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog,
                 onCopyMissingStickersClick = ::onCopyMissingStickersClick,
@@ -59,6 +58,8 @@ class UpdateAlbumViewModel @Inject constructor(
                 changeIconsLegendDialogState = ::changeIconsLegendDialogState,
                 searchStickerTextField = TextFieldValues(onTextChange = ::onSearchStickerChange),
                 onSearchStickerClick = ::onSearchStickerClick,
+                onFilterStickerClick = ::onFilterStickerClick,
+                onClearTextField = ::onClearTextField,
                 onScroll = ::onScroll,
                 onReturnToTopButtonClick = ::onReturnToTopButtonClick
             )
@@ -89,33 +90,31 @@ class UpdateAlbumViewModel @Inject constructor(
     }
 
     private fun onStickerClick(sticker: Sticker) {
-        _uiState.update {
-            it.copy(
-                showStickerDialog = true,
-                stickerDialog = sticker
-            )
+        if (!sticker.found) {
+            onFoundNotFoundClick(true, sticker)
+        } else {
+            onChangeRepeatedStickerClick(1, sticker)
         }
     }
 
-    private fun onCloseDialog() {
-        _uiState.update {
-            it.copy(
-                showStickerDialog = false
-            )
+    private fun onRemoveSticker(sticker: Sticker) {
+        if (sticker.repeated > 0) {
+            onChangeRepeatedStickerClick(-1, sticker)
+        } else {
+            onFoundNotFoundClick(false, sticker)
         }
     }
 
-    private fun onFoundNotFoundClick(found: Boolean) {
-        val newSticker = _uiState.value.stickerDialog.copy(found = found, repeated = 0)
+    private fun onFoundNotFoundClick(found: Boolean, sticker: Sticker) {
+        val newSticker = sticker.copy(found = found, repeated = 0)
         updateSticker(newSticker)
-        onCloseDialog()
     }
 
-    private fun onChangeRepeatedStickerClick(value: Int) {
-        val newRepeated = _uiState.value.stickerDialog.repeated + value
+    private fun onChangeRepeatedStickerClick(value: Int, sticker: Sticker) {
+        val newRepeated = sticker.repeated + value
 
         if (newRepeated >= 0) {
-            val newSticker = _uiState.value.stickerDialog.copy(repeated = newRepeated)
+            val newSticker = sticker.copy(repeated = newRepeated)
             updateSticker(newSticker)
         }
     }
@@ -144,7 +143,6 @@ class UpdateAlbumViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 album = newAlbum,
-                stickerDialog = newSticker
             )
         }
     }
@@ -178,7 +176,11 @@ class UpdateAlbumViewModel @Inject constructor(
     fun onEditAlbumClick() {
         navController.apply {
             EditAlbumScreen.apply {
-                navigateToItself(albumName = _uiState.value.album.name)
+                navigateToItself(
+                    parameters = NavigationParameters(
+                        albumName = _uiState.value.album.name
+                    )
+                )
             }
         }
     }
@@ -243,10 +245,7 @@ class UpdateAlbumViewModel @Inject constructor(
 
         onSearchStickerChange("")
 
-        if (stickerIndex != -1) {
-            val sticker = _uiState.value.album.stickersList.stickers[stickerIndex]
-            onStickerClick(sticker)
-        } else {
+        if (stickerIndex == -1) {
             val context = MyStickerAlbumApplication.getInstance()
             Toast.makeText(
                 context,
@@ -262,6 +261,31 @@ class UpdateAlbumViewModel @Inject constructor(
                 showReturnToTopButton = index >= topUIItems
             )
         }
+    }
+
+    private fun onFilterStickerClick() {
+        val stickerText = _uiState.value.searchStickerTextField.text.uppercase()
+        val newStickers = ArrayList(_uiState.value.album.stickersList.stickers.filter { it.identifier.contains(stickerText) })
+
+        val newAlbum = _uiState.value.album.copy(
+            stickersList = StickersList(newStickers)
+        )
+
+        _uiState.update {
+            it.copy(
+                filteredAlbum = newAlbum,
+            )
+        }
+    }
+
+    private fun onClearTextField() {
+        _uiState.update {
+            it.copy(
+                filteredAlbum = null,
+            )
+        }
+
+        onSearchStickerChange("")
     }
 
     private fun onReturnToTopButtonClick(lazyListState: LazyListState, scope: CoroutineScope) {

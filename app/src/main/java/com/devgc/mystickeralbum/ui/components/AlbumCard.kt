@@ -1,5 +1,6 @@
 package com.devgc.mystickeralbum.ui.components
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,16 +19,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,20 +42,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import com.devgc.mystickeralbum.MainActivity
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.model.Album
 import com.devgc.mystickeralbum.model.AlbumStatus
+import com.devgc.mystickeralbum.model.ImageCropperHelper
+import com.devgc.mystickeralbum.model.ImageCropperHelper.getImageState
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
+import com.devgc.mystickeralbum.navigation.MainNavComponent
+import com.devgc.mystickeralbum.navigation.NavigationParameters
+import com.devgc.mystickeralbum.navigation.screens.CropImageScreen
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @Composable
 fun AlbumCard(
     album: Album,
     onClick: ((Album) -> Unit)? = null,
+    canEditImage: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val imageState = ImageCropperHelper.imageStateHolder.collectAsState().value
+    val context = LocalContext.current
     val hasImage = album.albumImage.isNotEmpty()
     val isTablet = booleanResource(id = R.bool.isTablet)
     val baseHeight = if (isTablet) 300.dp else 200.dp
@@ -78,19 +92,46 @@ fun AlbumCard(
                 .fillMaxSize()
         ) {
             if (hasImage) {
+                var aspectRatio = 1F
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(0.5F),
+                        .fillMaxHeight(0.5F)
+                        .graphicsLayer {
+                            aspectRatio = size.width / size.height
+                        },
                 ) {
-                    AsyncImage(
-                        model = album.albumImage,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Black.copy(alpha = 0.5F)),
-                        contentScale = ContentScale.Crop
-                    )
+
+                    imageState.getImageState(context, album.albumImage)?.let {
+                        Image(
+                            bitmap = it.asImageBitmap(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color.Black.copy(alpha = 0.5F))
+                        )
+                    }
+
+                    if (canEditImage) {
+                        Button(onClick = {
+                            MainNavComponent.navController.apply {
+                                CropImageScreen.apply {
+                                    navigateToItself(
+                                        parameters = NavigationParameters(
+                                            albumName = album.name,
+                                            aspectRatio = aspectRatio
+                                        )
+                                    )
+                                }
+                            }
+                        }) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_edit),
+                                contentDescription = null
+                            )
+                        }
+                    }
 
                     if (album.name.isNotEmpty()) {
                         Text(

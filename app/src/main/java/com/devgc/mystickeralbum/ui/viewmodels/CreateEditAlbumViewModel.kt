@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.devgc.mystickeralbum.AlbumsRepository
 import com.devgc.mystickeralbum.MyStickerAlbumApplication
 import com.devgc.mystickeralbum.R
+import com.devgc.mystickeralbum.model.Album
 import com.devgc.mystickeralbum.model.CheckboxValues
 import com.devgc.mystickeralbum.model.CompoundStickerType
 import com.devgc.mystickeralbum.model.DialogValues
@@ -17,6 +18,7 @@ import com.devgc.mystickeralbum.model.ToggleGroupValues
 import com.devgc.mystickeralbum.navigation.MainNavComponent
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.getSingleTopWithPopUpTo
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.navController
+import com.devgc.mystickeralbum.navigation.NavigationParameters
 import com.devgc.mystickeralbum.navigation.screens.UpdateAlbumScreen
 import com.devgc.mystickeralbum.ui.stateholders.CreateEditAlbumUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -87,7 +89,9 @@ class CreateEditAlbumViewModel @Inject constructor(
                 .getStateFlow<String?>(MainNavComponent.albumNameArgument, null)
                 .filterNotNull()
                 .collect { albumName ->
-                    onReceivedAlbumName(albumName)
+                    AlbumsRepository.getAlbumByNameFlow(albumName).collect {
+                        onReceivedAlbum(it)
+                    }
                 }
         }
     }
@@ -299,7 +303,7 @@ class CreateEditAlbumViewModel @Inject constructor(
 
                 viewModelScope.launch {
                     withContext(IO) {
-                        AlbumsRepository.updateAlbum(album, oldAlbum)
+                        AlbumsRepository.replaceAlbum(album, oldAlbum)
                     }
 
                     if (_uiState.value.isCreateAlbum) {
@@ -308,7 +312,9 @@ class CreateEditAlbumViewModel @Inject constructor(
                         navController.apply {
                             UpdateAlbumScreen.apply {
                                 navigateToItself(
-                                    albumName = album.name,
+                                    parameters = NavigationParameters(
+                                        albumName = album.name
+                                    ),
                                     navOptions = getSingleTopWithPopUpTo(routeScreen, true)
                                 )
                             }
@@ -639,19 +645,14 @@ class CreateEditAlbumViewModel @Inject constructor(
         return hasError
     }
 
-    private fun onReceivedAlbumName(albumName: String) {
-        viewModelScope.launch {
-            val album = withContext(IO) {
-                return@withContext AlbumsRepository.getAlbumByName(albumName)
-            } ?: run {
-                _uiState.update {
-                    it.copy(
-                        isCreateAlbum = true
-                    )
-                }
-                return@launch
+    private fun onReceivedAlbum(album: Album?) {
+        if (album == null) {
+            _uiState.update {
+                it.copy(
+                    isCreateAlbum = true
+                )
             }
-
+        } else {
             oldAlbum = album
 
             _uiState.update {

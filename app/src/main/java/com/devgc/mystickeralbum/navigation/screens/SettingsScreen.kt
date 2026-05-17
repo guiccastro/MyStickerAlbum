@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.devgc.mystickeralbum.R
+import com.devgc.mystickeralbum.navigation.NavigationParameters
 import com.devgc.mystickeralbum.navigation.interfaces.Screen
 import com.devgc.mystickeralbum.scaffold.models.FABComponent
 import com.devgc.mystickeralbum.scaffold.models.TopAppBarActionItem
@@ -33,6 +34,9 @@ object SettingsScreen : Screen {
 
     override val routeScreen: String = "SettingsScreen"
 
-    override fun NavController.navigateToItself(albumName: String?, navOptions: NavOptions?) =
+    override fun NavController.navigateToItself(
+        parameters: NavigationParameters?,
+        navOptions: NavOptions?
+    ) =
         navigate(routeScreen, navOptions)
 }

@@ -5,7 +5,6 @@ import com.devgc.mystickeralbum.model.Album
 data class AlbumsListUIState(
     val albumsList: List<Album> = emptyList(),
     val onAlbumClick: (Album) -> Unit = {},
-    val updateAlbumsList: () -> Unit = {},
     val changeIconsLegendDialogState: () -> Unit = {},
     val showIconsLegendDialog: Boolean = false
 )

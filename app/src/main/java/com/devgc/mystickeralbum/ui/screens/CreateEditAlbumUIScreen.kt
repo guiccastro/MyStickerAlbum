@@ -1,5 +1,13 @@
 package com.devgc.mystickeralbum.ui.screens
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,13 +40,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +65,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.extensions.toGrid
 import com.devgc.mystickeralbum.model.Album
@@ -70,6 +93,9 @@ import com.devgc.mystickeralbum.ui.stateholders.CreateEditAlbumUIState
 import com.devgc.mystickeralbum.ui.theme.ErrorColor
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.viewmodels.CreateEditAlbumViewModel
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+
 
 @Composable
 fun CreateEditAlbumUIScreen(viewModel: CreateEditAlbumViewModel) {
@@ -198,14 +224,19 @@ fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (0.1).sp
         )
-        PreviewAlbum(album = state.album)
+        PreviewAlbum(
+            album = state.album
+        )
     }
 }
 
 @Composable
-fun PreviewAlbum(album: Album) {
+fun PreviewAlbum(
+    album: Album
+) {
     AlbumCard(
-        album = album
+        album = album,
+        canEditImage = true
     ) {
         Column(
             modifier = Modifier
@@ -900,6 +931,199 @@ fun CurrentStickersDialog(
             onClick = changeDialogState
         )
     )
+}
+
+//@Composable
+//fun CropImageTest(
+//    x: Float,
+//    y: Float
+//) {
+//    val imageCropper = rememberImageCropper()
+//    val scope = rememberCoroutineScope()
+//    val context = LocalContext.current
+//
+//    //val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.ic_logo_linkedin)
+//
+//    LaunchedEffect(Unit) {
+//        scope.launch {
+//            val loader = ImageLoader(context)
+//            val request = ImageRequest.Builder(context)
+//                .data("https://gremio.blob.core.windows.net/imgs-site/lg-noticias-gra-mio-lana-a-a-lbum-de-figurinhas-em-comemoraa-a-o-aos-120-anos-com-selo-da-panini-37651.jpg")
+//                .allowHardware(false) // Disable hardware bitmaps.
+//                .build()
+//
+//            val resultReq = (loader.execute(request) as SuccessResult).drawable
+//            val bitmap = (resultReq as BitmapDrawable).bitmap
+//
+//
+//            val result =
+//                imageCropper.crop(bmp = bitmap.asImageBitmap()) // Suspends until user accepts or cancels cropping
+//            when (result) {
+//                CropResult.Cancelled -> {}
+//                is CropError -> {}
+//                is CropResult.Success -> {
+//                    result.bitmap
+//                }
+//            }
+//        }
+//    }
+//    val cropState = imageCropper.cropState
+//    Log.println(Log.ASSERT, "Teste", "$x - $y")
+//    cropState?.region = Rect(Offset.Zero, Offset(x, y))
+//    //cropState?.shape = CropShape { rect -> Path().apply { addRect(Rect(Offset.Zero, Offset(x, y))) } }
+//    cropState?.aspectLock = true
+//    if (cropState != null) ImageCropperDialog(
+//        state = cropState,
+//        style = CropperStyle(
+//            secondaryHandles = false,
+//            shapes = emptyList(),
+//            aspects = listOf(
+//                AspectRatio(21, 9)
+//            ),
+//            autoZoom = false
+//        )
+//    )
+//}
+
+@Composable
+fun CropImageTest() {
+//    val context = LocalContext.current
+//    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+//    var imageUri by remember { mutableStateOf<Uri?>(null) }
+//    val scope = rememberCoroutineScope()
+//
+//    val imageCropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
+//        if (result.isSuccessful) {
+//            imageUri = result.uriContent
+//        } else {
+//            val exception = result.error
+//        }
+//    }
+//
+//    if (imageUri != null) {
+////        LaunchedEffect(Unit) {
+////            scope.launch {
+////                val loader = ImageLoader(context)
+////                val request = ImageRequest.Builder(context)
+////                    .data("https://gremio.blob.core.windows.net/imgs-site/lg-noticias-gra-mio-lana-a-a-lbum-de-figurinhas-em-comemoraa-a-o-aos-120-anos-com-selo-da-panini-37651.jpg")
+////                    .allowHardware(false) // Disable hardware bitmaps.
+////                    .build()
+////
+////                val resultReq = (loader.execute(request) as SuccessResult).drawable
+////                bitmap = (resultReq as BitmapDrawable).bitmap
+////            }
+////        }
+//    }
+//
+//    imageCropLauncher.launch(CropImageContractOptions(uriContent, CropImageOptions()))
+
+    val context = LocalContext.current
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val imageCropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            imageUri = result.uriContent
+        } else {
+            val exception = result.error
+        }
+    }
+
+    if (imageUri != null) {
+        if (Build.VERSION.SDK_INT < 28) {
+            bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+        } else {
+            val source = ImageDecoder.createSource(context.contentResolver, imageUri!!)
+            bitmap = ImageDecoder.decodeBitmap(source)
+        }
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(top = 100.dp)
+    ) {
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap?.asImageBitmap()!!,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Color.Blue)
+                    .size(150.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.Blue,
+                        shape = CircleShape
+                    )
+
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.ic_edit),
+                contentDescription = null,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Color.Blue)
+                    .size(150.dp)
+
+            )
+        }
+    }
+
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        scope.launch {
+            val loader = ImageLoader(context)
+            val request = ImageRequest.Builder(context)
+                .data("https://gremio.blob.core.windows.net/imgs-site/lg-noticias-gra-mio-lana-a-a-lbum-de-figurinhas-em-comemoraa-a-o-aos-120-anos-com-selo-da-panini-37651.jpg")
+                .allowHardware(false) // Disable hardware bitmaps.
+                .build()
+
+            val resultReq = (loader.execute(request) as SuccessResult).drawable
+            bitmap = (resultReq as BitmapDrawable).bitmap
+        }
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 330.dp, start = 100.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_delete),
+            contentDescription = null,
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(Color.Gray)
+                .size(50.dp)
+                .padding(10.dp)
+                .clickable {
+
+                    val imageUri = getImageUri(context, bitmap!!)
+                    val cropOption = CropImageContractOptions(
+                        imageUri,
+                        CropImageOptions().apply {
+                            cropShape = CropImageView.CropShape.RECTANGLE_HORIZONTAL_ONLY
+                        })
+                    imageCropLauncher.launch(cropOption)
+                }
+
+        )
+    }
+}
+
+fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+    val bytes = ByteArrayOutputStream()
+    inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+    val path =
+        MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
+    return Uri.parse(path)
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)

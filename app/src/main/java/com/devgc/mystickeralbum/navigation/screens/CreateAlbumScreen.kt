@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.devgc.mystickeralbum.R
 import com.devgc.mystickeralbum.navigation.MainNavComponent
+import com.devgc.mystickeralbum.navigation.NavigationParameters
 import com.devgc.mystickeralbum.navigation.interfaces.Screen
 import com.devgc.mystickeralbum.scaffold.models.FABComponent
 import com.devgc.mystickeralbum.scaffold.models.TopAppBarActionItem
@@ -47,6 +48,8 @@ object CreateAlbumScreen : Screen {
 
     override val routeScreen: String = "CreateAlbumScreen"
 
-    override fun NavController.navigateToItself(albumName: String?, navOptions: NavOptions?) =
-        navigate("$routeScreen/${albumName}", navOptions)
+    override fun NavController.navigateToItself(
+        parameters: NavigationParameters?,
+        navOptions: NavOptions?
+    ) = navigate("$routeScreen/${parameters?.albumName}", navOptions)
 }

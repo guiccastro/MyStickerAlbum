@@ -1,7 +1,9 @@
 package com.devgc.mystickeralbum.model
 
+import android.graphics.Bitmap
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.text.DecimalFormat
 
@@ -12,6 +14,9 @@ data class Album(
     val status: AlbumStatus,
     val albumImage: String
 ) {
+    @Ignore
+    var imageBitmap: Bitmap? = null
+
     fun getMissing(): List<Sticker> {
         return stickersList.stickers.filter { !it.found }
     }

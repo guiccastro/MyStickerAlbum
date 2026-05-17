@@ -3,6 +3,9 @@ package com.devgc.mystickeralbum
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import coil.ImageLoader
+import coil.disk.DiskCache
+import coil.request.CachePolicy
 import com.devgc.mystickeralbum.database.AlbumDatabase
 import dagger.hilt.android.HiltAndroidApp
 
@@ -22,6 +25,8 @@ class MyStickerAlbumApplication : Application() {
         }
     }
 
+    lateinit var imageLoader: ImageLoader
+
     private val databaseName = "album-database"
 
     override fun onCreate() {
@@ -32,6 +37,14 @@ class MyStickerAlbumApplication : Application() {
             AlbumDatabase::class.java, databaseName
         ).build()
         LanguageRepository.initiateLanguage(baseContext)
+        imageLoader = ImageLoader(this).newBuilder()
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(this.cacheDir.resolve("image_cache"))
+                    .build()
+            }
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .build()
     }
 
     fun getContext(): Context {

@@ -29,8 +29,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -89,10 +93,6 @@ fun UpdateAlbumUIScreen(viewModel: UpdateAlbumViewModel) {
 
     if (state.showIconsLegendDialog) {
         IconsLegendDialog(state.changeIconsLegendDialogState)
-    }
-
-    if (state.showStickerDialog) {
-        StickerOptionsDialog(state)
     }
 }
 
@@ -183,7 +183,20 @@ fun SearchSticker(state: UpdateAlbumUIState, lazyListState: LazyListState) {
                     .fillMaxHeight(),
                 placeholderText = stringResource(id = R.string.search_sticker_placeholder),
                 textSize = 14.sp,
-                textStyle = Poppins
+                textStyle = Poppins,
+                trailingIcon = {
+                    Button(
+                        onClick = {
+                            keyboardController?.hide()
+                            state.onClearTextField()
+                        },
+                        modifier = Modifier
+                            .width(40.dp),
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Icon(Icons.Filled.Clear, contentDescription = null)
+                    }
+                }
             )
         }
 
@@ -206,6 +219,26 @@ fun SearchSticker(state: UpdateAlbumUIState, lazyListState: LazyListState) {
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
             )
         }
+
+        Button(
+            onClick = {
+                keyboardController?.hide()
+                state.onFilterStickerClick()
+            },
+            modifier = Modifier
+            .fillMaxHeight(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_filter),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxHeight(),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
+            )
+        }
     }
 }
 
@@ -221,7 +254,8 @@ fun AlbumView(album: Album) {
 fun LazyListScope.stickersGrid(state: UpdateAlbumUIState, isTablet: Boolean) {
     val columns =
         if (isTablet) UpdateAlbumViewModel.tabletColumnsGrid else UpdateAlbumViewModel.normalColumnsGrid
-    val grid = state.album.stickersList.stickers.toGrid(columns)
+    val stickers = state.filteredAlbum?.stickersList?.stickers ?: state.album.stickersList.stickers
+    val grid = stickers.toGrid(columns)
 
     items(grid) { row ->
         Row(
@@ -290,173 +324,31 @@ fun RowScope.StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
                     fontWeight = FontWeight.SemiBold
                 )
             }
-        }
-    }
-}
 
-@Composable
-fun StickerOptionsDialog(state: UpdateAlbumUIState) {
-    Dialog(
-        onDismissRequest = { state.onCloseStickerDialog() }
-    ) {
-        Column(
-            modifier = Modifier
-                .width(200.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp))
-                .padding(horizontal = 20.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Column {
-                Text(
-                    text = (stringResource(id = R.string.sticker_title) + " " + state.stickerDialog.identifier).uppercase(),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = (0.1).sp
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = (if (state.stickerDialog.found) stringResource(id = R.string.found_title) else stringResource(
-                            id = R.string.not_found_title
-                        )).uppercase(),
-                        fontSize = 8.sp,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .offset(y = (-4).dp)
-                            .border(
-                                1.dp,
-                                BorderColor,
-                                RoundedCornerShape(4.dp)
-                            )
-                            .background(
-                                MaterialTheme.colorScheme.secondaryContainer,
-                                RoundedCornerShape(4.dp)
-                            )
-                            .padding(horizontal = 4.dp, vertical = 2.dp),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        letterSpacing = (0.1).sp
-                    )
-                }
-            }
-
-            if (!state.stickerDialog.found) {
-                Button(
-                    onClick = { state.onFoundNotFoundClick(true) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                    shape = RoundedCornerShape(4.dp),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 4.dp
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.found_title),
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                }
-            } else {
-                Button(
-                    onClick = { state.onFoundNotFoundClick(false) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                    shape = RoundedCornerShape(4.dp),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 4.dp
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.not_found_title),
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                }
-
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.repeated_stickers_title).uppercase(),
-                        fontSize = 10.sp,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        letterSpacing = (0.1).sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .height(30.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_remove),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer),
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .aspectRatio(1F)
-                                .shadow(4.dp, CircleShape)
-                                .background(
-                                    MaterialTheme.colorScheme.secondaryContainer,
-                                    CircleShape
-                                )
-                                .clip(CircleShape)
-                                .clickable { state.onChangeRepeatedStickerClick(-1) }
-                                .padding(4.dp)
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .aspectRatio(1F)
+                    .align(Alignment.BottomStart)
+                    .background(
+                        Color.Red,
+                        RoundedCornerShape(
+                            topStart = 0.dp,
+                            topEnd = 8.dp,
+                            bottomEnd = 0.dp,
+                            bottomStart = 4.dp
                         )
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .padding(horizontal = 10.dp)
-                        ) {
-                            Text(
-                                text = state.stickerDialog.repeated.toString(),
-                                fontSize = 14.sp,
-                                modifier = Modifier
-                                    .align(Alignment.Center),
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_add),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer),
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .aspectRatio(1F)
-                                .shadow(4.dp, CircleShape)
-                                .background(
-                                    MaterialTheme.colorScheme.secondaryContainer,
-                                    CircleShape
-                                )
-                                .clip(CircleShape)
-                                .clickable { state.onChangeRepeatedStickerClick(1) }
-                                .padding(4.dp)
-                        )
+                    )
+                    .clickable {
+                        state.onRemoveSticker(sticker)
                     }
-                }
+            ) {
+                Icon(
+                    painterResource(R.drawable.ic_delete),
+                    contentDescription = "Remove",
+                    modifier = Modifier
+                        .padding(2.dp)
+                )
             }
         }
     }
@@ -559,22 +451,6 @@ fun ReturnToTopButton(state: UpdateAlbumUIState, lazyListState: LazyListState) {
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiary)
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun StickerOptionsDialogPreview() {
-    MyStickerAlbumTheme {
-        StickerOptionsDialog(
-            state = UpdateAlbumUIState(
-                stickerDialog = Sticker(
-                    "1",
-                    true,
-                    0
-                )
-            )
-        )
     }
 }
 
