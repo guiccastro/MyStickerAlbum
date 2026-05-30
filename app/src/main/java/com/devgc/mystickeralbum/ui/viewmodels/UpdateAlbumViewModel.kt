@@ -53,6 +53,8 @@ class UpdateAlbumViewModel @Inject constructor(
             it.copy(
                 onStickerClick = ::onStickerClick,
                 onRemoveSticker = ::onRemoveSticker,
+                onToggleStickerLineBreak = ::onToggleStickerLineBreak,
+                onToggleStickerExtraLine = ::onToggleStickerExtraLine,
                 onCloseDeleteAlbumDialog = ::onCloseDeleteAlbumDialog,
                 onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog,
                 onCopyMissingStickersClick = ::onCopyMissingStickersClick,
@@ -110,6 +112,24 @@ class UpdateAlbumViewModel @Inject constructor(
         } else {
             onFoundNotFoundClick(false, sticker)
         }
+    }
+
+    private fun onToggleStickerLineBreak(sticker: Sticker) {
+        updateSticker(
+            sticker.copy(
+                lineBreakAfter = !sticker.lineBreakAfter,
+                extraLineAfter = if (sticker.lineBreakAfter) false else sticker.extraLineAfter
+            )
+        )
+    }
+
+    private fun onToggleStickerExtraLine(sticker: Sticker) {
+        updateSticker(
+            sticker.copy(
+                lineBreakAfter = true,
+                extraLineAfter = !sticker.extraLineAfter
+            )
+        )
     }
 
     private fun onFoundNotFoundClick(found: Boolean, sticker: Sticker) {

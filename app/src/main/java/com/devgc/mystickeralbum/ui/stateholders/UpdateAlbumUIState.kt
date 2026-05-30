@@ -13,6 +13,8 @@ data class UpdateAlbumUIState(
     val album: Album = Album("", StickersList(emptyList()), AlbumStatus.Completing, ""),
     val onStickerClick: (Sticker) -> Unit = {},
     val onRemoveSticker: (Sticker) -> Unit = {},
+    val onToggleStickerLineBreak: (Sticker) -> Unit = {},
+    val onToggleStickerExtraLine: (Sticker) -> Unit = {},
     val showDeleteAlbumDialog: Boolean = false,
     val onCloseDeleteAlbumDialog: () -> Unit = {},
     val onConfirmDeleteAlbumDialog: () -> Unit = {},

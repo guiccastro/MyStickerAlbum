@@ -92,6 +92,10 @@
     <string name="sticker_grid_title">Figurinhas</string>
     <string name="search_sticker_placeholder">Encontrar figurinha</string>
     <string name="search_sticker_not_found">Figurinha não encontrada!</string>
+    <string name="add_sticker_line_break">Adicionar quebra de linha</string>
+    <string name="remove_sticker_line_break">Remover quebra de linha</string>
+    <string name="add_sticker_extra_line">Adicionar linha vazia abaixo</string>
+    <string name="remove_sticker_extra_line">Remover linha vazia abaixo</string>
 
     <!-- Drawer Menu -->
     <string name="drawer_item_settings_title">Configurações</string>

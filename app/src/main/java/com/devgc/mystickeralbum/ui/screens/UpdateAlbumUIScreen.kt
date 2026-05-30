@@ -5,15 +5,16 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,11 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -38,27 +35,27 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -70,7 +67,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devgc.mystickeralbum.R
-import com.devgc.mystickeralbum.extensions.toGrid
 import com.devgc.mystickeralbum.model.Album
 import com.devgc.mystickeralbum.model.AlbumStatus
 import com.devgc.mystickeralbum.model.ButtonItem
@@ -121,37 +117,112 @@ fun DeleteAlbumDialog(state: UpdateAlbumUIState) {
 @Composable
 fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
     val lazyListState = rememberLazyListState()
+    val columns = (state.columns ?: 5).coerceAtLeast(1)
 
-    Column(
+    LazyColumn(
+        state = lazyListState,
         modifier = Modifier
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        Header(state)
+        item {
+            Header(state)
+        }
 
-        TitleSection(
-            title = stringResource(id = R.string.sticker_grid_title),
-            color = MaterialTheme.colorScheme.onBackground,
-            icons = listOf(
-                TitleSectionIcon(
-                    imageVector = if (state.isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    onIconClick = state.onToggleHeader
+        item {
+            TitleSection(
+                title = stringResource(id = R.string.sticker_grid_title),
+                color = MaterialTheme.colorScheme.onBackground,
+                icons = listOf(
+                    TitleSectionIcon(
+                        imageVector = if (state.isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        onIconClick = state.onToggleHeader
+                    )
                 )
             )
-        )
+        }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(state.columns ?: 5),
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(state.stickers) { sticker ->
-                StickerItem(sticker, state)
+        items(state.stickers.toStickerRows(columns)) { row ->
+            when (row) {
+                StickerGridRow.Empty -> {
+                    EmptyStickerRow(columns)
+                }
+
+                is StickerGridRow.Stickers -> {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        row.stickers.forEach { sticker ->
+                            Box(
+                                modifier = Modifier
+                                    .weight(1F)
+                            ) {
+                                StickerItem(sticker, state)
+                            }
+                        }
+
+                        repeat(columns - row.stickers.size) {
+                            Spacer(
+                                modifier = Modifier
+                                    .weight(1F)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 
     ReturnToTopButton(state, lazyListState)
+}
+
+@Composable
+private fun EmptyStickerRow(columns: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        repeat(columns) {
+            Spacer(
+                modifier = Modifier
+                    .weight(1F)
+                    .aspectRatio(1F)
+            )
+        }
+    }
+}
+
+private sealed interface StickerGridRow {
+    data class Stickers(val stickers: List<Sticker>) : StickerGridRow
+    data object Empty : StickerGridRow
+}
+
+private fun List<Sticker>.toStickerRows(columns: Int): List<StickerGridRow> {
+    val safeColumns = columns.coerceAtLeast(1)
+    val rows = ArrayList<StickerGridRow>()
+    val currentRow = ArrayList<Sticker>()
+
+    forEach { sticker ->
+        currentRow.add(sticker)
+
+        if (currentRow.size == safeColumns || sticker.lineBreakAfter) {
+            rows.add(StickerGridRow.Stickers(currentRow.toList()))
+            currentRow.clear()
+
+            if (sticker.extraLineAfter) {
+                rows.add(StickerGridRow.Empty)
+            }
+        }
+    }
+
+    if (currentRow.isNotEmpty()) {
+        rows.add(StickerGridRow.Stickers(currentRow.toList()))
+    }
+
+    return rows
 }
 
 @Composable
@@ -273,8 +344,11 @@ fun AlbumView(album: Album) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
+    var showMenu by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .aspectRatio(1F)
@@ -284,7 +358,10 @@ fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
                 RoundedCornerShape(8.dp)
             )
             .clip(RoundedCornerShape(8.dp))
-            .clickable { state.onStickerClick(sticker) }
+            .combinedClickable(
+                onClick = { state.onStickerClick(sticker) },
+                onLongClick = { showMenu = true }
+            )
     ) {
         Text(
             text = sticker.identifier,
@@ -348,6 +425,47 @@ fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
                         .padding(2.dp)
                 )
             }
+        }
+
+        DropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false }
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(
+                            id = if (sticker.lineBreakAfter) {
+                                R.string.remove_sticker_line_break
+                            } else {
+                                R.string.add_sticker_line_break
+                            }
+                        )
+                    )
+                },
+                onClick = {
+                    showMenu = false
+                    state.onToggleStickerLineBreak(sticker)
+                }
+            )
+
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(
+                            id = if (sticker.extraLineAfter) {
+                                R.string.remove_sticker_extra_line
+                            } else {
+                                R.string.add_sticker_extra_line
+                            }
+                        )
+                    )
+                },
+                onClick = {
+                    showMenu = false
+                    state.onToggleStickerExtraLine(sticker)
+                }
+            )
         }
     }
 }
