@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             }
         }.launch(
             CropImageContractOptions(
-                ImageCropperHelper.getOriginalImageUri(imageUrl),
+                ImageCropperHelper.getOriginalImageUri(this, imageUrl),
                 CropImageOptions()
             )
         )
