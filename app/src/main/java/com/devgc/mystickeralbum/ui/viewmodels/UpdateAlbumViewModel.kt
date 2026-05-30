@@ -3,6 +3,7 @@ package com.devgc.mystickeralbum.ui.viewmodels
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.SavedStateHandle
@@ -37,8 +38,8 @@ class UpdateAlbumViewModel @Inject constructor(
 
     companion object {
         private const val topUIItems = 4
-        const val normalColumnsGrid = 5
-        const val tabletColumnsGrid = 10
+        private const val portraitColumnsGrid = 5
+        private const val landscapeColumnsGrid = 10
     }
 
     private val _uiState: MutableStateFlow<UpdateAlbumUIState> =
@@ -263,8 +264,7 @@ class UpdateAlbumViewModel @Inject constructor(
         val stickerText = _uiState.value.searchStickerTextField.text.uppercase()
         val stickerIndex =
             _uiState.value.album.stickersList.stickers.indexOfFirst { it.identifier == stickerText }
-        val isTablet = MyStickerAlbumApplication.getInstance().resources.getBoolean(R.bool.isTablet)
-        val columns = if (isTablet) tabletColumnsGrid else normalColumnsGrid
+        val columns = _uiState.value.columns ?: getDefaultColumnsGrid()
         val stickerRowIndex = if (stickerIndex == -1) -1 else stickerIndex / columns
         val index = if (stickerRowIndex == -1) 0 else stickerRowIndex + topUIItems
 
@@ -314,6 +314,15 @@ class UpdateAlbumViewModel @Inject constructor(
             it.copy(
                 columns = columns
             )
+        }
+    }
+
+    private fun getDefaultColumnsGrid(): Int {
+        val orientation = MyStickerAlbumApplication.getInstance().resources.configuration.orientation
+        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            landscapeColumnsGrid
+        } else {
+            portraitColumnsGrid
         }
     }
 

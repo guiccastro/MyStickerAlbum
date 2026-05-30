@@ -1,5 +1,6 @@
 package com.devgc.mystickeralbum.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
@@ -55,6 +56,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -114,10 +116,14 @@ fun DeleteAlbumDialog(state: UpdateAlbumUIState) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
     val lazyListState = rememberLazyListState()
-    val columns = (state.columns ?: 5).coerceAtLeast(1)
+    val configuration = LocalConfiguration.current
+    val defaultColumns =
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 10 else 5
+    val columns = (state.columns ?: defaultColumns).coerceAtLeast(1)
 
     LazyColumn(
         state = lazyListState,
@@ -126,20 +132,28 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         item {
-            Header(state)
+            Header(state, defaultColumns)
         }
 
-        item {
-            TitleSection(
-                title = stringResource(id = R.string.sticker_grid_title),
-                color = MaterialTheme.colorScheme.onBackground,
-                icons = listOf(
-                    TitleSectionIcon(
-                        imageVector = if (state.isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        onIconClick = state.onToggleHeader
+        stickyHeader {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .clickable { state.onToggleHeader() }
+                    .padding(bottom = 5.dp)
+            ) {
+                TitleSection(
+                    title = stringResource(id = R.string.sticker_grid_title),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    icons = listOf(
+                        TitleSectionIcon(
+                            imageVector = if (state.isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            onIconClick = state.onToggleHeader
+                        )
                     )
                 )
-            )
+            }
         }
 
         items(state.stickers.toStickerRows(columns)) { row ->
@@ -189,7 +203,7 @@ private fun EmptyStickerRow(columns: Int) {
             Spacer(
                 modifier = Modifier
                     .weight(1F)
-                    .aspectRatio(1F)
+                    .aspectRatio(2F)
             )
         }
     }
@@ -226,7 +240,7 @@ private fun List<Sticker>.toStickerRows(columns: Int): List<StickerGridRow> {
 }
 
 @Composable
-fun Header(state: UpdateAlbumUIState) {
+fun Header(state: UpdateAlbumUIState, defaultColumns: Int) {
     AnimatedVisibility(
         visible = state.isHeaderVisible,
         enter = expandVertically(),
@@ -273,14 +287,14 @@ fun Header(state: UpdateAlbumUIState) {
                 }
             }
 
-            SearchSticker(state)
+            SearchSticker(state, defaultColumns)
         }
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchSticker(state: UpdateAlbumUIState) {
+fun SearchSticker(state: UpdateAlbumUIState, defaultColumns: Int) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(
         modifier = Modifier
@@ -321,7 +335,7 @@ fun SearchSticker(state: UpdateAlbumUIState) {
                 .fillMaxHeight()
         ) {
             TextField(
-                text = state.columns?.toString() ?: "",
+                text = (state.columns ?: defaultColumns).toString(),
                 onValueChange = {
                     state.onColumnsChanged(it.toIntOrNull())
                 },
