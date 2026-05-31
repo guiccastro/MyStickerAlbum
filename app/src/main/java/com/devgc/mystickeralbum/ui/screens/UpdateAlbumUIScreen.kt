@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -79,8 +80,6 @@ import com.devgc.mystickeralbum.ui.components.AlbumStickerInfo
 import com.devgc.mystickeralbum.ui.components.IconsLegendDialog
 import com.devgc.mystickeralbum.ui.components.SimpleDialog
 import com.devgc.mystickeralbum.ui.components.TextField
-import com.devgc.mystickeralbum.ui.components.TitleSection
-import com.devgc.mystickeralbum.ui.components.TitleSectionIcon
 import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.theme.Poppins
@@ -125,71 +124,118 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 10 else 5
     val columns = (state.columns ?: defaultColumns).coerceAtLeast(1)
 
-    LazyColumn(
-        state = lazyListState,
+    Column(
         modifier = Modifier
-            .padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+            .fillMaxSize()
+            .padding(start = 10.dp, top = 6.dp, end = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
-        item {
-            Header(state, defaultColumns)
-        }
+        Header(state, defaultColumns)
 
-        stickyHeader {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .clickable { state.onToggleHeader() }
-                    .padding(bottom = 5.dp)
-            ) {
-                TitleSection(
-                    title = stringResource(id = R.string.sticker_grid_title),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    icons = listOf(
-                        TitleSectionIcon(
-                            imageVector = if (state.isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                            onIconClick = state.onToggleHeader
-                        )
-                    )
-                )
-            }
-        }
+        StickerGridHeader(
+            title = stringResource(id = R.string.sticker_grid_title),
+            isHeaderVisible = state.isHeaderVisible,
+            onClick = state.onToggleHeader
+        )
 
-        items(state.stickers.toStickerRows(columns)) { row ->
-            when (row) {
-                StickerGridRow.Empty -> {
-                    EmptyStickerRow(columns)
-                }
+        LazyColumn(
+            state = lazyListState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1F),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            contentPadding = PaddingValues(top = 3.dp, bottom = 8.dp)
+        ) {
+            items(state.stickers.toStickerRows(columns)) { row ->
+                when (row) {
+                    StickerGridRow.Empty -> {
+                        EmptyStickerRow(columns)
+                    }
 
-                is StickerGridRow.Stickers -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        row.stickers.forEach { sticker ->
-                            Box(
-                                modifier = Modifier
-                                    .weight(1F)
-                            ) {
-                                StickerItem(sticker, state)
+                    is StickerGridRow.Stickers -> {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            row.stickers.forEach { sticker ->
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1F)
+                                ) {
+                                    StickerItem(sticker, state)
+                                }
                             }
-                        }
 
-                        repeat(columns - row.stickers.size) {
-                            Spacer(
-                                modifier = Modifier
-                                    .weight(1F)
-                            )
+                            repeat(columns - row.stickers.size) {
+                                Spacer(
+                                    modifier = Modifier
+                                        .weight(1F)
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    ReturnToTopButton(state, lazyListState)
+        ReturnToTopButton(state, lazyListState)
+    }
+}
+
+@Composable
+fun StickerGridHeader(
+    title: String,
+    isHeaderVisible: Boolean,
+    onClick: () -> Unit
+) {
+    val color = MaterialTheme.colorScheme.onBackground
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .padding(top = 2.dp, bottom = 3.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .height(1.dp)
+                .weight(1F)
+                .background(color)
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = title.uppercase(),
+                color = color,
+                fontSize = 19.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = Poppins
+            )
+
+            Icon(
+                imageVector = if (isHeaderVisible) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .height(1.dp)
+                .weight(1F)
+                .background(color)
+        )
+    }
 }
 
 @Composable
@@ -246,49 +292,57 @@ fun Header(state: UpdateAlbumUIState, defaultColumns: Int) {
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            AlbumView(state.album)
+        HeaderContent(state, defaultColumns)
+    }
+}
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically
+@Composable
+fun HeaderContent(state: UpdateAlbumUIState, defaultColumns: Int) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AlbumView(state.album)
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = {
+                    state.onViewAll()
+                },
+                contentPadding = PaddingValues(4.dp),
+                modifier = Modifier
+                    .weight(1F)
+                    .height(42.dp)
             ) {
-                Button(
-                    onClick = {
-                        state.onViewAll()
-                    },
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier
-                        .weight(1F)
-                ) {
-                    Text("Todas")
-                }
-
-                Button(
-                    onClick = {
-                        state.onViewMissing()
-                    },
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier
-                        .weight(1F)
-                ) {
-                    Text("Faltantes")
-                }
-
-                Button(
-                    onClick = {
-                        state.onViewRepeated()
-                    },
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier
-                        .weight(1F)
-                ) {
-                    Text("Repetidas", overflow = TextOverflow.Ellipsis, maxLines = 1)
-                }
+                Text("Todas")
             }
 
-            SearchSticker(state, defaultColumns)
+            Button(
+                onClick = {
+                    state.onViewMissing()
+                },
+                contentPadding = PaddingValues(4.dp),
+                modifier = Modifier
+                    .weight(1F)
+                    .height(42.dp)
+            ) {
+                Text("Faltantes")
+            }
+
+            Button(
+                onClick = {
+                    state.onViewRepeated()
+                },
+                contentPadding = PaddingValues(4.dp),
+                modifier = Modifier
+                    .weight(1F)
+                    .height(42.dp)
+            ) {
+                Text("Repetidas", overflow = TextOverflow.Ellipsis, maxLines = 1)
+            }
         }
+
+        SearchSticker(state, defaultColumns)
     }
 }
 
@@ -298,8 +352,8 @@ fun SearchSticker(state: UpdateAlbumUIState, defaultColumns: Int) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(
         modifier = Modifier
-            .height(50.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+            .height(46.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Box(
             modifier = Modifier
@@ -343,7 +397,7 @@ fun SearchSticker(state: UpdateAlbumUIState, defaultColumns: Int) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(60.dp)
+                    .width(58.dp)
             )
         }
     }
@@ -555,23 +609,23 @@ fun CopyStickersButtons(state: UpdateAlbumUIState) {
 @Composable
 fun ReturnToTopButton(state: UpdateAlbumUIState, lazyListState: LazyListState) {
     val scope = rememberCoroutineScope()
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    AnimatedVisibility(
+        visible = state.showReturnToTopButton,
+        enter = scaleIn(),
+        exit = scaleOut()
     ) {
-        AnimatedVisibility(
-            visible = state.showReturnToTopButton,
-            enter = scaleIn(),
-            exit = scaleOut()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(44.dp),
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_return_top),
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(top = 6.dp)
-                    .size(40.dp)
+                    .padding(top = 4.dp)
+                    .size(38.dp)
                     .background(MaterialTheme.colorScheme.tertiary, CircleShape)
                     .clip(CircleShape)
                     .clickable {
