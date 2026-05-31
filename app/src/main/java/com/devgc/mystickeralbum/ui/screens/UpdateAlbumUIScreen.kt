@@ -9,6 +9,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +28,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -64,7 +65,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -146,7 +146,7 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
             verticalArrangement = Arrangement.spacedBy(5.dp),
             contentPadding = PaddingValues(top = 3.dp, bottom = 8.dp)
         ) {
-            items(state.stickers.toStickerRows(columns)) { row ->
+            itemsIndexed(state.stickers.toStickerRows(columns)) { rowIndex, row ->
                 when (row) {
                     StickerGridRow.Empty -> {
                         EmptyStickerRow(columns)
@@ -163,7 +163,7 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
                                     modifier = Modifier
                                         .weight(1F)
                                 ) {
-                                    StickerItem(sticker, state)
+                                    StickerItem(sticker, state, rowIndex)
                                 }
                             }
 
@@ -249,7 +249,7 @@ private fun EmptyStickerRow(columns: Int) {
             Spacer(
                 modifier = Modifier
                     .weight(1F)
-                    .aspectRatio(2F)
+                    .aspectRatio(2.5F)
             )
         }
     }
@@ -414,18 +414,25 @@ fun AlbumView(album: Album) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
+fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState, rowIndex: Int) {
     var showMenu by remember { mutableStateOf(false) }
+    val cellShape = RoundedCornerShape(6.dp)
+    val missingColor = if (rowIndex % 2 == 0) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        Color(0xFFE7E7E7)
+    }
+    val backgroundColor = if (sticker.found) MaterialTheme.colorScheme.tertiaryContainer else missingColor
+    val contentColor = if (sticker.found) MaterialTheme.colorScheme.onTertiaryContainer else Color.Black
+    val borderColor = if (sticker.found) Color(0xFF2F3941) else Color(0x33000000)
 
     Box(
         modifier = Modifier
-            .aspectRatio(1F)
-            .shadow(4.dp, RoundedCornerShape(8.dp), clip = false)
-            .background(
-                if (sticker.found) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.primaryContainer,
-                RoundedCornerShape(8.dp)
-            )
-            .clip(RoundedCornerShape(8.dp))
+            .aspectRatio(1.22F)
+            .shadow(2.dp, cellShape, clip = false)
+            .clip(cellShape)
+            .background(backgroundColor)
+            .border(1.dp, borderColor, cellShape)
             .combinedClickable(
                 onClick = { state.onStickerClick(sticker) },
                 onLongClick = { showMenu = true }
@@ -435,52 +442,47 @@ fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
             text = sticker.identifier,
             fontSize = 18.sp,
             modifier = Modifier
-                .align(Alignment.Center),
-            textDecoration = if (sticker.found) TextDecoration.LineThrough else null,
-            fontWeight = if (sticker.found) FontWeight.Normal else FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            textAlign = TextAlign.Center
+                .align(Alignment.Center)
+                .padding(horizontal = 2.dp),
+            textDecoration = null,
+            fontWeight = FontWeight.SemiBold,
+            color = contentColor,
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
 
         if (sticker.found) {
-            Box(
-                modifier = Modifier
-                    .size(20.dp)
-                    .aspectRatio(1F)
-                    .align(Alignment.TopEnd)
-                    .background(
-                        MaterialTheme.colorScheme.secondary,
-                        RoundedCornerShape(
-                            topStart = 0.dp,
-                            topEnd = 8.dp,
-                            bottomEnd = 0.dp,
-                            bottomStart = 4.dp
-                        )
-                    )
-            ) {
-                Text(
-                    text = sticker.repeated.toString(),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSecondary,
+            if (sticker.repeated > 0) {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.Center),
-                    fontWeight = FontWeight.SemiBold
-                )
+                        .height(18.dp)
+                        .width(if (sticker.repeated > 9) 28.dp else 22.dp)
+                        .align(Alignment.TopEnd)
+                        .background(
+                            MaterialTheme.colorScheme.secondary,
+                            RoundedCornerShape(bottomStart = 6.dp)
+                        )
+                ) {
+                    Text(
+                        text = sticker.repeated.toString(),
+                        fontSize = 10.sp,
+                        color = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.Center),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
 
             Box(
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(18.dp)
                     .aspectRatio(1F)
                     .align(Alignment.BottomStart)
                     .background(
-                        Color.Red,
-                        RoundedCornerShape(
-                            topStart = 0.dp,
-                            topEnd = 8.dp,
-                            bottomEnd = 0.dp,
-                            bottomStart = 4.dp
-                        )
+                        Color(0xFFE53935),
+                        RoundedCornerShape(topEnd = 6.dp)
                     )
                     .clickable {
                         state.onRemoveSticker(sticker)
@@ -490,7 +492,8 @@ fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState) {
                     painterResource(R.drawable.ic_delete),
                     contentDescription = "Remove",
                     modifier = Modifier
-                        .padding(2.dp)
+                        .padding(2.dp),
+                    tint = Color.White
                 )
             }
         }
