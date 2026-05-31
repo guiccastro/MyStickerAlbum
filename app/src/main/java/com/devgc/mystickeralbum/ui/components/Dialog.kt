@@ -16,8 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -55,7 +54,8 @@ fun SimpleDialog(
             Text(
                 text = title.uppercase(),
                 fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White
             )
         }
 
@@ -64,7 +64,8 @@ fun SimpleDialog(
                 text = description,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
-                lineHeight = descriptionLineHeight
+                lineHeight = descriptionLineHeight,
+                color = Color.White.copy(alpha = 0.82F)
             )
         }
 
@@ -76,7 +77,8 @@ fun SimpleDialog(
                     onClick = { negativeButton.onClick() },
                     shape = RoundedCornerShape(4.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        containerColor = Color.White.copy(alpha = 0.14F),
+                        contentColor = Color.White
                     )
                 ) {
                     Text(text = negativeButton.text)
@@ -86,7 +88,11 @@ fun SimpleDialog(
             if (positiveButton?.text != null) {
                 Button(
                     onClick = { positiveButton.onClick() },
-                    shape = RoundedCornerShape(4.dp)
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1D7BE0),
+                        contentColor = Color.White
+                    )
                 ) {
                     Text(text = positiveButton.text)
                 }
@@ -98,9 +104,9 @@ fun SimpleDialog(
 @Composable
 fun BaseDialog(
     onDismissRequest: () -> Unit = {},
-    backgroundColor: Color = MaterialTheme.colorScheme.primaryContainer,
-    shape: Shape = RoundedCornerShape(8.dp),
-    paddingValues: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+    backgroundColor: Color = Color(0xFF0B2D4A),
+    shape: Shape = RoundedCornerShape(18.dp),
+    paddingValues: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(20.dp),
     content: @Composable (ColumnScope.() -> Unit)
@@ -130,47 +136,48 @@ fun IconsLegendDialog(onDismissRequest: () -> Unit) {
         Text(
             text = stringResource(id = R.string.icons_legend_dialog_title).uppercase(),
             fontSize = titleSize,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White
         )
 
         IconLegend(
-            icon = R.drawable.ic_total,
+            icon = R.drawable.ic_stat_total,
             legend = R.string.album_item_total
         )
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .width(dividerWidth),
             thickness = (0.5).dp,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = Color.White.copy(alpha = 0.18F)
         )
 
         IconLegend(
-            icon = R.drawable.ic_found,
-            legend = R.string.album_item_found
+            icon = R.drawable.ic_stat_owned,
+            legend = R.string.album_item_owned
         )
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .width(dividerWidth),
             thickness = (0.5).dp,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = Color.White.copy(alpha = 0.18F)
         )
 
         IconLegend(
-            icon = R.drawable.ic_missing,
+            icon = R.drawable.ic_stat_missing,
             legend = R.string.album_item_missing
         )
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .width(dividerWidth),
             thickness = (0.5).dp,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = Color.White.copy(alpha = 0.18F)
         )
 
         IconLegend(
-            icon = R.drawable.ic_repeated,
+            icon = R.drawable.ic_stat_repeated,
             legend = R.string.album_item_repeated
         )
     }
@@ -197,7 +204,7 @@ fun IconLegend(
             modifier = Modifier
                 .size(iconSize)
                 .aspectRatio(1F),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
+            colorFilter = ColorFilter.tint(Color.White)
         )
 
         Text(
@@ -207,7 +214,7 @@ fun IconLegend(
                 .weight(1F)
                 .padding(start = legendPadding),
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = Color.White,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
@@ -76,7 +78,15 @@ private fun MainContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.DarkGray)
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFF071827),
+                        Color(0xFF0B2D4A),
+                        Color(0xFF071420)
+                    )
+                )
+            )
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
 
@@ -108,7 +118,11 @@ private fun MainContent(
             onClick = { crop = true },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(20.dp)
+                .padding(20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF1D7BE0),
+                contentColor = Color.White
+            )
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_check),
@@ -118,6 +132,7 @@ private fun MainContent(
 
         if (isCropping) {
             CircularProgressIndicator(
+                color = Color(0xFF37D4B5),
                 modifier = Modifier
                     .align(Alignment.Center)
             )

@@ -36,7 +36,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -51,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
@@ -153,6 +153,7 @@ fun CreateEditAlbumUIScreen(state: CreateEditAlbumUIState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .appBackground()
             .padding(horizontal = 10.dp)
     ) {
         Column(
@@ -171,6 +172,18 @@ fun CreateEditAlbumUIScreen(state: CreateEditAlbumUIState) {
     }
 }
 
+private fun Modifier.appBackground(): Modifier {
+    return background(
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFF071827),
+                Color(0xFF0B2D4A),
+                Color(0xFF071420)
+            )
+        )
+    )
+}
+
 @Composable
 fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
     Column {
@@ -178,9 +191,9 @@ fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
             text = stringResource(id = R.string.album_name_label).uppercase(),
             fontSize = 16.sp,
             overflow = TextOverflow.Ellipsis,
-            color = Color.Black,
+            color = Color.White.copy(alpha = 0.90F),
             fontWeight = FontWeight.SemiBold,
-            letterSpacing = (0.1).sp
+            letterSpacing = 0.sp
         )
         TextField(
             text = state.albumNameTextField.text,
@@ -200,9 +213,9 @@ fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
             text = stringResource(id = R.string.image_url_label).uppercase(),
             fontSize = 16.sp,
             overflow = TextOverflow.Ellipsis,
-            color = Color.Black,
+            color = Color.White.copy(alpha = 0.90F),
             fontWeight = FontWeight.SemiBold,
-            letterSpacing = (0.1).sp
+            letterSpacing = 0.sp
         )
         TextField(
             text = state.albumImageUrlTextField.text,
@@ -220,9 +233,9 @@ fun BasicAlbumInfo(state: CreateEditAlbumUIState) {
             text = stringResource(id = R.string.preview_label).uppercase(),
             fontSize = 16.sp,
             overflow = TextOverflow.Ellipsis,
-            color = Color.Black,
+            color = Color.White.copy(alpha = 0.90F),
             fontWeight = FontWeight.SemiBold,
-            letterSpacing = (0.1).sp
+            letterSpacing = 0.sp
         )
         PreviewAlbum(
             album = state.album
@@ -275,7 +288,7 @@ fun EditStickers(state: CreateEditAlbumUIState) {
             title = stringResource(
                 id = EditStickerMode.getByIndex(state.editModeToggle.selectedIndex).getTitle()
             ),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = Color.White,
             icons = listOf(
                 TitleSectionIcon(
                     icon = R.drawable.ic_about_app,
@@ -336,7 +349,7 @@ fun EditStickers(state: CreateEditAlbumUIState) {
                 TitleSectionIcon(
                     icon = R.drawable.ic_delete,
                     iconSize = 21.dp,
-                    iconBorderStroke = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
+                    iconBorderStroke = BorderStroke(2.dp, Color.White.copy(alpha = 0.70F)),
                     iconBorderPadding = 3.dp,
                     onIconClick = state.deleteAllStickersDialog.changeDialogState,
                 )
@@ -361,7 +374,7 @@ fun EditModeSelect(editModeToggle: ToggleGroupValues) {
             text = stringResource(id = R.string.edit_mode_title),
             fontSize = 14.sp,
             overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = Color.White.copy(alpha = 0.80F),
             fontWeight = FontWeight.SemiBold
         )
         ToggleGroup(toggleGroupValues = editModeToggle)
@@ -387,7 +400,7 @@ fun StickerInput(
             text = title.uppercase(),
             fontSize = 14.sp,
             overflow = TextOverflow.Ellipsis,
-            color = Color.Black,
+            color = Color.White.copy(alpha = 0.86F),
             fontWeight = FontWeight.SemiBold
         )
 
@@ -416,7 +429,7 @@ fun StickerInput(
                     Image(
                         painter = painterResource(id = R.drawable.ic_long_arrow_right),
                         contentDescription = null,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
+                        colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.74F)),
                         modifier = Modifier
                             .align(Alignment.Center)
                     )
@@ -463,7 +476,7 @@ fun StickerInput(
                 text = stringResource(id = R.string.range_checkbox_desc),
                 fontSize = 10.sp,
                 overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
+                color = Color.White.copy(alpha = 0.74F),
                 fontWeight = FontWeight.Medium
             )
         }
@@ -486,14 +499,14 @@ fun CompoundStickerTypeSelect(state: CreateEditAlbumUIState) {
                     text = stringResource(id = R.string.compound_sticker_type_label).uppercase(),
                     fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
+                    color = Color.White.copy(alpha = 0.86F),
                     fontWeight = FontWeight.SemiBold
                 )
 
                 Image(
                     painter = painterResource(id = R.drawable.ic_about_app),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
+                    colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.86F)),
                     modifier = Modifier
                         .size(20.dp)
                         .clip(CircleShape)
@@ -550,7 +563,7 @@ fun StickersToBeEditedPreview(
                     text = stringResource(id = R.string.add_stickers),
                     fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSecondary,
+                    color = Color.White,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -559,15 +572,15 @@ fun StickersToBeEditedPreview(
                         .clickable {
                             onAddStickerClick()
                         }
-                        .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(10.dp))
-                        .padding(vertical = 2.dp, horizontal = 6.dp)
+                        .background(Color(0xFF1D7BE0), RoundedCornerShape(10.dp))
+                        .padding(vertical = 6.dp, horizontal = 12.dp)
                 )
             } else {
                 Text(
                     text = stringResource(id = R.string.remove_stickers),
                     fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    color = Color.White,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -577,10 +590,10 @@ fun StickersToBeEditedPreview(
                             onRemoveStickerClick()
                         }
                         .background(
-                            MaterialTheme.colorScheme.secondaryContainer,
+                            Color(0xFFFF7A88).copy(alpha = 0.72F),
                             RoundedCornerShape(10.dp)
                         )
-                        .padding(vertical = 2.dp, horizontal = 6.dp)
+                        .padding(vertical = 6.dp, horizontal = 12.dp)
                 )
             }
         }
@@ -606,7 +619,7 @@ fun StickersPreview(
         TitleSection(
             title = title.uppercase(),
             fontSize = 14.sp,
-            color = if (hasError) ErrorColor else MaterialTheme.colorScheme.onBackground,
+            color = if (hasError) ErrorColor else Color.White,
             fontWeight = FontWeight.SemiBold,
             icons = icons
         )
@@ -620,7 +633,7 @@ fun StickersPreview(
                     text = emptyMessage,
                     fontSize = 10.sp,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = Color.White.copy(alpha = 0.70F),
                     fontWeight = FontWeight.Medium
                 )
             } else {
@@ -636,18 +649,26 @@ fun StickersPreview(
                                 text = it.identifier,
                                 fontSize = 10.sp,
                                 overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = Color.White,
                                 fontWeight = FontWeight.Medium,
                                 textAlign = TextAlign.Center,
                                 maxLines = 1,
                                 modifier = Modifier
                                     .weight(1F)
-                                    .border((0.1).dp, MaterialTheme.colorScheme.secondary)
+                                    .padding(1.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(Color.White.copy(alpha = 0.08F))
+                                    .border(
+                                        1.dp,
+                                        Color.White.copy(alpha = 0.12F),
+                                        RoundedCornerShape(4.dp)
+                                    )
                                     .clickable(
                                         enabled = onStickerClick != null
                                     ) {
                                         onStickerClick?.invoke(it)
                                     }
+                                    .padding(vertical = 2.dp, horizontal = 3.dp)
                             )
                         }
 
@@ -687,14 +708,15 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
                 .fillMaxSize(),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.LightGray
+                containerColor = Color.White.copy(alpha = 0.12F),
+                contentColor = Color.White
             )
         ) {
             Text(
                 text = stringResource(id = R.string.cancel_button),
                 fontSize = 16.sp,
                 overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
+                color = Color.White,
                 fontWeight = FontWeight.SemiBold
             )
         }
@@ -704,7 +726,11 @@ fun BottomButtons(state: CreateEditAlbumUIState) {
             modifier = Modifier
                 .weight(1F)
                 .fillMaxSize(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF1D7BE0),
+                contentColor = Color.White
+            )
         ) {
             Text(
                 text = stringResource(id = if (state.isCreateAlbum) R.string.create_button else R.string.save_button),
@@ -740,7 +766,7 @@ fun StickerDialog(
                 text = (stringResource(id = R.string.sticker_title) + " " + sticker.identifier).uppercase(),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = Color.White
             )
 
             Row(
@@ -752,7 +778,7 @@ fun StickerDialog(
                     Image(
                         painter = painterResource(id = R.drawable.ic_short_arrow_left_filled),
                         contentDescription = null,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiaryContainer),
+                        colorFilter = ColorFilter.tint(Color.White),
                         modifier = Modifier
                             .fillMaxHeight()
                             .aspectRatio(1F)
@@ -761,7 +787,7 @@ fun StickerDialog(
                             .clickable {
                                 onPrevious()
                             }
-                            .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
+                            .background(Color.White.copy(alpha = 0.14F), CircleShape)
                             .padding(2.dp),
                     )
                 } else {
@@ -771,7 +797,7 @@ fun StickerDialog(
                 Image(
                     painter = painterResource(id = R.drawable.ic_delete),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiaryContainer),
+                    colorFilter = ColorFilter.tint(Color.White),
                     modifier = Modifier
                         .fillMaxHeight()
                         .aspectRatio(1F)
@@ -780,7 +806,7 @@ fun StickerDialog(
                         .clickable {
                             onDelete()
                         }
-                        .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
+                        .background(Color(0xFFFF7A88).copy(alpha = 0.72F), CircleShape)
                         .padding(6.dp),
                 )
 
@@ -788,7 +814,7 @@ fun StickerDialog(
                     Image(
                         painter = painterResource(id = R.drawable.ic_short_arrow_right_filled),
                         contentDescription = null,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiaryContainer),
+                        colorFilter = ColorFilter.tint(Color.White),
                         modifier = Modifier
                             .fillMaxHeight()
                             .aspectRatio(1F)
@@ -797,7 +823,7 @@ fun StickerDialog(
                             .clickable {
                                 onNext()
                             }
-                            .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
+                            .background(Color.White.copy(alpha = 0.14F), CircleShape)
                             .padding(2.dp),
                     )
                 } else {
@@ -813,7 +839,7 @@ fun StickerDialog(
                 text = stringResource(id = R.string.edit_sticker_identifier),
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = Color.White.copy(alpha = 0.78F)
             )
 
             Box(
@@ -839,25 +865,30 @@ fun StickerDialog(
             Button(
                 onClick = { onCancel() },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    containerColor = Color.White.copy(alpha = 0.12F),
+                    contentColor = Color.White
                 )
             ) {
                 Text(
                     text = stringResource(id = R.string.cancel_button),
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = Color.White
                 )
             }
 
             Button(
-                onClick = { onSave() }
+                onClick = { onSave() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF1D7BE0),
+                    contentColor = Color.White
+                )
             ) {
                 Text(
                     text = stringResource(id = R.string.save_button),
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = Color.White
                 )
             }
         }

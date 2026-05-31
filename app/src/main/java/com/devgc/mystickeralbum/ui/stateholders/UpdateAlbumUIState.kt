@@ -34,6 +34,13 @@ data class UpdateAlbumUIState(
     val onViewAll: () -> Unit = {},
     val onViewMissing: () -> Unit = {},
     val onViewRepeated: () -> Unit = {},
+    val selectedFilter: StickerFilter = StickerFilter.All,
     val isHeaderVisible: Boolean = true,
     val onToggleHeader: () -> Unit = {}
 )
+
+enum class StickerFilter {
+    All,
+    Missing,
+    Repeated
+}

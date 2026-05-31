@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,7 +56,7 @@ fun TitleSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Divider(
+        HorizontalDivider(
             thickness = 1.dp,
             color = color,
             modifier = Modifier
@@ -111,7 +111,7 @@ fun TitleSection(
             }
         }
 
-        Divider(
+        HorizontalDivider(
             thickness = 1.dp,
             color = color,
             modifier = Modifier

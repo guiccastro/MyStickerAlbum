@@ -19,6 +19,7 @@ import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.albumNameA
 import com.devgc.mystickeralbum.navigation.MainNavComponent.Companion.navController
 import com.devgc.mystickeralbum.navigation.NavigationParameters
 import com.devgc.mystickeralbum.navigation.screens.EditAlbumScreen
+import com.devgc.mystickeralbum.ui.stateholders.StickerFilter
 import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +47,7 @@ class UpdateAlbumViewModel @Inject constructor(
         MutableStateFlow(UpdateAlbumUIState())
     val uiState get() = _uiState.asStateFlow()
 
-    private var currentFilter: FilterType = FilterType.All
+    private var currentFilter: StickerFilter = StickerFilter.All
 
 
     init {
@@ -67,9 +68,9 @@ class UpdateAlbumViewModel @Inject constructor(
                 onScroll = ::onScroll,
                 onReturnToTopButtonClick = ::onReturnToTopButtonClick,
                 onColumnsChanged = ::onColumnsChanged,
-                onViewAll = { filterStickers(FilterType.All) },
-                onViewMissing = { filterStickers(FilterType.Missing) },
-                onViewRepeated = { filterStickers(FilterType.Repeated) },
+                onViewAll = { filterStickers(StickerFilter.All) },
+                onViewMissing = { filterStickers(StickerFilter.Missing) },
+                onViewRepeated = { filterStickers(StickerFilter.Repeated) },
                 onToggleHeader = ::onToggleHeader
             )
         }
@@ -326,19 +327,20 @@ class UpdateAlbumViewModel @Inject constructor(
         }
     }
 
-    private fun filterStickers(filterType: FilterType, text: String = _uiState.value.searchStickerTextField.text) {
+    private fun filterStickers(filterType: StickerFilter, text: String = _uiState.value.searchStickerTextField.text) {
         currentFilter = filterType
         val stickers = _uiState.value.album.stickersList.stickers
 
         val filteredStickers = when (filterType) {
-            FilterType.All -> stickers.filter { it.identifier.uppercase().contains(text.uppercase()) }
-            FilterType.Missing -> stickers.filter { !it.found && it.identifier.uppercase().contains(text.uppercase()) }
-            FilterType.Repeated -> stickers.filter { it.found && it.repeated > 0 && it.identifier.uppercase().contains(text.uppercase()) }
+            StickerFilter.All -> stickers.filter { it.identifier.uppercase().contains(text.uppercase()) }
+            StickerFilter.Missing -> stickers.filter { !it.found && it.identifier.uppercase().contains(text.uppercase()) }
+            StickerFilter.Repeated -> stickers.filter { it.found && it.repeated > 0 && it.identifier.uppercase().contains(text.uppercase()) }
         }
 
         _uiState.update {
             it.copy(
-                stickers = filteredStickers
+                stickers = filteredStickers,
+                selectedFilter = filterType
             )
         }
 
@@ -348,11 +350,5 @@ class UpdateAlbumViewModel @Inject constructor(
         _uiState.update {
             it.copy(isHeaderVisible = !it.isHeaderVisible)
         }
-    }
-
-    enum class FilterType {
-        All,
-        Missing,
-        Repeated;
     }
 }

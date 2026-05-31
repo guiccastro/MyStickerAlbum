@@ -13,13 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -42,9 +43,9 @@ fun AboutAppUIScreen() {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.tertiary)
+            .appBackground()
             .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(40.dp),
+        verticalArrangement = Arrangement.spacedBy(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(vertical = 20.dp)
     ) {
@@ -56,8 +57,8 @@ fun AboutAppUIScreen() {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
-                letterSpacing = 2.sp,
-                color = MaterialTheme.colorScheme.onTertiary,
+                letterSpacing = 0.sp,
+                color = Color.White.copy(alpha = 0.86F),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -71,8 +72,8 @@ fun AboutAppUIScreen() {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
-                letterSpacing = 2.sp,
-                color = MaterialTheme.colorScheme.onTertiary,
+                letterSpacing = 0.sp,
+                color = Color.White.copy(alpha = 0.86F),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -86,8 +87,8 @@ fun AboutAppUIScreen() {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
-                letterSpacing = 2.sp,
-                color = MaterialTheme.colorScheme.onTertiary,
+                letterSpacing = 0.sp,
+                color = Color.White.copy(alpha = 0.86F),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -96,7 +97,7 @@ fun AboutAppUIScreen() {
         item {
             TitleSection(
                 title = stringResource(id = R.string.about_app_contact_title),
-                color = MaterialTheme.colorScheme.onTertiary
+                color = Color.White
             )
 
             Text(
@@ -106,8 +107,8 @@ fun AboutAppUIScreen() {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 20.sp,
-                letterSpacing = 2.sp,
-                color = MaterialTheme.colorScheme.onTertiary,
+                letterSpacing = 0.sp,
+                color = Color.White.copy(alpha = 0.86F),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp)
@@ -121,7 +122,7 @@ fun AboutAppUIScreen() {
                 Image(
                     painter = painterResource(id = R.drawable.ic_logo_linkedin),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiary),
+                    colorFilter = ColorFilter.tint(Color.White),
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(50.dp)
@@ -140,12 +141,12 @@ fun AboutAppUIScreen() {
             Text(
                 text = stringResource(id = R.string.privacy_policy_desc),
                 style = Poppins,
-                color = MaterialTheme.colorScheme.onTertiary,
+                color = Color.White.copy(alpha = 0.86F),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
                 lineHeight = 18.sp,
-                letterSpacing = 2.sp,
+                letterSpacing = 0.sp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp)
@@ -154,17 +155,17 @@ fun AboutAppUIScreen() {
             Text(
                 text = stringResource(id = R.string.privacy_policy_button),
                 style = Poppins,
-                color = MaterialTheme.colorScheme.onTertiary,
+                color = Color.White,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
                 lineHeight = 18.sp,
-                letterSpacing = 2.sp,
+                letterSpacing = 0.sp,
                 modifier = Modifier
                     .padding(bottom = 10.dp)
                     .shadow(4.dp, CircleShape)
-                    .background(MaterialTheme.colorScheme.tertiary, CircleShape)
-                    .border(1.dp, MaterialTheme.colorScheme.onTertiary, CircleShape)
+                    .background(Color.White.copy(alpha = 0.10F), CircleShape)
+                    .border(1.dp, Color.White.copy(alpha = 0.22F), CircleShape)
                     .clip(CircleShape)
                     .clickable {
                         uriHandler.openUri(context.resources.getString(R.string.privacy_policy_url))
@@ -173,6 +174,18 @@ fun AboutAppUIScreen() {
             )
         }
     }
+}
+
+private fun Modifier.appBackground(): Modifier {
+    return background(
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFF071827),
+                Color(0xFF0B2D4A),
+                Color(0xFF071420)
+            )
+        )
+    )
 }
 
 @Preview(showSystemUi = true)

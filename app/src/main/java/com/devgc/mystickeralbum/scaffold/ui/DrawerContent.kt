@@ -11,9 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -42,7 +41,6 @@ import com.devgc.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent.
 import com.devgc.mystickeralbum.scaffold.models.DrawerMenuItem
 import com.devgc.mystickeralbum.scaffold.stateholders.DrawerMenuUIState
 import com.devgc.mystickeralbum.scaffold.stateholders.TopAppBarUIState
-import com.devgc.mystickeralbum.ui.theme.Main1
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 
 @Composable
@@ -50,7 +48,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
     ModalDrawerSheet(
         modifier = Modifier
             .width(250.dp),
-        drawerContainerColor = MaterialTheme.colorScheme.primary
+        drawerContainerColor = Color(0xFF071827)
     ) {
         Column(
             modifier = Modifier
@@ -67,9 +65,9 @@ fun DrawerContent(state: DrawerMenuUIState) {
                     .background(
                         Brush.radialGradient(
                             listOf(
-                                Main1.copy(alpha = 0.5F),
-                                Main1.copy(alpha = 0.5F),
-                                Main1.copy(alpha = 0.5F),
+                                Color(0xFF1D7BE0).copy(alpha = 0.35F),
+                                Color(0xFF1D7BE0).copy(alpha = 0.25F),
+                                Color(0xFF071827).copy(alpha = 0.15F),
                                 Color.Transparent
                             )
                         ),
@@ -80,15 +78,15 @@ fun DrawerContent(state: DrawerMenuUIState) {
             Text(
                 text = stringResource(id = R.string.app_name),
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = Color.White
             )
 
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 20.dp),
                 thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = Color.White.copy(alpha = 0.18F)
             )
 
             DrawerMenuItem.values().forEach { drawerItem ->
@@ -97,7 +95,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
                         Text(
                             text = stringResource(id = drawerItem.title),
                             fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = Color.White,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
@@ -107,7 +105,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(vertical = 10.dp),
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
+                            colorFilter = ColorFilter.tint(Color.White)
                         )
                     },
                     modifier = Modifier
@@ -117,7 +115,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
                         onClickDrawerMenuItem(drawerItem)
                     },
                     colors = NavigationDrawerItemDefaults.colors(
-                        selectedContainerColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2F),
+                        selectedContainerColor = Color.White.copy(alpha = 0.14F),
                         unselectedContainerColor = Color.Transparent
                     )
                 )
@@ -127,7 +125,7 @@ fun DrawerContent(state: DrawerMenuUIState) {
 
             Text(
                 text = "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = Color.White.copy(alpha = 0.72F),
                 modifier = Modifier
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
@@ -166,7 +164,7 @@ fun DrawerContentPreview() {
                     modifier = Modifier
                         .padding(it)
                         .fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = Color(0xFF071420)
                 ) {
                 }
             }

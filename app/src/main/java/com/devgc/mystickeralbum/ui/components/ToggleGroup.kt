@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,12 +28,12 @@ fun ToggleGroup(
     selectedFontWeight: FontWeight = FontWeight.Medium,
     cornerRadius: Dp = 8.dp,
     borderWidth: Dp = 1.dp,
-    borderColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-    selectedColorBorder: Color = MaterialTheme.colorScheme.tertiary,
-    background: Color = MaterialTheme.colorScheme.primaryContainer,
-    selectedBackground: Color = MaterialTheme.colorScheme.primary,
-    contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-    selectedContentColor: Color = MaterialTheme.colorScheme.onPrimary
+    borderColor: Color = Color.White.copy(alpha = 0.18F),
+    selectedColorBorder: Color = Color(0xFF37D4B5),
+    background: Color = Color.White.copy(alpha = 0.08F),
+    selectedBackground: Color = Color(0xFF1D7BE0),
+    contentColor: Color = Color.White.copy(alpha = 0.76F),
+    selectedContentColor: Color = Color.White
 ) {
     Row {
         toggleGroupValues.options.forEachIndexed { index, option ->

@@ -3,7 +3,6 @@ package com.devgc.mystickeralbum.scaffold.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -11,6 +10,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.devgc.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent
 import com.devgc.mystickeralbum.scaffold.maincomponents.MainDrawerMenuComponent.changeDrawerState
 import com.devgc.mystickeralbum.scaffold.maincomponents.MainFABComponent
@@ -67,7 +67,7 @@ fun MainScaffold(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = Color(0xFF071420)
             ) {
                 content()
             }
