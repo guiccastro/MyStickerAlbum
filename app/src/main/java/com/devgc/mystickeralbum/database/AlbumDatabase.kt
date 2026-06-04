@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.devgc.mystickeralbum.model.Album
 
 @Database(
-    version = 1,
+    version = 2,
     entities = [Album::class]
 )
 @TypeConverters(DatabaseConverters::class)

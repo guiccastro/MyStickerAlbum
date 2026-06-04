@@ -24,6 +24,10 @@ object AlbumsRepository {
     }
 
     fun updateStickers(album: Album) {
+        updateAlbum(album)
+    }
+
+    fun updateAlbum(album: Album) {
         albumDao.insert(album)
     }
 

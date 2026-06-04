@@ -14,6 +14,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -45,9 +46,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -69,6 +72,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devgc.mystickeralbum.R
@@ -87,6 +92,28 @@ import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.theme.Poppins
 import com.devgc.mystickeralbum.ui.viewmodels.UpdateAlbumViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlin.math.roundToInt
+
+private val ScreenBackgroundBrush = Brush.verticalGradient(
+    listOf(
+        Color(0xFF071827),
+        Color(0xFF0B2D4A),
+        Color(0xFF071420)
+    )
+)
+private val AlbumCoverBrush = Brush.verticalGradient(
+    listOf(
+        Color(0xFF35A9E8),
+        Color(0xFF16598F)
+    )
+)
+private val StickerCellShape = RoundedCornerShape(11.dp)
+private val OwnedStickerColor = Color(0xFF0B5E8E)
+private val MissingStickerEvenColor = Color(0xFFF8FBFF)
+private val MissingStickerOddColor = Color(0xFFF1F6FA)
+private val OwnedStickerBorderColor = Color(0xFF38A9E6).copy(alpha = 0.78F)
+private val MissingStickerBorderColor = Color(0xFFD6E1EA)
 
 @Composable
 fun UpdateAlbumUIScreen(viewModel: UpdateAlbumViewModel) {
@@ -126,19 +153,19 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
     val defaultColumns =
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 10 else 5
     val columns = (state.columns ?: defaultColumns).coerceAtLeast(1)
+    val stickerRows = remember(state.stickers, columns) {
+        state.stickers.toStickerRows(columns)
+    }
+    val gridSpacing = stickerGridSpacing(columns)
+    val onStickerClick = state.onStickerClick
+    val onRemoveSticker = state.onRemoveSticker
+    val onToggleStickerLineBreak = state.onToggleStickerLineBreak
+    val onToggleStickerExtraLine = state.onToggleStickerExtraLine
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color(0xFF071827),
-                        Color(0xFF0B2D4A),
-                        Color(0xFF071420)
-                    )
-                )
-            )
+            .background(ScreenBackgroundBrush)
             .padding(start = 12.dp, top = 10.dp, end = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -155,27 +182,39 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1F),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(gridSpacing),
             contentPadding = PaddingValues(top = 2.dp, bottom = 12.dp)
         ) {
-            itemsIndexed(state.stickers.toStickerRows(columns)) { rowIndex, row ->
+            itemsIndexed(
+                items = stickerRows,
+                key = { rowIndex, row -> row.key(rowIndex) }
+            ) { rowIndex, row ->
                 when (row) {
                     StickerGridRow.Empty -> {
-                        EmptyStickerRow(columns)
+                        EmptyStickerRow(columns, gridSpacing)
                     }
 
                     is StickerGridRow.Stickers -> {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(gridSpacing)
                         ) {
-                            row.stickers.forEach { sticker ->
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1F)
-                                ) {
-                                    StickerItem(sticker, state, rowIndex)
+                            row.stickers.forEachIndexed { columnIndex, sticker ->
+                                key(sticker.identifier, columnIndex) {
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1F)
+                                    ) {
+                                        StickerItem(
+                                            sticker = sticker,
+                                            rowIndex = rowIndex,
+                                            onStickerClick = onStickerClick,
+                                            onRemoveSticker = onRemoveSticker,
+                                            onToggleStickerLineBreak = onToggleStickerLineBreak,
+                                            onToggleStickerExtraLine = onToggleStickerExtraLine
+                                        )
+                                    }
                                 }
                             }
 
@@ -191,7 +230,21 @@ fun UpdateAlbumUIScreen(state: UpdateAlbumUIState) {
             }
         }
 
-        ReturnToTopButton(state, lazyListState)
+        ReturnToTopButton(
+            showReturnToTopButton = state.showReturnToTopButton,
+            lazyListState = lazyListState,
+            onReturnToTopButtonClick = state.onReturnToTopButtonClick
+        )
+    }
+}
+
+private fun stickerGridSpacing(columns: Int): Dp {
+    return when {
+        columns <= 5 -> 8.dp
+        columns <= 7 -> 6.dp
+        columns <= 10 -> 4.dp
+        columns <= 14 -> 3.dp
+        else -> 2.dp
     }
 }
 
@@ -252,11 +305,11 @@ fun StickerGridHeader(
 }
 
 @Composable
-private fun EmptyStickerRow(columns: Int) {
+private fun EmptyStickerRow(columns: Int, gridSpacing: Dp) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
         repeat(columns) {
             Spacer(
@@ -271,6 +324,18 @@ private fun EmptyStickerRow(columns: Int) {
 private sealed interface StickerGridRow {
     data class Stickers(val stickers: List<Sticker>) : StickerGridRow
     data object Empty : StickerGridRow
+}
+
+private fun StickerGridRow.key(index: Int): String {
+    return when (this) {
+        StickerGridRow.Empty -> "empty-$index"
+        is StickerGridRow.Stickers -> stickers.joinToString(
+            separator = "|",
+            prefix = "stickers-"
+        ) { sticker ->
+            "${sticker.identifier}:${sticker.lineBreakAfter}:${sticker.extraLineAfter}"
+        }
+    }
 }
 
 private fun List<Sticker>.toStickerRows(columns: Int): List<StickerGridRow> {
@@ -311,17 +376,54 @@ fun Header(state: UpdateAlbumUIState, defaultColumns: Int) {
 
 @Composable
 fun HeaderContent(state: UpdateAlbumUIState, defaultColumns: Int) {
+    val stickerStats = remember(state.album.stickersList.stickers) {
+        state.album.stickersList.stickers.toStickerStats()
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        CollectionSummary(state.album)
-        StickerStatsPanel(state.album)
+        CollectionSummary(state.album, stickerStats)
+        StickerStatsPanel(stickerStats)
         FilterControls(state)
         SearchSticker(state, defaultColumns)
         CopyStickersButtons(state)
     }
 }
 
+private data class StickerStats(
+    val total: Int,
+    val found: Int,
+    val missing: Int,
+    val repeated: Int,
+    val progress: Float,
+    val formattedProgress: String
+)
+
+private fun List<Sticker>.toStickerStats(): StickerStats {
+    var found = 0
+    var repeated = 0
+
+    forEach { sticker ->
+        if (sticker.found) {
+            found++
+        }
+        repeated += sticker.repeated
+    }
+
+    val total = size
+    val progress = if (total == 0) 0F else found.toFloat() / total
+
+    return StickerStats(
+        total = total,
+        found = found,
+        missing = total - found,
+        repeated = repeated,
+        progress = progress,
+        formattedProgress = "${(progress * 100).roundToInt()}%"
+    )
+}
+
 @Composable
-fun CollectionSummary(album: Album) {
+private fun CollectionSummary(album: Album, stats: StickerStats) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -363,7 +465,7 @@ fun CollectionSummary(album: Album) {
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    progress = { album.getProgress() },
+                    progress = { stats.progress },
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFF37D4B5),
                     trackColor = Color.White.copy(alpha = 0.18F),
@@ -371,7 +473,7 @@ fun CollectionSummary(album: Album) {
                 )
 
                 Text(
-                    text = album.getFormattedProgress(),
+                    text = stats.formattedProgress,
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -400,14 +502,7 @@ fun AlbumCover(album: Album) {
             .size(76.dp)
             .shadow(8.dp, RoundedCornerShape(14.dp))
             .clip(RoundedCornerShape(14.dp))
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color(0xFF35A9E8),
-                        Color(0xFF16598F)
-                    )
-                )
-            ),
+            .background(AlbumCoverBrush),
         contentAlignment = Alignment.Center
     ) {
         if (bitmap != null) {
@@ -430,7 +525,7 @@ fun AlbumCover(album: Album) {
 }
 
 @Composable
-fun StickerStatsPanel(album: Album) {
+private fun StickerStatsPanel(stats: StickerStats) {
     val shape = RoundedCornerShape(16.dp)
     Row(
         modifier = Modifier
@@ -444,7 +539,7 @@ fun StickerStatsPanel(album: Album) {
         StickerStatItem(
             icon = R.drawable.ic_stat_total,
             label = stringResource(id = R.string.album_item_total),
-            value = album.getTotalStickers().toString(),
+            value = stats.total.toString(),
             color = Color.White,
             modifier = Modifier.weight(1F)
         )
@@ -452,7 +547,7 @@ fun StickerStatsPanel(album: Album) {
         StickerStatItem(
             icon = R.drawable.ic_stat_owned,
             label = stringResource(id = R.string.album_item_owned),
-            value = album.getFound().size.toString(),
+            value = stats.found.toString(),
             color = Color(0xFF6EE7B7),
             modifier = Modifier.weight(1F)
         )
@@ -460,7 +555,7 @@ fun StickerStatsPanel(album: Album) {
         StickerStatItem(
             icon = R.drawable.ic_stat_missing,
             label = stringResource(id = R.string.album_item_missing),
-            value = album.getMissing().size.toString(),
+            value = stats.missing.toString(),
             color = Color(0xFFFF7A88),
             modifier = Modifier.weight(1F)
         )
@@ -468,7 +563,7 @@ fun StickerStatsPanel(album: Album) {
         StickerStatItem(
             icon = R.drawable.ic_stat_repeated,
             label = stringResource(id = R.string.album_item_repeated),
-            value = album.getRepeated().size.toString(),
+            value = stats.repeated.toString(),
             color = Color(0xFFFFD166),
             modifier = Modifier.weight(1F)
         )
@@ -530,11 +625,13 @@ fun StatDivider() {
 fun FilterControls(state: UpdateAlbumUIState) {
     var expanded by remember { mutableStateOf(false) }
     val shape = RoundedCornerShape(14.dp)
-    val filters = listOf(
-        StickerFilter.All,
-        StickerFilter.Missing,
-        StickerFilter.Repeated
-    )
+    val filters = remember {
+        listOf(
+            StickerFilter.All,
+            StickerFilter.Missing,
+            StickerFilter.Repeated
+        )
+    }
 
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -659,6 +756,10 @@ private fun UpdateAlbumUIState.onFilterSelected(filter: StickerFilter) {
 @Composable
 fun SearchSticker(state: UpdateAlbumUIState, defaultColumns: Int) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    var columnsText by rememberSaveable(state.album.name, defaultColumns) {
+        mutableStateOf((state.columns ?: defaultColumns).toString())
+    }
+
     Row(
         modifier = Modifier
             .height(46.dp),
@@ -719,9 +820,10 @@ fun SearchSticker(state: UpdateAlbumUIState, defaultColumns: Int) {
                 .fillMaxHeight()
         ) {
             TextField(
-                text = (state.columns ?: defaultColumns).toString(),
-                onValueChange = {
-                    state.onColumnsChanged(it.toIntOrNull())
+                text = columnsText,
+                onValueChange = { value ->
+                    columnsText = value.filter { it.isDigit() }
+                    state.onColumnsChanged(columnsText.toIntOrNull())
                 },
                 placeholderText = stringResource(id = R.string.columns_placeholder),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -741,65 +843,137 @@ fun SearchSticker(state: UpdateAlbumUIState, defaultColumns: Int) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState, rowIndex: Int) {
-    var showMenu by remember { mutableStateOf(false) }
-    val cellShape = RoundedCornerShape(11.dp)
+fun StickerItem(
+    sticker: Sticker,
+    rowIndex: Int,
+    onStickerClick: (Sticker) -> Unit,
+    onRemoveSticker: (Sticker) -> Unit,
+    onToggleStickerLineBreak: (Sticker) -> Unit,
+    onToggleStickerExtraLine: (Sticker) -> Unit
+) {
+    var showMenu by remember(sticker.identifier) { mutableStateOf(false) }
     val isOwned = sticker.found
     val repeatedCount = sticker.repeated
-    val ownedBrush = Brush.verticalGradient(
-        listOf(
-            Color(0xFF0B5E8E),
-            Color(0xFF07365D)
-        )
-    )
-    val missingBrush = Brush.verticalGradient(
-        listOf(
-            if (rowIndex % 2 == 0) Color(0xFFF8FBFF) else Color(0xFFF1F6FA),
-            Color(0xFFE7EEF5)
-        )
-    )
-    val baseModifier = Modifier
-        .aspectRatio(1.08F)
-        .shadow(4.dp, cellShape, clip = false)
-        .clip(cellShape)
-        .background(if (isOwned) ownedBrush else missingBrush)
-    val cardModifier = if (isOwned) {
-        baseModifier.border(1.dp, Color(0xFF38A9E6).copy(alpha = 0.78F), cellShape)
+    val backgroundColor = if (isOwned) {
+        OwnedStickerColor
+    } else if (rowIndex % 2 == 0) {
+        MissingStickerEvenColor
     } else {
-        baseModifier.border(1.dp, Color(0xFFD6E1EA), cellShape)
+        MissingStickerOddColor
+    }
+    val borderColor = if (isOwned) {
+        OwnedStickerBorderColor
+    } else {
+        MissingStickerBorderColor
     }
     val contentColor = if (isOwned) Color.White else Color(0xFF647486)
 
-    Box(
-        modifier = cardModifier
+    BoxWithConstraints(
+        modifier = Modifier
+            .aspectRatio(1.08F)
+            .clip(StickerCellShape)
+            .background(backgroundColor)
+            .border(1.dp, borderColor, StickerCellShape)
             .combinedClickable(
-                onClick = { state.onStickerClick(sticker) },
+                onClick = { onStickerClick(sticker) },
                 onLongClick = { showMenu = true }
             )
     ) {
-        Text(
-            text = sticker.identifier,
-            fontSize = 18.sp,
-            modifier = Modifier
-                .align(if (isOwned) Alignment.TopCenter else Alignment.Center)
-                .padding(top = if (isOwned) 14.dp else 0.dp)
-                .padding(horizontal = 2.dp),
-            fontWeight = FontWeight.SemiBold,
-            color = contentColor,
-            textAlign = TextAlign.Center,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
+        val identifierTextSize = when {
+            maxWidth < 40.dp -> 8.sp
+            maxWidth < 50.dp -> 10.sp
+            maxWidth < 64.dp -> 12.sp
+            maxWidth < 76.dp -> 14.sp
+            else -> 18.sp
+        }
+        val ownedIdentifierTopPadding = when {
+            maxWidth < 40.dp -> 0.dp
+            maxWidth < 50.dp -> 1.dp
+            maxWidth < 64.dp -> 2.dp
+            maxWidth < 76.dp -> 4.dp
+            else -> 8.dp
+        }
+        val controlButtonSize = when {
+            maxWidth < 40.dp -> 10.dp
+            maxWidth < 50.dp -> 12.dp
+            maxWidth < 64.dp -> 14.dp
+            maxWidth < 76.dp -> 16.dp
+            else -> 20.dp
+        }
+        val controlIconSize = when {
+            maxWidth < 40.dp -> 6.dp
+            maxWidth < 50.dp -> 7.dp
+            maxWidth < 64.dp -> 9.dp
+            maxWidth < 76.dp -> 10.dp
+            else -> 12.dp
+        }
+        val repeatedTextSize = when {
+            maxWidth < 40.dp -> 7.sp
+            maxWidth < 50.dp -> 8.sp
+            maxWidth < 64.dp -> 9.sp
+            maxWidth < 76.dp -> 11.sp
+            else -> 13.sp
+        }
+        val controlsHorizontalPadding = when {
+            maxWidth < 40.dp -> 1.dp
+            maxWidth < 50.dp -> 2.dp
+            maxWidth < 64.dp -> 3.dp
+            else -> 5.dp
+        }
+        val controlsVerticalPadding = when {
+            maxWidth < 40.dp -> 1.dp
+            maxWidth < 50.dp -> 2.dp
+            maxWidth < 64.dp -> 3.dp
+            else -> 5.dp
+        }
 
         if (isOwned) {
-            StickerCountControls(
-                repeatedCount = repeatedCount,
-                onRemove = { state.onRemoveSticker(sticker) },
-                onAdd = { state.onStickerClick(sticker) },
+            Column(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp, vertical = 7.dp)
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = controlsHorizontalPadding,
+                        vertical = controlsVerticalPadding
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = sticker.identifier,
+                    fontSize = identifierTextSize,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = ownedIdentifierTopPadding),
+                    fontWeight = FontWeight.SemiBold,
+                    color = contentColor,
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    lineHeight = identifierTextSize
+                )
+
+                StickerCountControls(
+                    repeatedCount = repeatedCount,
+                    onRemove = { onRemoveSticker(sticker) },
+                    onAdd = { onStickerClick(sticker) },
+                    modifier = Modifier.fillMaxWidth(),
+                    buttonSize = controlButtonSize,
+                    iconSize = controlIconSize,
+                    textSize = repeatedTextSize
+                )
+            }
+        } else {
+            Text(
+                text = sticker.identifier,
+                fontSize = identifierTextSize,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 2.dp),
+                fontWeight = FontWeight.SemiBold,
+                color = contentColor,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
         }
 
@@ -821,7 +995,7 @@ fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState, rowIndex: Int) {
                 },
                 onClick = {
                     showMenu = false
-                    state.onToggleStickerLineBreak(sticker)
+                    onToggleStickerLineBreak(sticker)
                 }
             )
 
@@ -839,7 +1013,7 @@ fun StickerItem(sticker: Sticker, state: UpdateAlbumUIState, rowIndex: Int) {
                 },
                 onClick = {
                     showMenu = false
-                    state.onToggleStickerExtraLine(sticker)
+                    onToggleStickerExtraLine(sticker)
                 }
             )
         }
@@ -911,7 +1085,10 @@ private fun StickerCountControls(
     repeatedCount: Int,
     onRemove: () -> Unit,
     onAdd: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    buttonSize: Dp,
+    iconSize: Dp,
+    textSize: TextUnit
 ) {
     Row(
         modifier = modifier,
@@ -920,13 +1097,15 @@ private fun StickerCountControls(
     ) {
         StickerCounterButton(
             icon = R.drawable.ic_remove,
-            onClick = onRemove
+            onClick = onRemove,
+            buttonSize = buttonSize,
+            iconSize = iconSize
         )
 
         Text(
             text = repeatedCount.toString(),
             color = Color.White,
-            fontSize = 16.sp,
+            fontSize = textSize,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             textAlign = TextAlign.Center,
@@ -936,7 +1115,9 @@ private fun StickerCountControls(
 
         StickerCounterButton(
             icon = R.drawable.ic_add,
-            onClick = onAdd
+            onClick = onAdd,
+            buttonSize = buttonSize,
+            iconSize = iconSize
         )
     }
 }
@@ -944,11 +1125,13 @@ private fun StickerCountControls(
 @Composable
 private fun StickerCounterButton(
     icon: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    buttonSize: Dp,
+    iconSize: Dp
 ) {
     Box(
         modifier = Modifier
-            .size(24.dp)
+            .size(buttonSize)
             .clip(CircleShape)
             .background(Color.White.copy(alpha = 0.22F))
             .clickable { onClick() },
@@ -958,16 +1141,20 @@ private fun StickerCounterButton(
             painter = painterResource(id = icon),
             contentDescription = null,
             tint = Color.White,
-            modifier = Modifier.size(17.dp)
+            modifier = Modifier.size(iconSize)
         )
     }
 }
 
 @Composable
-fun ReturnToTopButton(state: UpdateAlbumUIState, lazyListState: LazyListState) {
+fun ReturnToTopButton(
+    showReturnToTopButton: Boolean,
+    lazyListState: LazyListState,
+    onReturnToTopButtonClick: (LazyListState, CoroutineScope) -> Unit
+) {
     val scope = rememberCoroutineScope()
     AnimatedVisibility(
-        visible = state.showReturnToTopButton,
+        visible = showReturnToTopButton,
         enter = scaleIn(),
         exit = scaleOut()
     ) {
@@ -986,7 +1173,7 @@ fun ReturnToTopButton(state: UpdateAlbumUIState, lazyListState: LazyListState) {
                     .background(Color(0xFF1D7BE0), CircleShape)
                     .clip(CircleShape)
                     .clickable {
-                        state.onReturnToTopButtonClick(lazyListState, scope)
+                        onReturnToTopButtonClick(lazyListState, scope)
                     }
                     .padding(6.dp),
                 colorFilter = ColorFilter.tint(Color.White)

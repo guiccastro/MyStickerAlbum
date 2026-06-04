@@ -12,7 +12,8 @@ data class Album(
     @PrimaryKey val name: String,
     @Embedded val stickersList: StickersList,
     val status: AlbumStatus,
-    val albumImage: String
+    val albumImage: String,
+    val selectedColumns: Int? = null
 ) {
     @Ignore
     var imageBitmap: Bitmap? = null

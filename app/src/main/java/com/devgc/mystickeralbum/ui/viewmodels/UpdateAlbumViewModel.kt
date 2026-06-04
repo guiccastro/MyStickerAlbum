@@ -94,7 +94,13 @@ class UpdateAlbumViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     album = album,
-                    stickers = album.stickersList.stickers
+                    stickers = getFilteredStickers(
+                        stickers = album.stickersList.stickers,
+                        filterType = currentFilter,
+                        text = it.searchStickerTextField.text
+                    ),
+                    columns = album.selectedColumns,
+                    selectedFilter = currentFilter
                 )
             }
         }
@@ -149,7 +155,8 @@ class UpdateAlbumViewModel @Inject constructor(
     }
 
     private fun updateSticker(newSticker: Sticker) {
-        val newStickers = ArrayList(_uiState.value.album.stickersList.stickers)
+        val currentState = _uiState.value
+        val newStickers = ArrayList(currentState.album.stickersList.stickers)
 
         newStickers.replaceAll {
             if (it.identifier == newSticker.identifier) {
@@ -159,23 +166,28 @@ class UpdateAlbumViewModel @Inject constructor(
             }
         }
 
-        val newAlbum = _uiState.value.album.copy(
+        val newAlbum = currentState.album.copy(
             stickersList = StickersList(newStickers)
         )
+        val filteredStickers = getFilteredStickers(
+            stickers = newStickers,
+            filterType = currentFilter,
+            text = currentState.searchStickerTextField.text
+        )
+
+        _uiState.update {
+            it.copy(
+                album = newAlbum,
+                stickers = filteredStickers,
+                selectedFilter = currentFilter
+            )
+        }
 
         viewModelScope.launch {
             withContext(IO) {
                 AlbumsRepository.updateStickers(newAlbum)
             }
         }
-
-        _uiState.update {
-            it.copy(
-                album = newAlbum,
-            )
-        }
-
-        filterStickers(currentFilter)
     }
 
     fun onDeleteAlbumClick() {
@@ -255,17 +267,22 @@ class UpdateAlbumViewModel @Inject constructor(
             it.copy(
                 searchStickerTextField = it.searchStickerTextField.copy(
                     text = text
-                )
+                ),
+                stickers = getFilteredStickers(
+                    stickers = it.album.stickersList.stickers,
+                    filterType = currentFilter,
+                    text = text
+                ),
+                selectedFilter = currentFilter
             )
         }
-        filterStickers(currentFilter, text)
     }
 
     private fun onSearchStickerClick(lazyListState: LazyListState, scope: CoroutineScope) {
         val stickerText = _uiState.value.searchStickerTextField.text.uppercase()
         val stickerIndex =
             _uiState.value.album.stickersList.stickers.indexOfFirst { it.identifier == stickerText }
-        val columns = _uiState.value.columns ?: getDefaultColumnsGrid()
+        val columns = (_uiState.value.columns ?: getDefaultColumnsGrid()).coerceAtLeast(1)
         val stickerRowIndex = if (stickerIndex == -1) -1 else stickerIndex / columns
         val index = if (stickerRowIndex == -1) 0 else stickerRowIndex + topUIItems
 
@@ -287,9 +304,14 @@ class UpdateAlbumViewModel @Inject constructor(
     }
 
     private fun onScroll(index: Int) {
+        val showReturnToTopButton = index >= topUIItems
+        if (_uiState.value.showReturnToTopButton == showReturnToTopButton) {
+            return
+        }
+
         _uiState.update {
             it.copy(
-                showReturnToTopButton = index >= topUIItems
+                showReturnToTopButton = showReturnToTopButton
             )
         }
     }
@@ -311,10 +333,24 @@ class UpdateAlbumViewModel @Inject constructor(
     }
 
     private fun onColumnsChanged(columns: Int?) {
+        val currentState = _uiState.value
+        val normalizedColumns = columns?.coerceAtLeast(1)
+        if (currentState.columns == normalizedColumns) {
+            return
+        }
+
+        val newAlbum = currentState.album.copy(selectedColumns = normalizedColumns)
         _uiState.update {
             it.copy(
-                columns = columns
+                album = newAlbum,
+                columns = normalizedColumns
             )
+        }
+
+        viewModelScope.launch {
+            withContext(IO) {
+                AlbumsRepository.updateAlbum(newAlbum)
+            }
         }
     }
 
@@ -329,21 +365,42 @@ class UpdateAlbumViewModel @Inject constructor(
 
     private fun filterStickers(filterType: StickerFilter, text: String = _uiState.value.searchStickerTextField.text) {
         currentFilter = filterType
-        val stickers = _uiState.value.album.stickersList.stickers
-
-        val filteredStickers = when (filterType) {
-            StickerFilter.All -> stickers.filter { it.identifier.uppercase().contains(text.uppercase()) }
-            StickerFilter.Missing -> stickers.filter { !it.found && it.identifier.uppercase().contains(text.uppercase()) }
-            StickerFilter.Repeated -> stickers.filter { it.found && it.repeated > 0 && it.identifier.uppercase().contains(text.uppercase()) }
-        }
 
         _uiState.update {
             it.copy(
-                stickers = filteredStickers,
+                stickers = getFilteredStickers(
+                    stickers = it.album.stickersList.stickers,
+                    filterType = filterType,
+                    text = text
+                ),
                 selectedFilter = filterType
             )
         }
 
+    }
+
+    private fun getFilteredStickers(
+        stickers: List<Sticker>,
+        filterType: StickerFilter,
+        text: String
+    ): List<Sticker> {
+        val query = text.trim()
+        val hasQuery = query.isNotEmpty()
+
+        if (!hasQuery && filterType == StickerFilter.All) {
+            return stickers
+        }
+
+        return stickers.filter { sticker ->
+            val matchesFilter = when (filterType) {
+                StickerFilter.All -> true
+                StickerFilter.Missing -> !sticker.found
+                StickerFilter.Repeated -> sticker.found && sticker.repeated > 0
+            }
+            val matchesText = !hasQuery || sticker.identifier.contains(query, ignoreCase = true)
+
+            matchesFilter && matchesText
+        }
     }
 
     private fun onToggleHeader() {
