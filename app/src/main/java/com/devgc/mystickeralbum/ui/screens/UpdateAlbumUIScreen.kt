@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -38,7 +39,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -84,11 +84,13 @@ import com.devgc.mystickeralbum.model.ImageCropperHelper
 import com.devgc.mystickeralbum.model.ImageCropperHelper.getImageState
 import com.devgc.mystickeralbum.model.Sticker
 import com.devgc.mystickeralbum.model.StickersList
+import com.devgc.mystickeralbum.model.ToggleGroupValues
 import com.devgc.mystickeralbum.ui.components.IconsLegendDialog
 import com.devgc.mystickeralbum.ui.components.SimpleDialog
 import com.devgc.mystickeralbum.ui.components.TextField
-import com.devgc.mystickeralbum.ui.stateholders.StickerFilter
+import com.devgc.mystickeralbum.ui.components.ToggleGroup
 import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
+import com.devgc.mystickeralbum.ui.stateholders.WorldCupQuickFilterOrder
 import com.devgc.mystickeralbum.ui.theme.MyStickerAlbumTheme
 import com.devgc.mystickeralbum.ui.theme.Poppins
 import com.devgc.mystickeralbum.ui.viewmodels.UpdateAlbumViewModel
@@ -114,6 +116,86 @@ private val MissingStickerEvenColor = Color(0xFFF8FBFF)
 private val MissingStickerOddColor = Color(0xFFF1F6FA)
 private val OwnedStickerBorderColor = Color(0xFF38A9E6).copy(alpha = 0.78F)
 private val MissingStickerBorderColor = Color(0xFFD6E1EA)
+private const val WorldCup2026AlbumName = "Copa do Mundo 2026"
+private const val MaxWorldCupTeamsPerAlphabeticalColumn = 4
+private const val EnglandFlag = "\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F"
+private const val ScotlandFlag = "\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F"
+
+private data class WorldCupTeam(
+    val code: String,
+    val flag: String
+)
+
+private data class WorldCupTeamGroup(
+    val title: String,
+    val teams: List<WorldCupTeam>
+)
+
+private val WorldCup2026Teams = listOf(
+    WorldCupTeam("ALG", "🇩🇿"),
+    WorldCupTeam("ARG", "🇦🇷"),
+    WorldCupTeam("AUS", "🇦🇺"),
+    WorldCupTeam("AUT", "🇦🇹"),
+    WorldCupTeam("BEL", "🇧🇪"),
+    WorldCupTeam("BIH", "🇧🇦"),
+    WorldCupTeam("BRA", "🇧🇷"),
+    WorldCupTeam("CAN", "🇨🇦"),
+    WorldCupTeam("CIV", "🇨🇮"),
+    WorldCupTeam("COD", "🇨🇩"),
+    WorldCupTeam("COL", "🇨🇴"),
+    WorldCupTeam("CPV", "🇨🇻"),
+    WorldCupTeam("CRO", "🇭🇷"),
+    WorldCupTeam("CUW", "🇨🇼"),
+    WorldCupTeam("CZE", "🇨🇿"),
+    WorldCupTeam("ECU", "🇪🇨"),
+    WorldCupTeam("EGY", "🇪🇬"),
+    WorldCupTeam("ENG", EnglandFlag),
+    WorldCupTeam("ESP", "🇪🇸"),
+    WorldCupTeam("FRA", "🇫🇷"),
+    WorldCupTeam("GER", "🇩🇪"),
+    WorldCupTeam("GHA", "🇬🇭"),
+    WorldCupTeam("HAI", "🇭🇹"),
+    WorldCupTeam("IRN", "🇮🇷"),
+    WorldCupTeam("IRQ", "🇮🇶"),
+    WorldCupTeam("JOR", "🇯🇴"),
+    WorldCupTeam("JPN", "🇯🇵"),
+    WorldCupTeam("KOR", "🇰🇷"),
+    WorldCupTeam("KSA", "🇸🇦"),
+    WorldCupTeam("MAR", "🇲🇦"),
+    WorldCupTeam("MEX", "🇲🇽"),
+    WorldCupTeam("NED", "🇳🇱"),
+    WorldCupTeam("NOR", "🇳🇴"),
+    WorldCupTeam("NZL", "🇳🇿"),
+    WorldCupTeam("PAN", "🇵🇦"),
+    WorldCupTeam("PAR", "🇵🇾"),
+    WorldCupTeam("POR", "🇵🇹"),
+    WorldCupTeam("QAT", "🇶🇦"),
+    WorldCupTeam("RSA", "🇿🇦"),
+    WorldCupTeam("SCO", ScotlandFlag),
+    WorldCupTeam("SEN", "🇸🇳"),
+    WorldCupTeam("SUI", "🇨🇭"),
+    WorldCupTeam("SWE", "🇸🇪"),
+    WorldCupTeam("TUN", "🇹🇳"),
+    WorldCupTeam("TUR", "🇹🇷"),
+    WorldCupTeam("URU", "🇺🇾"),
+    WorldCupTeam("USA", "🇺🇸"),
+    WorldCupTeam("UZB", "🇺🇿")
+)
+
+private val WorldCup2026OfficialGroups = listOf(
+    "A" to listOf("MEX", "RSA", "KOR", "CZE"),
+    "B" to listOf("CAN", "BIH", "QAT", "SUI"),
+    "C" to listOf("BRA", "MAR", "HAI", "SCO"),
+    "D" to listOf("USA", "PAR", "AUS", "TUR"),
+    "E" to listOf("GER", "CUW", "CIV", "ECU"),
+    "F" to listOf("NED", "JPN", "SWE", "TUN"),
+    "G" to listOf("BEL", "EGY", "IRN", "NZL"),
+    "H" to listOf("ESP", "CPV", "KSA", "URU"),
+    "I" to listOf("FRA", "SEN", "IRQ", "NOR"),
+    "J" to listOf("ARG", "ALG", "AUT", "JOR"),
+    "K" to listOf("POR", "COD", "UZB", "COL"),
+    "L" to listOf("ENG", "CRO", "GHA", "PAN")
+)
 
 @Composable
 fun UpdateAlbumUIScreen(viewModel: UpdateAlbumViewModel) {
@@ -381,11 +463,9 @@ fun HeaderContent(state: UpdateAlbumUIState, defaultColumns: Int) {
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        CollectionSummary(state.album, stickerStats)
-        StickerStatsPanel(stickerStats)
-        FilterControls(state)
+        AlbumCompactSummary(state.album, stickerStats)
         SearchSticker(state, defaultColumns)
-        CopyStickersButtons(state)
+        WorldCup2026QuickFilter(state)
     }
 }
 
@@ -423,85 +503,149 @@ private fun List<Sticker>.toStickerStats(): StickerStats {
 }
 
 @Composable
-private fun CollectionSummary(album: Album, stats: StickerStats) {
+private fun AlbumCompactSummary(album: Album, stats: StickerStats) {
+    val shape = RoundedCornerShape(14.dp)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp),
+            .clip(shape)
+            .background(Color.White.copy(alpha = 0.08F))
+            .border(1.dp, Color.White.copy(alpha = 0.14F), shape)
+            .padding(horizontal = 10.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        AlbumCover(album)
+        AlbumCover(
+            album = album,
+            size = 54.dp,
+            cornerRadius = 12.dp,
+            initialsSize = 17.sp
+        )
 
         Column(
             modifier = Modifier.weight(1F),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Text(
-                text = album.name,
-                color = Color.White,
-                fontSize = 23.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = Poppins
-            )
-
-            Text(
-                text = stringResource(id = R.string.album_primary_subtitle),
-                color = Color.White.copy(alpha = 0.72F),
-                fontSize = 14.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = Poppins
-            )
-        }
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier.size(70.dp),
-                contentAlignment = Alignment.Center
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CircularProgressIndicator(
-                    progress = { stats.progress },
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFF37D4B5),
-                    trackColor = Color.White.copy(alpha = 0.18F),
-                    strokeWidth = 7.dp
+                Text(
+                    text = album.name,
+                    color = Color.White,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1F),
+                    style = Poppins
                 )
 
                 Text(
                     text = stats.formattedProgress,
-                    color = Color.White,
-                    fontSize = 18.sp,
+                    color = Color(0xFF6EE7B7),
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     style = Poppins
                 )
             }
 
-            Text(
-                text = stringResource(id = R.string.album_progress_complete),
-                color = Color.White.copy(alpha = 0.72F),
-                fontSize = 12.sp,
-                style = Poppins
-            )
+            ProgressTrack(progress = stats.progress)
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                CompactStickerStat(
+                    icon = R.drawable.ic_stat_total,
+                    value = stats.total.toString(),
+                    color = Color.White
+                )
+                CompactStickerStat(
+                    icon = R.drawable.ic_stat_owned,
+                    value = stats.found.toString(),
+                    color = Color(0xFF6EE7B7)
+                )
+                CompactStickerStat(
+                    icon = R.drawable.ic_stat_missing,
+                    value = stats.missing.toString(),
+                    color = Color(0xFFFF7A88)
+                )
+                CompactStickerStat(
+                    icon = R.drawable.ic_stat_repeated,
+                    value = stats.repeated.toString(),
+                    color = Color(0xFFFFD166)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun AlbumCover(album: Album) {
+private fun ProgressTrack(progress: Float) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(4.dp)
+            .clip(RoundedCornerShape(50))
+            .background(Color.White.copy(alpha = 0.16F))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(progress.coerceIn(0F, 1F))
+                .fillMaxHeight()
+                .background(Color(0xFF37D4B5))
+        )
+    }
+}
+
+@Composable
+private fun CompactStickerStat(
+    icon: Int,
+    value: String,
+    color: Color
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier.size(14.dp),
+            colorFilter = ColorFilter.tint(color)
+        )
+
+        Text(
+            text = value,
+            color = color,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = Poppins
+        )
+    }
+}
+
+@Composable
+fun AlbumCover(
+    album: Album,
+    size: Dp = 76.dp,
+    cornerRadius: Dp = 14.dp,
+    initialsSize: TextUnit = 22.sp
+) {
     val context = LocalContext.current
     val imageState = ImageCropperHelper.imageStateHolder.collectAsState().value
     val bitmap = imageState.getImageState(context, album.albumImage)
+    val shape = RoundedCornerShape(cornerRadius)
 
     Box(
         modifier = Modifier
-            .size(76.dp)
-            .shadow(8.dp, RoundedCornerShape(14.dp))
-            .clip(RoundedCornerShape(14.dp))
+            .size(size)
+            .shadow(8.dp, shape)
+            .clip(shape)
             .background(AlbumCoverBrush),
         contentAlignment = Alignment.Center
     ) {
@@ -516,239 +660,11 @@ fun AlbumCover(album: Album) {
             Text(
                 text = album.name.take(2).uppercase(),
                 color = Color.White,
-                fontSize = 22.sp,
+                fontSize = initialsSize,
                 fontWeight = FontWeight.Bold,
                 style = Poppins
             )
         }
-    }
-}
-
-@Composable
-private fun StickerStatsPanel(stats: StickerStats) {
-    val shape = RoundedCornerShape(16.dp)
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(Color.White.copy(alpha = 0.08F))
-            .border(1.dp, Color.White.copy(alpha = 0.14F), shape)
-            .padding(horizontal = 8.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        StickerStatItem(
-            icon = R.drawable.ic_stat_total,
-            label = stringResource(id = R.string.album_item_total),
-            value = stats.total.toString(),
-            color = Color.White,
-            modifier = Modifier.weight(1F)
-        )
-        StatDivider()
-        StickerStatItem(
-            icon = R.drawable.ic_stat_owned,
-            label = stringResource(id = R.string.album_item_owned),
-            value = stats.found.toString(),
-            color = Color(0xFF6EE7B7),
-            modifier = Modifier.weight(1F)
-        )
-        StatDivider()
-        StickerStatItem(
-            icon = R.drawable.ic_stat_missing,
-            label = stringResource(id = R.string.album_item_missing),
-            value = stats.missing.toString(),
-            color = Color(0xFFFF7A88),
-            modifier = Modifier.weight(1F)
-        )
-        StatDivider()
-        StickerStatItem(
-            icon = R.drawable.ic_stat_repeated,
-            label = stringResource(id = R.string.album_item_repeated),
-            value = stats.repeated.toString(),
-            color = Color(0xFFFFD166),
-            modifier = Modifier.weight(1F)
-        )
-    }
-}
-
-@Composable
-fun StickerStatItem(
-    icon: Int,
-    label: String,
-    value: String,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = icon),
-            contentDescription = null,
-            modifier = Modifier.size(22.dp),
-            colorFilter = ColorFilter.tint(color)
-        )
-
-        Text(
-            text = label,
-            color = Color.White.copy(alpha = 0.68F),
-            fontSize = 12.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = Poppins
-        )
-
-        Text(
-            text = value,
-            color = color,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = Poppins
-        )
-    }
-}
-
-@Composable
-fun StatDivider() {
-    Box(
-        modifier = Modifier
-            .height(54.dp)
-            .width(1.dp)
-            .background(Color.White.copy(alpha = 0.16F))
-    )
-}
-
-@Composable
-fun FilterControls(state: UpdateAlbumUIState) {
-    var expanded by remember { mutableStateOf(false) }
-    val shape = RoundedCornerShape(14.dp)
-    val filters = remember {
-        listOf(
-            StickerFilter.All,
-            StickerFilter.Missing,
-            StickerFilter.Repeated
-        )
-    }
-
-    Box(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(46.dp)
-                .clip(shape)
-                .background(Color.White.copy(alpha = 0.10F))
-                .border(1.dp, Color.White.copy(alpha = 0.18F), shape)
-                .clickable { expanded = true }
-                .padding(horizontal = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_filter),
-                contentDescription = null,
-                tint = Color(0xFF6EE7B7),
-                modifier = Modifier.size(20.dp)
-            )
-
-            Column(
-                modifier = Modifier.weight(1F),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(id = R.string.sticker_filter_label),
-                    color = Color.White.copy(alpha = 0.56F),
-                    fontSize = 10.sp,
-                    maxLines = 1,
-                    style = Poppins
-                )
-
-                Text(
-                    text = stringResource(id = state.selectedFilter.labelRes()),
-                    color = Color.White,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = Poppins
-                )
-            }
-
-            Icon(
-                imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(22.dp)
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .fillMaxWidth(0.92F)
-                .background(Color(0xFF123A5D))
-        ) {
-            filters.forEach { filter ->
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        if (state.selectedFilter == filter) {
-                                            Color(0xFF6EE7B7)
-                                        } else {
-                                            Color.White.copy(alpha = 0.24F)
-                                        }
-                                    )
-                            )
-
-                            Text(
-                                text = stringResource(id = filter.labelRes()),
-                                color = Color.White,
-                                fontWeight = if (state.selectedFilter == filter) {
-                                    FontWeight.Bold
-                                } else {
-                                    FontWeight.Normal
-                                },
-                                style = Poppins
-                            )
-                        }
-                    },
-                    onClick = {
-                        expanded = false
-                        state.onFilterSelected(filter)
-                    }
-                )
-            }
-        }
-    }
-}
-
-private fun StickerFilter.labelRes(): Int {
-    return when (this) {
-        StickerFilter.All -> R.string.sticker_filter_all
-        StickerFilter.Missing -> R.string.sticker_filter_missing
-        StickerFilter.Repeated -> R.string.sticker_filter_repeated
-    }
-}
-
-private fun UpdateAlbumUIState.onFilterSelected(filter: StickerFilter) {
-    when (filter) {
-        StickerFilter.All -> onViewAll()
-        StickerFilter.Missing -> onViewMissing()
-        StickerFilter.Repeated -> onViewRepeated()
     }
 }
 
@@ -762,9 +678,15 @@ fun SearchSticker(state: UpdateAlbumUIState, defaultColumns: Int) {
 
     Row(
         modifier = Modifier
+            .fillMaxWidth()
             .height(46.dp),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        if (state.album.name == WorldCup2026AlbumName) {
+            WorldCupQuickFilterToggle(state)
+        }
+
         Box(
             modifier = Modifier
                 .weight(1F)
@@ -838,6 +760,187 @@ fun SearchSticker(state: UpdateAlbumUIState, defaultColumns: Int) {
                 shape = RoundedCornerShape(12.dp)
             )
         }
+    }
+}
+
+@Composable
+private fun WorldCupQuickFilterToggle(state: UpdateAlbumUIState) {
+    val selectedOrder = state.worldCupQuickFilterOrder
+
+    ToggleGroup(
+        toggleGroupValues = ToggleGroupValues(
+            options = listOf(
+                stringResource(id = R.string.world_cup_quick_filter_groups),
+                stringResource(id = R.string.world_cup_quick_filter_alphabetical)
+            ),
+            selectedIndex = selectedOrder.ordinal,
+            onOptionClick = { index ->
+                state.onWorldCupQuickFilterOrderSelected(
+                    WorldCupQuickFilterOrder.getByIndex(index)
+                )
+            }
+        ),
+        fontSize = 11.sp,
+        fontWeight = FontWeight.SemiBold,
+        selectedFontWeight = FontWeight.Bold,
+        cornerRadius = 12.dp,
+        selectedBackground = Color(0xFF0B5E8E),
+        selectedColorBorder = Color(0xFF6EE7B7)
+    )
+}
+
+@Composable
+private fun WorldCup2026QuickFilter(state: UpdateAlbumUIState) {
+    if (state.album.name != WorldCup2026AlbumName) {
+        return
+    }
+
+    val selectedOrder = state.worldCupQuickFilterOrder
+    val teamGroups = remember(selectedOrder) {
+        when (selectedOrder) {
+            WorldCupQuickFilterOrder.Groups -> WorldCup2026Teams.toOfficialGroups()
+            WorldCupQuickFilterOrder.Alphabetical -> WorldCup2026Teams.toAlphabeticalGroups()
+        }
+    }
+    val selectedCode = state.searchStickerTextField.text.trim()
+
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 2.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        itemsIndexed(
+            items = teamGroups,
+            key = { index, group -> "${group.title}-$index" }
+        ) { _, group ->
+            WorldCupTeamColumn(
+                group = group,
+                selectedCode = selectedCode,
+                onClick = state.onWorldCupTeamSelected
+            )
+        }
+    }
+}
+
+private fun List<WorldCupTeam>.toOfficialGroups(): List<WorldCupTeamGroup> {
+    val teamsByCode = associateBy { team -> team.code }
+
+    return WorldCup2026OfficialGroups.map { (title, codes) ->
+        WorldCupTeamGroup(
+            title = title,
+            teams = codes.map { code -> teamsByCode.getValue(code) }
+        )
+    }
+}
+
+private fun List<WorldCupTeam>.toAlphabeticalGroups(): List<WorldCupTeamGroup> {
+    val teamsByTitle = linkedMapOf<String, ArrayList<WorldCupTeam>>()
+
+    sortedBy { team -> team.code }.forEach { team ->
+        val title = team.code.first().toString()
+        teamsByTitle.getOrPut(title) { ArrayList() }.add(team)
+    }
+
+    return teamsByTitle.flatMap { (title, teams) ->
+        teams.chunked(MaxWorldCupTeamsPerAlphabeticalColumn).map { chunk ->
+            WorldCupTeamGroup(
+                title = title,
+                teams = chunk
+            )
+        }
+    }
+}
+
+@Composable
+private fun WorldCupTeamColumn(
+    group: WorldCupTeamGroup,
+    selectedCode: String,
+    onClick: (String) -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        WorldCupGroupHeader(group.title)
+
+        group.teams.forEach { team ->
+            WorldCupTeamPill(
+                team = team,
+                selected = selectedCode.equals(team.code, ignoreCase = true),
+                onClick = onClick
+            )
+        }
+    }
+}
+
+@Composable
+private fun WorldCupGroupHeader(title: String) {
+    Box(
+        modifier = Modifier
+            .size(28.dp)
+            .clip(CircleShape)
+            .background(Color.White.copy(alpha = 0.12F))
+            .border(1.dp, Color.White.copy(alpha = 0.16F), CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = title,
+            color = Color.White.copy(alpha = 0.78F),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            style = Poppins
+        )
+    }
+}
+
+@Composable
+private fun WorldCupTeamPill(
+    team: WorldCupTeam,
+    selected: Boolean,
+    onClick: (String) -> Unit
+) {
+    val shape = RoundedCornerShape(12.dp)
+    val backgroundColor = if (selected) {
+        Color(0xFF37D4B5).copy(alpha = 0.26F)
+    } else {
+        Color.White.copy(alpha = 0.09F)
+    }
+    val borderColor = if (selected) {
+        Color(0xFF6EE7B7)
+    } else {
+        Color.White.copy(alpha = 0.16F)
+    }
+
+    Row(
+        modifier = Modifier
+            .height(40.dp)
+            .clip(shape)
+            .background(backgroundColor)
+            .border(1.dp, borderColor, shape)
+            .clickable { onClick(team.code) }
+            .padding(horizontal = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Text(
+            text = team.flag,
+            color = Color.White,
+            fontSize = 18.sp,
+            maxLines = 1,
+            style = Poppins
+        )
+
+        Text(
+            text = team.code,
+            color = Color.White,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            style = Poppins
+        )
     }
 }
 
@@ -1017,66 +1120,6 @@ fun StickerItem(
                 }
             )
         }
-    }
-}
-
-@Composable
-fun CopyStickersButtons(state: UpdateAlbumUIState) {
-    val context = LocalContext.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        CopyActionPill(
-            text = stringResource(id = R.string.copy_missing_stickers),
-            onClick = { state.onCopyMissingStickersClick(context) },
-            modifier = Modifier.weight(1F)
-        )
-
-        CopyActionPill(
-            text = stringResource(id = R.string.copy_repeated_stickers),
-            onClick = { state.onCopyRepeatedStickersClick(context) },
-            modifier = Modifier.weight(1F)
-        )
-    }
-}
-
-@Composable
-fun CopyActionPill(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .height(38.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.10F))
-            .border(1.dp, Color.White.copy(alpha = 0.16F), RoundedCornerShape(12.dp))
-            .clickable { onClick() }
-            .padding(horizontal = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_copy),
-            contentDescription = null,
-            tint = Color.White.copy(alpha = 0.78F),
-            modifier = Modifier.size(18.dp)
-        )
-
-        Text(
-            text = text,
-            textAlign = TextAlign.Center,
-            color = Color.White,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            modifier = Modifier.fillMaxWidth(),
-            style = Poppins
-        )
     }
 }
 

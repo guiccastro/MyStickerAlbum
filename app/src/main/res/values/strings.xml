@@ -103,6 +103,8 @@
     <string name="search_sticker_placeholder">Find sticker</string>
     <string name="search_sticker_not_found">Sticker not found!</string>
     <string name="columns_placeholder">Columns</string>
+    <string name="world_cup_quick_filter_groups">Groups</string>
+    <string name="world_cup_quick_filter_alphabetical">A-Z</string>
     <string name="add_sticker_line_break">Add line break</string>
     <string name="remove_sticker_line_break">Remove line break</string>
     <string name="add_sticker_extra_line">Add empty line below</string>

@@ -100,6 +100,8 @@
     <string name="search_sticker_placeholder">Encontrar figurinha</string>
     <string name="search_sticker_not_found">Figurinha não encontrada!</string>
     <string name="columns_placeholder">Colunas</string>
+    <string name="world_cup_quick_filter_groups">Grupos</string>
+    <string name="world_cup_quick_filter_alphabetical">A-Z</string>
     <string name="add_sticker_line_break">Adicionar quebra de linha</string>
     <string name="remove_sticker_line_break">Remover quebra de linha</string>
     <string name="add_sticker_extra_line">Adicionar linha vazia abaixo</string>

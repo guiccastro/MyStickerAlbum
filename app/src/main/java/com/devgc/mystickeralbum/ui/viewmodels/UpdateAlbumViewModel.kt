@@ -1,8 +1,5 @@
 package com.devgc.mystickeralbum.ui.viewmodels
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.lazy.LazyListState
@@ -21,6 +18,7 @@ import com.devgc.mystickeralbum.navigation.NavigationParameters
 import com.devgc.mystickeralbum.navigation.screens.EditAlbumScreen
 import com.devgc.mystickeralbum.ui.stateholders.StickerFilter
 import com.devgc.mystickeralbum.ui.stateholders.UpdateAlbumUIState
+import com.devgc.mystickeralbum.ui.stateholders.WorldCupQuickFilterOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -59,8 +57,6 @@ class UpdateAlbumViewModel @Inject constructor(
                 onToggleStickerExtraLine = ::onToggleStickerExtraLine,
                 onCloseDeleteAlbumDialog = ::onCloseDeleteAlbumDialog,
                 onConfirmDeleteAlbumDialog = ::onConfirmDeleteAlbumDialog,
-                onCopyMissingStickersClick = ::onCopyMissingStickersClick,
-                onCopyRepeatedStickersClick = ::onCopyRepeatedStickersClick,
                 changeIconsLegendDialogState = ::changeIconsLegendDialogState,
                 searchStickerTextField = TextFieldValues(onTextChange = ::onSearchStickerChange),
                 onSearchStickerClick = ::onSearchStickerClick,
@@ -68,10 +64,9 @@ class UpdateAlbumViewModel @Inject constructor(
                 onScroll = ::onScroll,
                 onReturnToTopButtonClick = ::onReturnToTopButtonClick,
                 onColumnsChanged = ::onColumnsChanged,
-                onViewAll = { filterStickers(StickerFilter.All) },
-                onViewMissing = { filterStickers(StickerFilter.Missing) },
-                onViewRepeated = { filterStickers(StickerFilter.Repeated) },
-                onToggleHeader = ::onToggleHeader
+                onToggleHeader = ::onToggleHeader,
+                onWorldCupQuickFilterOrderSelected = ::onWorldCupQuickFilterOrderSelected,
+                onWorldCupTeamSelected = ::onWorldCupTeamSelected
             )
         }
 
@@ -228,32 +223,6 @@ class UpdateAlbumViewModel @Inject constructor(
         }
     }
 
-    private fun copyTextToClipboard(context: Context, text: String) {
-        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("Label", text)
-        clipboard.setPrimaryClip(clip)
-    }
-
-    private fun onCopyMissingStickersClick(context: Context) {
-        copyTextToClipboard(context, getMissingStickersText())
-        Toast.makeText(context, R.string.message_missing_stickers_copied, Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    private fun onCopyRepeatedStickersClick(context: Context) {
-        copyTextToClipboard(context, getRepeatedStickersText())
-        Toast.makeText(context, R.string.message_repeated_stickers_copied, Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    private fun getMissingStickersText(): String {
-        return _uiState.value.album.getMissing().joinToString(" - ") { it.identifier }
-    }
-
-    private fun getRepeatedStickersText(): String {
-        return _uiState.value.album.getRepeated().joinToString(" - ") { it.identifier }
-    }
-
     fun changeIconsLegendDialogState() {
         _uiState.update {
             it.copy(
@@ -318,6 +287,28 @@ class UpdateAlbumViewModel @Inject constructor(
 
     private fun onClearTextField() {
         onSearchStickerChange("")
+    }
+
+    private fun onWorldCupTeamSelected(code: String) {
+        onSearchStickerChange(code)
+    }
+
+    fun onStickerFilterSelected(filter: StickerFilter) {
+        filterStickers(filter)
+    }
+
+    fun isStickerFilterSelected(filter: StickerFilter): Boolean {
+        return _uiState.value.selectedFilter == filter
+    }
+
+    private fun onWorldCupQuickFilterOrderSelected(order: WorldCupQuickFilterOrder) {
+        if (_uiState.value.worldCupQuickFilterOrder == order) {
+            return
+        }
+
+        _uiState.update {
+            it.copy(worldCupQuickFilterOrder = order)
+        }
     }
 
     private fun onReturnToTopButtonClick(lazyListState: LazyListState, scope: CoroutineScope) {

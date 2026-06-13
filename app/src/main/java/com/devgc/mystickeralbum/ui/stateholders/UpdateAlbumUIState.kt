@@ -1,6 +1,5 @@
 package com.devgc.mystickeralbum.ui.stateholders
 
-import android.content.Context
 import androidx.compose.foundation.lazy.LazyListState
 import com.devgc.mystickeralbum.model.Album
 import com.devgc.mystickeralbum.model.AlbumStatus
@@ -18,8 +17,6 @@ data class UpdateAlbumUIState(
     val showDeleteAlbumDialog: Boolean = false,
     val onCloseDeleteAlbumDialog: () -> Unit = {},
     val onConfirmDeleteAlbumDialog: () -> Unit = {},
-    val onCopyMissingStickersClick: (Context) -> Unit = {},
-    val onCopyRepeatedStickersClick: (Context) -> Unit = {},
     val changeIconsLegendDialogState: () -> Unit = {},
     val showIconsLegendDialog: Boolean = false,
     val searchStickerTextField: TextFieldValues = TextFieldValues(),
@@ -31,16 +28,27 @@ data class UpdateAlbumUIState(
     val columns: Int? = null,
     val onColumnsChanged: (Int?) -> Unit = {},
     val stickers: List<Sticker> = emptyList(),
-    val onViewAll: () -> Unit = {},
-    val onViewMissing: () -> Unit = {},
-    val onViewRepeated: () -> Unit = {},
     val selectedFilter: StickerFilter = StickerFilter.All,
     val isHeaderVisible: Boolean = true,
-    val onToggleHeader: () -> Unit = {}
+    val onToggleHeader: () -> Unit = {},
+    val worldCupQuickFilterOrder: WorldCupQuickFilterOrder = WorldCupQuickFilterOrder.Groups,
+    val onWorldCupQuickFilterOrderSelected: (WorldCupQuickFilterOrder) -> Unit = {},
+    val onWorldCupTeamSelected: (String) -> Unit = {}
 )
 
 enum class StickerFilter {
     All,
     Missing,
     Repeated
+}
+
+enum class WorldCupQuickFilterOrder {
+    Groups,
+    Alphabetical;
+
+    companion object {
+        fun getByIndex(index: Int): WorldCupQuickFilterOrder {
+            return values().getOrElse(index) { Groups }
+        }
+    }
 }

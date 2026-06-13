@@ -1,17 +1,24 @@
 package com.devgc.mystickeralbum.scaffold.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -78,19 +85,60 @@ fun TopBar(
         },
         actions = {
             state.actionItems.forEach {
-                Image(
-                    painter = painterResource(id = it.icon),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(horizontal = 6.dp)
-                        .clip(CircleShape)
-                        .clickable { it.onClick() },
-                    colorFilter = ColorFilter.tint(Color.White)
-                )
+                TopBarAction(actionItem = it)
             }
         }
     )
+}
+
+@Composable
+private fun TopBarAction(actionItem: TopAppBarActionItem) {
+    var expanded by remember { mutableStateOf(false) }
+    val hasMenu = actionItem.menuItems.isNotEmpty()
+
+    Box {
+        Image(
+            painter = painterResource(id = actionItem.icon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(40.dp)
+                .padding(horizontal = 6.dp)
+                .clip(CircleShape)
+                .clickable {
+                    if (hasMenu) {
+                        expanded = true
+                    } else {
+                        actionItem.onClick()
+                    }
+                },
+            colorFilter = ColorFilter.tint(Color.White)
+        )
+
+        if (hasMenu) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.background(Color(0xFF123A5D))
+            ) {
+                actionItem.menuItems.forEach { menuItem ->
+                    val selected = menuItem.isSelected()
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = stringResource(id = menuItem.title),
+                                color = if (selected) Color(0xFF6EE7B7) else Color.White,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            menuItem.onClick()
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Preview(showSystemUi = true)

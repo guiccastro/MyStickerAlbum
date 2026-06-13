@@ -15,7 +15,9 @@ import com.devgc.mystickeralbum.navigation.interfaces.Screen
 import com.devgc.mystickeralbum.scaffold.models.FABComponent
 import com.devgc.mystickeralbum.scaffold.models.TopAppBarActionItem
 import com.devgc.mystickeralbum.scaffold.models.TopAppBarComponent
+import com.devgc.mystickeralbum.scaffold.models.TopAppBarMenuItem
 import com.devgc.mystickeralbum.ui.screens.UpdateAlbumUIScreen
+import com.devgc.mystickeralbum.ui.stateholders.StickerFilter
 import com.devgc.mystickeralbum.ui.viewmodels.UpdateAlbumViewModel
 
 object UpdateAlbumScreen : Screen {
@@ -29,6 +31,26 @@ object UpdateAlbumScreen : Screen {
         override fun hasReturn(): Boolean = true
 
         override fun getActionItems(): List<TopAppBarActionItem> = listOf(
+            TopAppBarActionItem(
+                icon = R.drawable.ic_filter,
+                menuItems = listOf(
+                    TopAppBarMenuItem(
+                        title = R.string.sticker_filter_all,
+                        onClick = { viewModel.onStickerFilterSelected(StickerFilter.All) },
+                        isSelected = { viewModel.isStickerFilterSelected(StickerFilter.All) }
+                    ),
+                    TopAppBarMenuItem(
+                        title = R.string.sticker_filter_missing,
+                        onClick = { viewModel.onStickerFilterSelected(StickerFilter.Missing) },
+                        isSelected = { viewModel.isStickerFilterSelected(StickerFilter.Missing) }
+                    ),
+                    TopAppBarMenuItem(
+                        title = R.string.sticker_filter_repeated,
+                        onClick = { viewModel.onStickerFilterSelected(StickerFilter.Repeated) },
+                        isSelected = { viewModel.isStickerFilterSelected(StickerFilter.Repeated) }
+                    )
+                )
+            ),
             TopAppBarActionItem(R.drawable.ic_legend) { viewModel.changeIconsLegendDialogState() },
             TopAppBarActionItem(R.drawable.ic_delete) { viewModel.onDeleteAlbumClick() },
             TopAppBarActionItem(R.drawable.ic_edit) { viewModel.onEditAlbumClick() }
